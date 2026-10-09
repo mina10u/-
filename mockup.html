@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>アプリ画面モックアップ (仮)</title>
+    <title>AIプログラミング学習ノート (モックアップ)</title>
     <style>
         :root {
-            --bg-dark: #0f172a;
-            --panel-bg: #1e293b;
-            --border: #334155;
-            --accent: #38bdf8;
-            --primary: #2563eb;
+            --bg-main: #181e2a;
+            --panel-bg: #242d3d;
+            --card-bg: #2d384e;
+            --accent-blue: #38bdf8;
+            --accent-green: #4ade80;
+            --accent-yellow: #fbbf24;
+            --accent-purple: #c084fc;
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
+            --border: #3b4861;
         }
 
         * {
@@ -22,8 +25,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-dark);
+            font-family: 'Hiragino Sans', 'YakuHanJP', 'Meiryo', -apple-system, sans-serif;
+            background-color: var(--bg-main);
             color: var(--text-main);
             height: 100vh;
             display: flex;
@@ -34,194 +37,212 @@
         /* ヘッダー */
         header {
             background-color: var(--panel-bg);
-            border-bottom: 1px solid var(--border);
-            padding: 0.5rem 1rem;
+            border-bottom: 2px solid var(--border);
+            padding: 0.6rem 1.2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 50px;
+            height: 56px;
         }
 
         .logo {
-            font-weight: bold;
-            color: var(--accent);
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--accent-blue);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
+        }
+
+        .mode-badge {
+            background: linear-gradient(135deg, #0284c7, #38bdf8);
+            color: white;
+            padding: 0.25rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .nav-tools {
             display: flex;
-            gap: 0.8rem;
+            gap: 0.6rem;
             align-items: center;
         }
 
         .btn {
-            background-color: #334155;
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 0.45rem 0.9rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            background-color: #384661;
+        }
+
+        .btn-run {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
             color: white;
             border: none;
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
         }
 
-        .btn-primary {
-            background-color: var(--primary);
-        }
-
-        .btn-success {
-            background-color: #16a34a;
-        }
-
-        .mode-badge {
-            background-color: #0284c7;
-            padding: 0.2rem 0.6rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-        }
-
-        /* メイン 3分割レイアウト */
+        /* レイアウト */
         .app-container {
             display: flex;
             flex: 1;
-            height: calc(100vh - 50px);
+            gap: 0.8rem;
+            padding: 0.8rem;
+            height: calc(100vh - 56px);
         }
 
-        /* 左エリア: エディタ ＆ コンソール */
+        /* 左エリア (エディタ & コンソール) */
         .left-pane {
             flex: 6;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid var(--border);
-        }
-
-        .editor-header {
-            background-color: #172033;
-            padding: 0.4rem 0.8rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-            color: var(--text-sub);
-        }
-
-        .editor-area {
-            flex: 7;
-            background-color: #090d16;
-            padding: 1rem;
-            font-family: monospace;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            color: #e2e8f0;
-            white-space: pre;
-            overflow: auto;
-        }
-
-        .console-area {
-            flex: 3;
-            background-color: #020617;
-            border-top: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .console-header {
-            background-color: #0f172a;
-            padding: 0.3rem 0.8rem;
-            font-size: 0.8rem;
-            color: var(--text-sub);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .console-body {
-            padding: 0.8rem;
-            font-family: monospace;
-            font-size: 0.85rem;
-            color: #ef4444; /* エラーの仮表示 */
-        }
-
-        /* 右エリア: 上下2分割 (AI ＆ 辞書) */
-        .right-pane {
-            flex: 4;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .ai-pane {
-            flex: 5;
-            background-color: var(--panel-bg);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .panel-title {
-            background-color: #172033;
-            padding: 0.5rem 0.8rem;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: var(--accent);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .chat-history {
-            flex: 1;
-            padding: 0.8rem;
-            overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 0.8rem;
         }
 
-        .chat-msg {
-            background-color: #0f172a;
-            padding: 0.6rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            border-left: 3px solid var(--accent);
-        }
-
-        .dict-pane {
-            flex: 5;
+        .card {
             background-color: var(--panel-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
+        .editor-card {
+            flex: 7;
+        }
+
+        .card-header {
+            background-color: #1f2736;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-sub);
+        }
+
+        .editor-area {
+            flex: 1;
+            background-color: #131822;
+            padding: 1.2rem;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #f1f5f9;
+            white-space: pre;
+            overflow: auto;
+        }
+
+        .console-card {
+            flex: 3;
+        }
+
+        .console-body {
+            padding: 0.8rem 1.2rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #fca5a5;
+            background-color: #0f131c;
+            flex: 1;
+            overflow-y: auto;
+            border-left: 4px solid #ef4444;
+        }
+
+        /* 右エリア (AIサポート & 辞書) */
+        .right-pane {
+            flex: 4;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .ai-card {
+            flex: 5;
+        }
+
+        .chat-history {
+            padding: 0.8rem;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            background-color: #1a2230;
+        }
+
+        /* ふきだし風のメッセージ */
+        .ai-speech-bubble {
+            background: linear-gradient(135deg, #2d384e, #242d3d);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            border-top-left-radius: 4px;
+            padding: 0.8rem 1rem;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        .dict-card {
+            flex: 5;
+        }
+
         .dict-tabs {
             display: flex;
-            background-color: #0f172a;
+            background-color: #1a2230;
             border-bottom: 1px solid var(--border);
+            padding: 0.3rem 0.5rem 0;
+            gap: 0.3rem;
         }
 
         .tab {
             padding: 0.4rem 0.8rem;
             font-size: 0.8rem;
+            font-weight: bold;
             color: var(--text-sub);
+            border-radius: 8px 8px 0 0;
             cursor: pointer;
         }
 
         .tab.active {
             background-color: var(--panel-bg);
-            color: var(--accent);
-            font-weight: bold;
-            border-bottom: 2px solid var(--accent);
+            color: var(--accent-blue);
+            border: 1px solid var(--border);
+            border-bottom: none;
         }
 
         .dict-body {
-            padding: 0.8rem;
-            font-size: 0.85rem;
+            padding: 1rem;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            overflow-y: auto;
+            flex: 1;
         }
 
-        .code-keyword {
-            color: #f43f5e;
-            background: #0f172a;
-            padding: 0.1rem 0.3rem;
-            border-radius: 3px;
+        .code-tag {
+            background-color: #131822;
+            color: var(--accent-yellow);
+            padding: 0.15rem 0.4rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -230,43 +251,47 @@
     <!-- ヘッダー -->
     <header>
         <div class="logo">
-            <span>🤖 AIプログラミング学習アシスタント</span>
-            <span class="mode-badge">こどもモード (ルビあり)</span>
+            <span style="font-size: 1.3rem;">🤖</span>
+            <span>AIプログラミングノート</span>
+            <span class="mode-badge">こどもモード (ルビつき)</span>
         </div>
         <div class="nav-tools">
-            <button class="btn">モード: 自由創作（サンドボックス）</button>
+            <button class="btn">🎨 モード: 自由創作</button>
             <button class="btn">📋 成長カルテ</button>
-            <button class="btn">🏆 アチーブメント</button>
+            <button class="btn">🏆 あちーぶめんと</button>
         </div>
     </header>
 
-    <!-- メインコンテンツ (3分割構造) -->
+    <!-- メイン領域 -->
     <div class="app-container">
         
-        <!-- 左エリア: エディタ ＆ 出力コンソール -->
+        <!-- 左エリア: エディタ ＆ コンソール -->
         <div class="left-pane">
-            <div class="editor-header">
-                <span>ファイル: main.py</span>
-                <div>
-                    <button class="btn" style="padding: 0.2rem 0.5rem;">✨ コード整形</button>
-                    <button class="btn" style="padding: 0.2rem 0.5rem;">＋ スニペット挿入</button>
-                    <button class="btn btn-success" style="padding: 0.2rem 0.8rem; font-weight: bold;">▶ 実行</button>
+            <div class="card editor-card">
+                <div class="card-header">
+                    <span>📄 main.py</span>
+                    <div style="display: flex; gap: 0.4rem;">
+                        <button class="btn">✨ コードせいせい</button>
+                        <button class="btn">＋ パーツいれる</button>
+                        <button class="btn btn-run">▶ うごかす！</button>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="editor-area"># ここに自由（じゆう）にコードを書いてみよう！
+                <div class="editor-area"># ここに じゆうに コードを かいてみよう！
 name = "たろう"
 age = 10
 
-print("ぼくの名前（なまえ）は " + name)
-print("年齢（ねんれい）は " + age + "歳です")</div>
+print("ぼくの名前は " + name)
+print("ねんれいは " + age + "さいです")</div>
+            </div>
 
-            <div class="console-area">
-                <div class="console-header">実行結果（じっこうけっか）/ エラーコンソール</div>
+            <div class="card console-card">
+                <div class="card-header" style="color: #fca5a5;">
+                    <span>💬 実行結果（じっこうけっか）と おしらせ</span>
+                </div>
                 <div class="console-body">
-                    [エラーメッセージ]<br>
-                    TypeError: can only concatenate str (not "int") to str<br>
-                    ➔ 文字列（もじれつ）と 数値（すうち）を 直接（ちょくせつ）「+」で つなぐことは できません。
+                    <strong>⚠️ エラーが発生したよ！</strong><br>
+                    `TypeError: can only concatenate str (not "int") to str`<br>
+                    👉 文字（もじ）と 数字（すうじ）を そのまま 「+」で つなぐことは できません。
                 </div>
             </div>
         </div>
@@ -274,35 +299,40 @@ print("年齢（ねんれい）は " + age + "歳です")</div>
         <!-- 右エリア: AIヒント ＆ 関数辞書 -->
         <div class="right-pane">
             
-            <!-- 右上: AIアシスタント -->
-            <div class="ai-pane">
-                <div class="panel-title">
-                    <span>💡 AIサポートヒント</span>
-                    <span style="font-size: 0.75rem; color: var(--text-sub);">ヒントレベル 1/3</span>
+            <!-- 右上: AIアドバイス -->
+            <div class="card ai-card">
+                <div class="card-header" style="color: var(--accent-blue);">
+                    <span>💡 AIの アドバイス</span>
+                    <span style="font-size: 0.75rem; color: var(--accent-yellow);">★ ヒント 1 / 3</span>
                 </div>
                 <div class="chat-history">
-                    <div class="chat-msg">
-                        <strong>AIアシスタント:</strong><br>
-                        `print` の中で 数値（`age`）を そのまま 文字列と つなげようとして エラーに なっているよ！<br>
-                        数値を 文字に 変える <span class="code-keyword">str()</span> を 使うか、カンマ「,」で くぎってみよう。
+                    <div class="ai-speech-bubble">
+                        <strong style="color: var(--accent-green);">🤖 AIロボ:</strong><br>
+                        `print` の 中で 数字の変数（`age`）を そのまま 文字と つなげようとして エラーに なっているよ！<br><br>
+                        数字を 文字に変える <span class="code-tag">str()</span> を 使うか、カンマ「,」で くぎってみよう。
                     </div>
                 </div>
             </div>
 
-            <!-- 右下: 関数・構文辞書 -->
-            <div class="dict-pane">
+            <!-- 右下: かんたん辞書 -->
+            <div class="card dict-card">
                 <div class="dict-tabs">
-                    <div class="tab active">🔍 辞書検索</div>
-                    <div class="tab">🕒 履歴</div>
+                    <div class="tab active">🔍 じしょ</div>
+                    <div class="tab">🕒 りれき</div>
                     <div class="tab">⭐ お気に入り</div>
-                    <div class="tab">🔥 頻出</div>
+                    <div class="tab">🔥 よくつかう</div>
                 </div>
                 <div class="dict-body">
-                    <h3 style="color: var(--accent); margin-bottom: 0.4rem;">str() 関数 <span style="font-size: 0.75rem; color: var(--text-sub);">(えすてぃーあーる かんすう)</span></h3>
-                    <p style="margin-bottom: 0.6rem;">数値（すうち）や ほかの データを 文字列（もじれつ）に 変換（へんかん）するための 関数（かんすう）です。</p>
-                    <div style="background-color: #0f172a; padding: 0.5rem; border-radius: 4px; font-family: monospace;">
+                    <h3 style="color: var(--accent-blue); font-size: 1rem; margin-bottom: 0.4rem;">
+                        str() 関数 <span style="font-size: 0.75rem; color: var(--text-sub);">(えすてぃーあーる かんすう)</span>
+                    </h3>
+                    <p style="margin-bottom: 0.6rem; color: #cbd5e1;">
+                        数字（すうじ）や ほかの データを 文字列（もじれつ）に へんかんするための かんすうです。
+                    </p>
+                    <div style="background-color: #131822; padding: 0.6rem; border-radius: 10px; border: 1px solid var(--border); font-family: monospace;">
+                        <span style="color: var(--text-sub);"># れい:</span><br>
                         age = 10<br>
-                        print("ねんれい: " + str(age))
+                        print("ねんれい: " + <span style="color: var(--accent-yellow);">str(age)</span>)
                     </div>
                 </div>
             </div>
