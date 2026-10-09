@@ -138,7 +138,7 @@
     <header>
         <h1>プログラミング初学者向け AI誤り分析アシスタント 仕様書</h1>
         <div class="meta-info">
-            <span class="updated-date">最終更新日: 2026年10月9日</span>
+            <span class="updated-date">最終更新日時: 2026年10月9日 10:15</span>
             <span>アーキテクチャ: Tauri v2 (Desktop App)</span>
             <span>対象OS: Windows 10/11</span>
             <span>チーム規模: 6名</span>
@@ -151,7 +151,7 @@
         <p>プログラミング初学者がコードを実行した際に発生したエラー文やソースコードを解析し、<strong>答えを直接教えるのではなく「原因・ヒント・関連する関数辞書」を段階的に提示する</strong>デスクトップアプリケーション。</p>
         <ul>
             <li><strong>ターゲット層:</strong> 大学・専門学校のプログラミング初学者</li>
-            <li><strong>コア体験:</strong> 「自由記述でのエラー解析」「組み込み関数辞書での学び」「スキルチェック問題演習」を1つの環境でシームレスに提供する統合学習システム</li>
+            <li><strong>コア体験:</strong> 「自由記述でのエラー解析」「辞書（検索履歴・お気に入り機能付き）での学習」「スキルチェック問題演習」を1つの環境で提供する統合学習システム</li>
         </ul>
     </section>
 
@@ -185,8 +185,13 @@
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
                 <tr>
-                    <td><strong>4. スキルチェック・問題演習機能</strong> <span class="badge badge-new">NEW</span></td>
-                    <td>難易度別の課題（例: 変数・IF文・For文）を出題し、プログラムの実行結果を自動採点してレベル測定する機能。</td>
+                    <td><strong>4. 辞書便利機能（履歴/頻出/お気に入り）</strong></td>
+                    <td>「検索履歴」「よく調べるワード（アクセス順）」「単語のお気に入り登録（ブックマーク）」機能。</td>
+                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
+                </tr>
+                <tr>
+                    <td><strong>5. スキルチェック・問題演習機能</strong></td>
+                    <td>難易度別の課題を出題し、プログラムの実行結果を自動採点してレベル測定する機能。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
             </tbody>
@@ -203,17 +208,17 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>5. 段階的AIヒント生成</strong></td>
-                    <td>「レベル1: エラーの概要」「レベル2: 原因箇所」「レベル3: 考え方」を段階的に生成。問題演習時にもヒントを提供。</td>
+                    <td><strong>6. 段階的AIヒント生成</strong></td>
+                    <td>「レベル1: エラーの概要」「レベル2: 原因箇所」「レベル3: 考え方」を段階的に生成。</td>
                     <td><span class="badge badge-backend">Rust (AI)</span></td>
                 </tr>
                 <tr>
-                    <td><strong>6. ヒント ⇄ 辞書 連動機能</strong></td>
+                    <td><strong>7. ヒント ⇄ 辞書 連動機能</strong></td>
                     <td>AIが生成したヒント内に、関連する関数辞書（例: `len()`）への直接リンクを表示しクリックで辞書を開く機能。</td>
                     <td><span class="badge badge-core">共通 (IPC)</span></td>
                 </tr>
                 <tr>
-                    <td><strong>7. 対話型お助けチャット</strong></td>
+                    <td><strong>8. 対話型お助けチャット</strong></td>
                     <td>ヒントや問題の解き方に対して「ここがよくわからない」と追加質問できる対話インターフェース。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
@@ -225,36 +230,32 @@
     <section>
         <h2>3. フロント ⇄ Rust バックエンド間 データ仕様 (IPC)</h2>
 
-        <h3>問題データの構造案（JSON）</h3>
+        <h3>拡張された辞書データ構造案（JSON）</h3>
         <pre><code>{
-  "problemId": "p_001",
-  "title": "偶数・奇数の判定プログラムを作ろう",
-  "difficulty": "初級", // 入門 / 初級 / 中級
-  "description": "変数 num が偶数の場合は 'Even'、奇数の場合は 'Odd' と出力するプログラムを作成してください。",
-  "templateCode": "num = 7\n# ここにコードを書いてください\n",
-  "testCases": [
-    { "input": "num = 4", "expectedOutput": "Even" },
-    { "input": "num = 7", "expectedOutput": "Odd" }
-  ],
-  "relatedDictKeys": ["if", "print"]
+  "key": "print",
+  "title": "print() 関数",
+  "category": "組み込み関数",
+  "description": "画面に文字や数値を出力するための関数です。",
+  "example": "print('Hello World')\nprint('結果:', 10)",
+  "tips": "カンマ (,) で区切ると、複数の値を並べて出力できます。",
+  "isBookmarked": true,  // お気に入り登録フラグ
+  "searchCount": 12      // 検索・閲覧回数（よく調べるワード用）
 }</code></pre>
 
-        <h3>採点結果レスポンス (Rust → TypeScript)</h3>
+        <h3>検索履歴・お気に入りリスト共有構造</h3>
         <pre><code>{
-  "status": "passed", // passed / failed
-  "score": 100,
-  "passedCases": 2,
-  "totalCases": 2,
-  "feedback": "全テストケースをクリアしました！条件分岐（if文）が正しく理解できています。"
+  "searchHistory": ["print", "if", "type_error"], // 最近検索した単語（上限10件）
+  "favoriteKeys": ["print", "len", "for"]         // お気に入り登録された単語キー一覧
 }</code></pre>
     </section>
 
     <!-- 4. 画面レイアウト構成案 -->
     <section>
-        <h2>4. 画面レイアウト構成案（モード切り替え対応）</h2>
+        <h2>4. 画面レイアウト構成案（3分割＋辞書タブ）</h2>
         <ul>
-            <li><strong>フリー記述モード:</strong> 左側にコードエディタ＆出力コンソール、右側にAIヒント＆関数辞書。</li>
-            <li><strong>問題演習モード:</strong> 左上に問題文＆テストケース、左下にコードエディタ、右側にAIヒント＆関数辞書。</li>
+            <li><strong>左エリア:</strong> コードエディタ ＆ 下部出力コンソール</li>
+            <li><strong>右上エリア:</strong> AIヒント ＆ 対話チャット画面</li>
+            <li><strong>右下エリア:</strong> 関数・構文辞書（「検索」「履歴」「お気に入り」「頻出」のタブ切り替え対応）</li>
         </ul>
     </section>
 </div>
