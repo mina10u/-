@@ -1,181 +1,205 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>画面遷移図・機能フロー図</title>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-    <script>
-        mermaid.initialize({
-            startOnLoad: true,
-            theme: 'dark',
-            themeVariables: {
-                primaryColor: '#1e293b',
-                primaryBorderColor: '#38bdf8',
-                lineColor: '#94a3b8',
-                fontFamily: 'sans-serif',
-                fontSize: '13px'
-            },
-            flowchart: {
-                useMaxWidth: true,
-                htmlLabels: true,
-                curve: 'basis',
-                nodeSpacing: 35,
-                rankSpacing: 45
-            }
-        });
-    </script>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --accent: #38bdf8;
-            --border: #334155;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        header {
-            background-color: var(--card-bg);
-            border-bottom: 2px solid var(--border);
-            padding: 0.6rem 1.2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            min-height: 50px;
-            gap: 1rem;
-            flex-shrink: 0;
-        }
-        h1 { color: var(--accent); font-size: 1.1rem; }
-        .back-link {
-            color: var(--text-main);
-            text-decoration: none;
-            background-color: rgba(37, 99, 235, 0.2);
-            padding: 0.35rem 0.8rem;
-            border-radius: 6px;
-            border: 1px solid var(--primary);
-            font-size: 0.8rem;
-            font-weight: bold;
-            white-space: nowrap;
-        }
-        .back-link:hover { background-color: var(--primary); }
-        .diagram-viewport {
-            flex: 1;
-            width: 100%;
-            min-height: 0;
-            padding: 1rem;
-            background-color: #0b1120;
-            overflow: auto;
-        }
-        .mermaid {
-            width: 100%;
-            min-height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-        .mermaid svg {
-            width: 100% !important;
-            height: auto !important;
-            max-width: 1500px !important;
-        }
-        @media (max-width: 700px) {
-            header { align-items: flex-start; }
-            h1 { font-size: 0.95rem; }
-            .diagram-viewport { padding: 0.5rem; }
-            .mermaid svg { min-width: 900px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>システム機能・画面遷移フロー図</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: "dark",
+  themeVariables: {
+    background: "#0b1120",
+    primaryColor: "#1e293b",
+    primaryTextColor: "#f8fafc",
+    primaryBorderColor: "#38bdf8",
+    lineColor: "#94a3b8",
+    secondaryColor: "#172554",
+    tertiaryColor: "#172033",
+    fontFamily: "sans-serif",
+    fontSize: "14px"
+  },
+  flowchart: {
+    useMaxWidth: true,
+    htmlLabels: true,
+    curve: "linear",
+    nodeSpacing: 32,
+    rankSpacing: 48,
+    padding: 12
+  }
+});
+</script>
+<style>
+:root {
+  --bg: #0b1120;
+  --panel: #1e293b;
+  --border: #334155;
+  --accent: #38bdf8;
+  --text: #f8fafc;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 22px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+h1 { margin: 0; color: var(--accent); font-size: 1.15rem; }
+.back-link {
+  color: var(--text);
+  text-decoration: none;
+  border: 1px solid #2563eb;
+  background: #1e3a8a;
+  padding: 8px 12px;
+  border-radius: 7px;
+  font-size: .85rem;
+  white-space: nowrap;
+}
+.back-link:hover { background: #2563eb; }
+.intro {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 14px 22px 0;
+  color: #cbd5e1;
+  font-size: .92rem;
+  line-height: 1.6;
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  padding: 10px 22px 0;
+  max-width: 1500px;
+  margin: 0 auto;
+  color: #cbd5e1;
+  font-size: .82rem;
+}
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.viewport {
+  margin: 0 auto;
+  max-width: 1600px;
+  padding: 18px;
+  overflow: auto;
+}
+.mermaid { min-width: 980px; display: flex; justify-content: center; }
+.mermaid svg { width: 100% !important; height: auto !important; max-width: 1500px; }
+.note {
+  max-width: 1500px;
+  margin: 0 auto 24px;
+  padding: 0 22px;
+  color: #94a3b8;
+  font-size: .82rem;
+  line-height: 1.6;
+}
+@media (max-width: 700px) {
+  header { align-items: flex-start; padding: 12px; }
+  h1 { font-size: 1rem; }
+  .intro, .legend { padding-left: 12px; padding-right: 12px; }
+  .viewport { padding: 10px; }
+  .note { padding: 0 12px; }
+}
+</style>
 </head>
 <body>
-    <header>
-        <h1>システム機能・画面遷移フロー図</h1>
-        <a href="index.html" class="back-link">← 仕様書トップに戻る</a>
-    </header>
-
-    <main class="diagram-viewport">
-        <div class="mermaid">
+<header>
+  <h1>システム機能・画面遷移フロー図</h1>
+  <a class="back-link" href="index.html">← 仕様書トップに戻る</a>
+</header>
+<p class="intro">メイン画面から各機能へ進む構成と、学習中の操作フローを分けて表示しています。グループからメイン画面へ戻る矢印は省き、学習の流れを中心に整理しています。</p>
+<div class="legend">
+  <span><i class="swatch" style="background:#2563eb"></i>起点・メイン画面</span>
+  <span><i class="swatch" style="background:#0284c7"></i>学習機能</span>
+  <span><i class="swatch" style="background:#b91c1c"></i>エラー対応</span>
+  <span><i class="swatch" style="background:#7e22ce"></i>学習記録</span>
+  <span><i class="swatch" style="background:#0e7490"></i>共通機能</span>
+</div>
+<main class="viewport">
+<div class="mermaid">
 flowchart TB
-    Start([アプリ起動]) --> MainScreen["メイン画面"]
+    Start(["アプリ起動"]) --> Main["メイン画面"]
 
-    MainScreen --> LearningMode{"学習モードを選択"}
-    MainScreen --> Support["学習サポート"]
-    MainScreen --> Records["学習記録"]
-    MainScreen --> Common["共通機能"]
+    Main --> Mode{"学習モードを選択"}
+    Main --> Support["学習サポート"]
+    Main --> Records["学習記録"]
+    Main --> Common["共通機能"]
 
     subgraph Learning["① 学習機能"]
-        direction TB
-        LearningMode --> ModeFree["自由創作"]
-        LearningMode --> ModeTask["課題演習"]
-        ModeFree --> Editor["コードエディタ"]
-        ModeTask --> Editor
-        Editor --> Run["コード実行"]
-        Run --> Result["実行結果"]
-        Result --> ResultCheck{"実行結果の判定"}
+      direction TB
+      Mode --> Free["自由創作"]
+      Mode --> Task["課題演習"]
+      Free --> Editor["コードエディタ"]
+      Task --> Editor
+      Editor --> Run["コード実行"]
+      Run --> Result["実行結果"]
+      Result --> Judge{"実行結果の判定"}
 
-        ResultCheck -- "正常終了" --> Continue["学習を継続<br/>次のコードを書く"]
-        Continue --> Editor
+      Judge -- "正常終了" --> Continue["学習を継続<br/>次のコードを書く"]
+      Continue --> Editor
 
-        ResultCheck -- "文法エラー" --> ErrExplain["やさしいエラー解説"]
-        ResultCheck -- "期待と違う" --> LogicExplain["期待結果との差分解説"]
-        ErrExplain --> AiSupport["AIサポート・チャット"]
-        LogicExplain --> AiSupport
-        AiSupport --> Editor
+      Judge -- "文法エラー" --> Error["やさしいエラー解説"]
+      Judge -- "期待と違う" --> Diff["期待結果との差分解説"]
+      Error --> AI["AIサポート・チャット"]
+      Diff --> AI
+      AI --> Editor
 
-        ModeTask -. "課題演習の場合のみ" .-> TaskCheck["自動採点・課題チェック"]
-        Result -. "課題演習の場合のみ" .-> TaskCheck
-        TaskCheck --> Editor
+      Task -. "課題演習のみ" .-> Check["自動採点・課題チェック"]
+      Result -. "課題演習のみ" .-> Check
+      Check --> Editor
     end
 
     subgraph SupportGroup["② 学習サポート"]
-        direction TB
-        Support --> CodeFormat["コード整形"]
-        Support --> Dictionary["関数・構文辞書"]
-        Support --> Snippet["スニペット挿入"]
-        Dictionary <--> DictFeatures["検索・履歴・お気に入り"]
-        CodeFormat -. "エディタへ反映" .-> Editor
-        Snippet -. "エディタへ挿入" .-> Editor
+      direction TB
+      Support --> Format["コード整形"]
+      Support --> Dictionary["関数・構文辞書"]
+      Support --> Snippet["スニペット挿入"]
+      Dictionary <--> DictFeatures["検索・履歴・お気に入り"]
     end
 
     subgraph RecordGroup["③ 学習記録"]
-        direction TB
-        Records --> Achieve["アチーブメント"]
-        Records --> Karte["成長カルテ"]
-        Achieve --> BadgeConfirm["実績・バッジ確認"]
-        Karte --> LogConfirm["エラー履歴・修正ログ"]
+      direction TB
+      Records --> Achievement["アチーブメント"]
+      Records --> Karte["成長カルテ"]
+      Achievement --> Badge["実績・バッジ確認"]
+      Karte --> Logs["エラー履歴・修正ログ"]
     end
 
     subgraph CommonGroup["④ 共通機能"]
-        direction TB
-        Common --> SaveFile["ファイル保存"]
-        Common --> ModeSwitch["表示モード切替"]
-        ModeSwitch --> ModeKid["子ども向け表示"]
-        ModeSwitch --> ModeAdult["大人向け表示"]
+      direction TB
+      Common --> Save["ファイル保存"]
+      Common --> Switch["表示モード切替"]
+      Switch --> Kid["子ども向け表示"]
+      Switch --> Adult["大人向け表示"]
     end
 
-    classDef startEnd fill:#14532d,stroke:#4ade80,color:#f8fafc,stroke-width:2px;
+    classDef start fill:#14532d,stroke:#4ade80,color:#f8fafc,stroke-width:2px;
     classDef main fill:#1d4ed8,stroke:#60a5fa,color:#ffffff,stroke-width:2px;
-    classDef learning fill:#1e293b,stroke:#38bdf8,color:#f8fafc;
-    classDef error fill:#7f1d1d,stroke:#f87171,color:#ffffff;
-    classDef record fill:#581c87,stroke:#c084fc,color:#ffffff;
-    classDef common fill:#164e63,stroke:#22d3ee,color:#ffffff;
-    class Start startEnd;
-    class MainScreen main;
-    class Editor,Run,Result,Continue,TaskCheck learning;
-    class ErrExplain,LogicExplain,AiSupport error;
-    class Records,Achieve,Karte,BadgeConfirm,LogConfirm record;
-    class Common,SaveFile,ModeSwitch,ModeKid,ModeAdult common;
-        </div>
-    </main>
+    classDef learning fill:#172554,stroke:#38bdf8,color:#f8fafc,stroke-width:1.5px;
+    classDef error fill:#7f1d1d,stroke:#f87171,color:#ffffff,stroke-width:1.5px;
+    classDef record fill:#581c87,stroke:#c084fc,color:#ffffff,stroke-width:1.5px;
+    classDef common fill:#164e63,stroke:#22d3ee,color:#ffffff,stroke-width:1.5px;
+    class Start start;
+    class Main main;
+    class Editor,Run,Result,Continue,Check learning;
+    class Error,Diff,AI error;
+    class Records,Achievement,Karte,Badge,Logs record;
+    class Common,Save,Switch,Kid,Adult common;
+</div>
+</main>
+<p class="note">補足：点線は「課題演習のみ」など、条件付きで使う機能を示します。画面遷移と学習中の処理フローを一つの図にまとめているため、細部を説明する資料では学習機能だけを別図にするとさらに読みやすくなります。</p>
 </body>
 </html>
