@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アプリ画面モックアップ (仮)</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --panel-bg: #1e293b;
+            --border: #334155;
+            --accent: #38bdf8;
+            --primary: #2563eb;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ヘッダー */
+        header {
+            background-color: var(--panel-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
+        }
+
+        .logo {
+            font-weight: bold;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-tools {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .btn {
+            background-color: #334155;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+        }
+
+        .btn-success {
+            background-color: #16a34a;
+        }
+
+        .mode-badge {
+            background-color: #0284c7;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+
+        /* メイン 3分割レイアウト */
+        .app-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 50px);
+        }
+
+        /* 左エリア: エディタ ＆ コンソール */
+        .left-pane {
+            flex: 6;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+        }
+
+        .editor-header {
+            background-color: #172033;
+            padding: 0.4rem 0.8rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+        }
+
+        .editor-area {
+            flex: 7;
+            background-color: #090d16;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+            white-space: pre;
+            overflow: auto;
+        }
+
+        .console-area {
+            flex: 3;
+            background-color: #020617;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .console-header {
+            background-color: #0f172a;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .console-body {
+            padding: 0.8rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #ef4444; /* エラーの仮表示 */
+        }
+
+        /* 右エリア: 上下2分割 (AI ＆ 辞書) */
+        .right-pane {
+            flex: 4;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ai-pane {
+            flex: 5;
+            background-color: var(--panel-bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-title {
+            background-color: #172033;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--accent);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .chat-history {
+            flex: 1;
+            padding: 0.8rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .chat-msg {
+            background-color: #0f172a;
+            padding: 0.6rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            border-left: 3px solid var(--accent);
+        }
+
+        .dict-pane {
+            flex: 5;
+            background-color: var(--panel-bg);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dict-tabs {
+            display: flex;
+            background-color: #0f172a;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background-color: var(--panel-bg);
+            color: var(--accent);
+            font-weight: bold;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .dict-body {
+            padding: 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .code-keyword {
+            color: #f43f5e;
+            background: #0f172a;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ヘッダー -->
+    <header>
+        <div class="logo">
+            <span>🤖 AIプログラミング学習アシスタント</span>
+            <span class="mode-badge">こどもモード (ルビあり)</span>
+        </div>
+        <div class="nav-tools">
+            <button class="btn">モード: 自由創作（サンドボックス）</button>
+            <button class="btn">📋 成長カルテ</button>
+            <button class="btn">🏆 アチーブメント</button>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ (3分割構造) -->
+    <div class="app-container">
+        
+        <!-- 左エリア: エディタ ＆ 出力コンソール -->
+        <div class="left-pane">
+            <div class="editor-header">
+                <span>ファイル: main.py</span>
+                <div>
+                    <button class="btn" style="padding: 0.2rem 0.5rem;">✨ コード整形</button>
+                    <button class="btn" style="padding: 0.2rem 0.5rem;">＋ スニペット挿入</button>
+                    <button class="btn btn-success" style="padding: 0.2rem 0.8rem; font-weight: bold;">▶ 実行</button>
+                </div>
+            </div>
+            
+            <div class="editor-area"># ここに自由（じゆう）にコードを書いてみよう！
+name = "たろう"
+age = 10
+
+print("ぼくの名前（なまえ）は " + name)
+print("年齢（ねんれい）は " + age + "歳です")</div>
+
+            <div class="console-area">
+                <div class="console-header">実行結果（じっこうけっか）/ エラーコンソール</div>
+                <div class="console-body">
+                    [エラーメッセージ]<br>
+                    TypeError: can only concatenate str (not "int") to str<br>
+                    ➔ 文字列（もじれつ）と 数値（すうち）を 直接（ちょくせつ）「+」で つなぐことは できません。
+                </div>
+            </div>
+        </div>
+
+        <!-- 右エリア: AIヒント ＆ 関数辞書 -->
+        <div class="right-pane">
+            
+            <!-- 右上: AIアシスタント -->
+            <div class="ai-pane">
+                <div class="panel-title">
+                    <span>💡 AIサポートヒント</span>
+                    <span style="font-size: 0.75rem; color: var(--text-sub);">ヒントレベル 1/3</span>
+                </div>
+                <div class="chat-history">
+                    <div class="chat-msg">
+                        <strong>AIアシスタント:</strong><br>
+                        `print` の中で 数値（`age`）を そのまま 文字列と つなげようとして エラーに なっているよ！<br>
+                        数値を 文字に 変える <span class="code-keyword">str()</span> を 使うか、カンマ「,」で くぎってみよう。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右下: 関数・構文辞書 -->
+            <div class="dict-pane">
+                <div class="dict-tabs">
+                    <div class="tab active">🔍 辞書検索</div>
+                    <div class="tab">🕒 履歴</div>
+                    <div class="tab">⭐ お気に入り</div>
+                    <div class="tab">🔥 頻出</div>
+                </div>
+                <div class="dict-body">
+                    <h3 style="color: var(--accent); margin-bottom: 0.4rem;">str() 関数 <span style="font-size: 0.75rem; color: var(--text-sub);">(えすてぃーあーる かんすう)</span></h3>
+                    <p style="margin-bottom: 0.6rem;">数値（すうち）や ほかの データを 文字列（もじれつ）に 変換（へんかん）するための 関数（かんすう）です。</p>
+                    <div style="background-color: #0f172a; padding: 0.5rem; border-radius: 4px; font-family: monospace;">
+                        age = 10<br>
+                        print("ねんれい: " + str(age))
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
