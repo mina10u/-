@@ -97,7 +97,7 @@
             background-color: #0b1120;
         }
 
-        /* SVGの縮小を防止し、大画面化する設定 */
+        /* SVGの縮小を防止し、巨大化・全幅化する設定 */
         .mermaid {
             width: 100%;
             display: flex;
@@ -156,13 +156,10 @@ flowchart TD
         Result --> TaskCheck[自動採点・課題チェック]
         TaskCheck --> ResultCheck{実行結果は？}
         
-        ResultCheck -- 文法エラー --> ErrExplain[やさしいエラー解説]
+        ResultCheck -- エラー --> ErrExplain[やさしいエラー解説]
         ErrExplain --> AiSupport[AIサポート・チャット]
         
-        ResultCheck -- 期待と違う --> LogicExplain[どこがどう違うかの差分解説]
-        LogicExplain --> AiSupport
-        
-        ResultCheck -- 正常（大成功） --> Continue[学習を継続]
+        ResultCheck -- 正常 --> Continue[学習を継続]
         Continue --> Editor
     end
 
