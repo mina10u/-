@@ -93,16 +93,6 @@
             color: var(--accent);
         }
 
-        .nav-btn.primary {
-            background-color: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .nav-btn.primary:hover {
-            background-color: #1d4ed8;
-            color: white;
-        }
-
         /* メインレイアウト（2列構成） */
         main {
             flex: 1;
@@ -113,7 +103,7 @@
             overflow: hidden;
         }
 
-        /* 左カラム：エディタ & コンソール */
+        /* 左カラム：課題お題 & エディタ & コンソール */
         .left-column {
             display: flex;
             flex-direction: column;
@@ -140,6 +130,33 @@
             font-size: 0.85rem;
             font-weight: bold;
             color: var(--text-sub);
+        }
+
+        /* 課題お題表示エリア */
+        .task-banner {
+            background: rgba(30, 58, 138, 0.4);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 8px;
+            padding: 0.6rem 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .task-title {
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .task-target {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #4ade80;
+            font-weight: bold;
         }
 
         .panel-tools {
@@ -253,16 +270,17 @@
             display: flex;
             gap: 0.5rem;
             font-size: 0.8rem;
+            margin-bottom: 0.2rem;
         }
 
         .diff-label {
-            width: 80px;
+            width: 100px;
             font-weight: bold;
             color: var(--text-sub);
         }
 
-        .diff-val.expected { color: #4ade80; }
-        .diff-val.actual { color: #f87171; }
+        .diff-val.expected { color: #4ade80; font-weight: bold; }
+        .diff-val.actual { color: #f87171; font-weight: bold; }
 
         /* 右カラム：AIチャット & 辞書 */
         .right-column {
@@ -398,8 +416,18 @@
 
     <!-- メインエリア -->
     <main>
-        <!-- 左カラム：エディタ & コンソール -->
+        <!-- 左カラム：課題 & エディタ & コンソール -->
         <div class="left-column">
+            <!-- 課題演習 お題バナー -->
+            <div class="task-banner">
+                <div>
+                    <span class="task-title">🎯 今日のお題:</span> 年齢（10歳）を表示するコードを書こう！
+                </div>
+                <div>
+                    期待される出力: <span class="task-target">ねんれいは 10さいです</span>
+                </div>
+            </div>
+
             <!-- コードエディタ -->
             <div class="panel editor-container">
                 <div class="panel-header">
@@ -410,7 +438,7 @@
                         <button class="tool-btn" onclick="insertSnippet('print')">＋ print</button>
                     </div>
                 </div>
-                <textarea id="codeEditor" class="code-editor" spellcheck="false"># 課題: 年齢(10歳)を表示するプログラムを作ろう！
+                <textarea id="codeEditor" class="code-editor" spellcheck="false"># 年齢(10歳)を表示するプログラムを作ろう！
 age = 10 + 5
 print("ねんれいは " + str(age) + "さいです")</textarea>
             </div>
@@ -430,6 +458,7 @@ print("ねんれいは " + str(age) + "さいです")</textarea>
             <div class="panel console-container">
                 <div class="panel-header">
                     <span>💻 しゅつりょく結果 (コンソール)</span>
+                    <span style="font-size: 0.75rem; color: var(--accent);">[目標: ねんれいは 10さいです]</span>
                 </div>
                 <div id="consoleOutput" class="console-body">
                     <div class="console-msg warning">「▶ うごかす！」ボタンを押すと、実行結果が表示されます。</div>
@@ -446,8 +475,8 @@ print("ねんれいは " + str(age) + "さいです")</textarea>
                 </div>
                 <div id="chatMessages" class="chat-messages">
                     <div class="chat-bubble ai">
-                        こんにちは！コードが書けたら「▶ うごかす！」を押してね。<br>
-                        困ったときはいつでも質問してね！
+                        こんにちは！今日のお題は「ねんれいは 10さいです」と表示することだよ。<br>
+                        コードが書けたら「▶ うごかす！」を押してね！
                     </div>
                 </div>
                 <div class="chat-input-area">
@@ -507,21 +536,20 @@ print("ねんれいは " + str(age) + "さいです")</textarea>
         function runCode() {
             const pattern = document.querySelector('input[name="testPattern"]:checked').value;
             const consoleOut = document.getElementById('consoleOutput');
-            const chatMsgs = document.getElementById('chatMessages');
 
             if (pattern === 'logic') {
                 // 論理エラー（期待した出力と異なる）
                 consoleOut.innerHTML = `
                     <div class="console-msg warning"><strong>🤔 期待した結果と少しちがうみたい！</strong></div>
                     <div class="diff-box">
-                        <div class="diff-line"><span class="diff-label">【本当の答え】</span><span class="diff-val expected">ねんれいは 10さいです</span></div>
+                        <div class="diff-line"><span class="diff-label">【目標の答え】</span><span class="diff-val expected">ねんれいは 10さいです</span></div>
                         <div class="diff-line"><span class="diff-label">【今のしゅつりょく】</span><span class="diff-val actual">ねんれいは 15さいです</span></div>
                     </div>
                 `;
                 appendAiMessage(`
                     🤖 <strong>AIロボ:</strong><br>
                     プログラムは動いたけれど、<strong>表示結果が「15歳」になっているよ！</strong><br>
-                    お題は「10歳」を出すことだから、1行目の <code>10 + 5</code> の計算部分を見直してみよう！
+                    目標は「10歳」を出すことだから、エディタの <code>10 + 5</code> の部分を見直してみよう！
                 `);
             } else if (pattern === 'syntax') {
                 // 文法エラー
@@ -538,12 +566,12 @@ print("ねんれいは " + str(age) + "さいです")</textarea>
                 // 大成功
                 consoleOut.innerHTML = `
                     <div class="console-msg success"><strong>🎉 ねんれいは 10さいです</strong></div>
-                    <div class="console-msg success" style="margin-top: 0.4rem;">大成功！お題通りの結果が出力されました！</div>
+                    <div class="console-msg success" style="margin-top: 0.4rem;">大成功！お題通りの期待値が出力されました！</div>
                 `;
                 appendAiMessage(`
                     🤖 <strong>AIロボ:</strong><br>
                     <strong>パーフェクト！✨</strong><br>
-                    バッチリ10歳って表示できたね！次の課題にチャレンジしてみよう！
+                    バッチリ目標通りの「ねんれいは 10さいです」が出せたね！
                 `);
             }
         }
