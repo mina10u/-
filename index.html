@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>プログラミング学習AIアシスタント - アプリ仕様書</title>
+    <title>プログラミング学習 AI誤り分析アシスタント 仕様書</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -138,7 +138,7 @@
     <header>
         <h1>プログラミング学習 AI誤り分析アシスタント 仕様書</h1>
         <div class="meta-info">
-            <span class="updated-date">最終更新日時: 2026年10月9日 10:20</span>
+            <span class="updated-date">最終更新日時: 2026年10月9日 10:26</span>
             <span>アーキテクチャ: Tauri v2 (Desktop App)</span>
             <span>対象OS: Windows 10/11</span>
             <span>チーム規模: 6名</span>
@@ -148,10 +148,10 @@
     <!-- 1. 概要・目標 -->
     <section>
         <h2>1. アプリ概要・目的</h2>
-        <p>小学生高学年から大人までのプログラミング初心者が、コード実行時のエラーや疑問を直感的に解消できるデスクトップアプリケーション。<strong>答えを直接教えるのではなく「原因・ひらがな解説・関連する辞書」を親しみやすく提示</strong>します。</p>
+        <p>小学生高学年から大人までのプログラミング初心者が、コード実行時のエラーや疑問を直感的に解消できるデスクトップアプリケーション。<strong>答えを直接教えるのではなく「原因・ひらがな解説・関連する辞書・モチベーション向上要素」を提示</strong>します。</p>
         <ul>
             <li><strong>ターゲット層:</strong> 小学生高学年、中高生、大学・専門学校生、社会人のプログラミング初学者</li>
-            <li><strong>コア体験:</strong> 「やさしい言葉でのエラー解説」「ふりがな表示対応の関数辞書」「楽しみながらレベルアップできる問題演習」の統合学習体験</li>
+            <li><strong>コア体験:</strong> 「やさしい言葉でのエラー解説」「ふりがな表示対応の関数辞書」「アチーブメント獲得で楽しく学べる問題演習」の統合学習体験</li>
         </ul>
     </section>
 
@@ -180,7 +180,7 @@
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
                 <tr>
-                    <td><strong>3. ふりがな付き関数・構文辞書</strong> <span class="badge badge-new">NEW</span></td>
+                    <td><strong>3. ふりがな付き関数・構文辞書</strong></td>
                     <td>基本関数（`print`, `len` 等）の解説。難解な漢字や専門用語にふりがな（ルビ）を表示可能。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
@@ -190,8 +190,13 @@
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
                 <tr>
-                    <td><strong>5. スキルチェック・問題演習</strong> <span class="badge badge-new">NEW</span></td>
-                    <td>「小学生・入門モード（選択肢/穴埋め）」から「中級モード（自由記述）」まで対応した問題演習。</td>
+                    <td><strong>5. スキルチェック・問題演習</strong></td>
+                    <td>「入門・初級・中級」の段階的テスト問題と自動採点機能。</td>
+                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
+                </tr>
+                <tr>
+                    <td><strong>6. アチーブメント（実績・バッジ）獲得機能</strong> <span class="badge badge-new">NEW</span></td>
+                    <td>課題達成・学習継続・辞書利用等に応じてバッジや称号を獲得できる学習モチベーション維持機能。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
             </tbody>
@@ -208,22 +213,22 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>6. やさしさ切り替え（モード設定）</strong> <span class="badge badge-new">NEW</span></td>
+                    <td><strong>7. やさしさ切り替え（モード設定）</strong></td>
                     <td>「こども（ふりがなあり・やさしい言葉）」/「大人（標準表記）」のUI表現切り替えスイッチ。</td>
                     <td><span class="badge badge-frontend">フロント</span></td>
                 </tr>
                 <tr>
-                    <td><strong>7. 段階的AIヒント生成</strong></td>
+                    <td><strong>8. 段階的AIヒント生成</strong></td>
                     <td>設定されたモード（年齢層）に合わせてAIがヒントの言葉遣いや難易度を自動調整。</td>
                     <td><span class="badge badge-backend">Rust (AI)</span></td>
                 </tr>
                 <tr>
-                    <td><strong>8. ヒント ⇄ 辞書 連動機能</strong></td>
+                    <td><strong>9. ヒント ⇄ 辞書 連動機能</strong></td>
                     <td>AIヒント内の関連キーワードから直接ワンタップで関数辞書へ移動できる機能。</td>
                     <td><span class="badge badge-core">共通 (IPC)</span></td>
                 </tr>
                 <tr>
-                    <td><strong>9. 対話型お助けチャット</strong></td>
+                    <td><strong>10. 対話型お助けチャット</strong></td>
                     <td>「ここがよくわからない」と気軽に話しかけて質問できるチャット機能。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
@@ -235,6 +240,27 @@
     <section>
         <h2>3. フロント ⇄ Rust バックエンド間 データ仕様 (IPC)</h2>
 
+        <h3>アチーブメント（実績データ）構造案（JSON）</h3>
+        <pre><code>{
+  "achievementId": "achieve_first_step",
+  "title": "はじめの一歩",
+  "description": "初めてコードを実行してプログラムを動かした！",
+  "icon": "rocket",
+  "isUnlocked": true,
+  "unlockedAt": "2026-10-09 10:25:00",
+  "progress": 1,
+  "maxProgress": 1
+},
+{
+  "achievementId": "achieve_problem_5",
+  "title": "問題ハンター",
+  "description": "スキルチェック問題を5問クリアしよう！",
+  "icon": "trophy",
+  "isUnlocked": false,
+  "progress": 3,
+  "maxProgress": 5
+}</code></pre>
+
         <h3>年齢層（モード）対応AIリクエスト構造</h3>
         <pre><code>{
   "language": "python",
@@ -243,25 +269,13 @@
   "userMode": "junior", // "junior" (小学生高学年〜中学生向け) / "standard" (一般・大学生向け)
   "hintLevel": 1
 }</code></pre>
-
-        <h3>辞書データ構造（ふりがな・難易度フラグ対応）</h3>
-        <pre><code>{
-  "key": "print",
-  "title": "print() 関数",
-  "titleRuby": "プリント かんすう",  // 小学生向けふりがな
-  "category": "組み込み関数",
-  "description": "画面（がめん）に文字や数値を表示（ひょうじ）するための基本コマンドです。",
-  "example": "print('Hello World')\nprint('けっか:', 10)",
-  "isBookmarked": false,
-  "searchCount": 5
-}</code></pre>
     </section>
 
     <!-- 4. 画面レイアウト構成案 -->
     <section>
-        <h2>4. 画面レイアウト構成案（3分割＋モード切替）</h2>
+        <h2>4. 画面レイアウト構成案（3分割＋マイページ/実績）</h2>
         <ul>
-            <li><strong>ヘッダー:</strong> モード切り替え（「こどもモード / ふりがな表示」スイッチ）</li>
+            <li><strong>ヘッダー:</strong> モード切り替え（「こどもモード / ふりがな表示」スイッチ） ＆ アチーブメント/バッジ一覧アイコン</li>
             <li><strong>左エリア:</strong> コードエディタ ＆ やさしい出力コンソール</li>
             <li><strong>右上エリア:</strong> AIヒント ＆ やさしいチャット画面</li>
             <li><strong>右下エリア:</strong> 関数・構文辞書（ルビ表示対応、タブ切り替え機能付き）</li>
