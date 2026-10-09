@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初学者向けプログラミング学習AIアシスタント - アプリ仕様書（仮案）</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--accent);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .meta-info {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--text-sub);
+            font-size: 0.9rem;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 1.3rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+
+        h3 {
+            color: var(--accent);
+            font-size: 1.1rem;
+            margin-top: 1.2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: rgba(37, 99, 235, 0.2);
+            color: var(--accent);
+        }
+
+        ul {
+            padding-left: 1.2rem;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge-frontend { background-color: #0284c7; color: white; }
+        .badge-backend { background-color: #d97706; color: white; }
+        .badge-core { background-color: #16a34a; color: white; }
+
+        code {
+            background-color: #0f172a;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            color: #f43f5e;
+            font-family: monospace;
+        }
+
+        pre {
+            background-color: #0f172a;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            color: #e2e8f0;
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>プログラミング初学者向け AI誤り分析アシスタント 仕様書（仮案）</h1>
+        <div class="meta-info">
+            <span>アーキテクチャ: Tauri v2 (Desktop App)</span>
+            <span>対象OS: Windows 10/11</span>
+            <span>チーム規模: 6名</span>
+        </div>
+    </header>
+
+    <!-- 1. 概要・目標 -->
+    <section>
+        <h2>1. アプリ概要・目的</h2>
+        <p>プログラミング初学者がコードを実行した際に発生したエラー文やソースコードを解析し、<strong>答えを直接教えるのではなく「原因とヒント」段階的に提示する</strong>デスクトップアプリケーション。</p>
+        <ul>
+            <li><strong>ターゲット層:</strong> 大学・専門学校のプログラミング初学者（Python / Rust / C / JS 等）</li>
+            <li><strong>コア体験:</strong> 「どこで詰まっているか」を即座にAIが察知し、気づきを与える教育的サポート</li>
+        </ul>
+    </section>
+
+    <!-- 2. システム構成・技術スタック -->
+    <section>
+        <h2>2. 技術スタック & 役割分担概要</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>区分</th>
+                    <th>使用技術</th>
+                    <th>主な役割</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="badge badge-frontend">フロントエンド</span></td>
+                    <td>TypeScript, React, Tailwind CSS</td>
+                    <td>UIデザイン、入力フォーム、チャット/ヒント表示、エディタ制御</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-frontend">エディタUI</span></td>
+                    <td>Monaco Editor (VS Code互換)</td>
+                    <td>コードのシンタックスハイライト、行番号表示、エラー箇所の波線表示</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-backend">バックエンド</span></td>
+                    <td>Rust (Tauri v2)</td>
+                    <td>ローカルファイル操作、APIキー安全管理、外部AIサービス(OpenAI/Claude)との通信</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-core">通信・データ交換</span></td>
+                    <td>Tauri Command (IPC通信, JSON)</td>
+                    <td>フロント（TypeScript）とバックエンド（Rust）間のデータ結合</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 3. 機能一覧（編集対象） -->
+    <section>
+        <h2>3. 機能一覧（仮定義）</h2>
+        <p>※こちらのリストを見て「追加したい機能」「不要な機能」をご指摘ください。</p>
+        
+        <h3>3.1 コア機能（AIお助け）</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>機能名</th>
+                    <th>機能概要</th>
+                    <th>担当領域</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>1. コード＆エラー解析リクエスト</strong></td>
+                    <td>ユーザーが入力したソースコードとエラー文をあわせてAIへ送信する機能</td>
+                    <td>フロント / Rust両方</td>
+                </tr>
+                <tr>
+                    <td><strong>2. 段階的ヒント生成（段階表示）</strong></td>
+                    <td>「レベル1: エラーの意味」「レベル2: 間違いの行・原因」「レベル3: 修正への考え方」を段階別にAIに生成させる機能</td>
+                    <td>Rust (プロンプト)</td>
+                </tr>
+                <tr>
+                    <td><strong>3. APIキー管理（設定画面）</strong></td>
+                    <td>ユーザー自身のOpenAI/Claude APIキーをローカルの安全な場所に保存・管理する機能</td>
+                    <td>Rust (設定ファイル)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>3.2 UI・学習サポート機能</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>機能名</th>
+                    <th>機能概要</th>
+                    <th>担当領域</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>4. コードエディタ機能</strong></td>
+                    <td>画面上でコードを直接記述・貼り付けできるエディタ（Monaco Editor）</td>
+                    <td>フロント</td>
+                </tr>
+                <tr>
+                    <td><strong>5. 対話型チャットUI</strong></td>
+                    <td>AIのヒントに対して「ここがよくわからない」と追加質問できるチャット画面</td>
+                    <td>フロント / Rust</td>
+                </tr>
+                <tr>
+                    <td><strong>6. 過去の誤り履歴（履歴保存）</strong></td>
+                    <td>過去に質問したエラーとAIの回答履歴をローカル（JSONまたはSQLite）に保存し振り返れる機能</td>
+                    <td>Rust (DB/ファイル)</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 4. データ交換仕様 (API/IPC連携案) -->
+    <section>
+        <h2>4. フロント ⇄ Rust バックエンド間 データ仕様 (IPC)</h2>
+        <p>フロントとバックエンドを別々で開発し、最後に繋ぐためのデータインターフェースです。</p>
+
+        <h3>AI解析リクエスト (TypeScript → Rust)</h3>
+        <pre><code>// Tauri Command: invoke('analyze_code_error', { payload })
+{
+  "language": "python",
+  "code": "def add(a, b):\n    return a + b",
+  "errorMessage": "TypeError: unsupported operand type(s) for +: 'int' and 'str'",
+  "hintLevel": 1 // 1: 概要ヒント, 2: 原因箇所, 3: 修正例の方向性
+}</code></pre>
+
+        <h3>AI解析レスポンス (Rust → TypeScript)</h3>
+        <pre><code>{
+  "status": "success",
+  "hintTitle": "型（データ種別）の不一致が原因です",
+  "hintContent": "数値（int）と文字列（str）を直接足し合わせようとしています。変数の中身が意図した型になっているか確認しましょう。",
+  "targetLine": 2
+}</code></pre>
+    </section>
+
+    <!-- 5. 課題提出・運用における前提ルール -->
+    <section>
+        <h2>5. チーム開発・提出時の前提ルール</h2>
+        <ul>
+            <li><strong>ローカル完結:</strong> 外部サーバーは準備せず、インストーラー（`.exe`）をビルドして提出可能にする。</li>
+            <li><strong>Git管理:</strong> `.env`（APIキー格納用）は絶対リポジトリに含めず、`.gitignore` で除外する。</li>
+            <li><strong>バージョン固定:</strong> `rust-toolchain.toml` と `package.json` でRustおよびNode.jsのバージョンを統一する。</li>
+        </ul>
+    </section>
+</div>
+
+</body>
+</html>
