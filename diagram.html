@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>設計図（画面遷移図・アクティビティ図） - アプリ仕様書</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            color: var(--accent);
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .back-link {
+            color: var(--primary);
+            text-decoration: none;
+            background-color: rgba(37, 99, 235, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 1.3rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+
+        .diagram-box {
+            background-color: #0f172a;
+            border: 1px dashed var(--accent);
+            border-radius: 6px;
+            padding: 1.5rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            color: #38bdf8;
+            overflow-x: auto;
+        }
+
+        .note {
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1>システム設計図（仮）</h1>
+            <span style="color: var(--text-sub); font-size: 0.9rem;">最終更新日時: 2026年10月9日 11:17</span>
+        </div>
+        <a href="index.html" class="back-link">← 仕様書トップに戻る</a>
+    </header>
+
+    <!-- 1. 画面遷移図 -->
+    <section>
+        <h2>1. 画面遷移図（概要）</h2>
+        <p>アプリケーション内の主要な画面とダイアログの遷移フローです。</p>
+        
+        <div class="diagram-box">
+[メイン画面 (3分割)]
+  │
+  ├── [ヘッダー機能]
+  │     ├── Mode切替 ➔ 「自由創作（サンドボックス）」 ⇄ 「課題演習」
+  │     ├── 対象年齢切替 ➔ 「こどもモード（ルビ表示）」 ⇄ 「大人モード」
+  │     ├── モーダル表示 ➔ [成長カルテ (エラー履歴)]
+  │     └── モーダル表示 ➔ [アチーブメント (実績一覧)]
+  │
+  ├── [左エリア: エディタ ＆ コンソール]
+  │     ├── [コード整形 (フォーマッタ)]
+  │     ├── [スニペット挿入メニュー]
+  │     └── [実行ボタン] ➔ 実行結果をコンソールに表示
+  │
+  ├── [右上エリア: AIアシスタント]
+  │     ├── 段階的ヒント表示 (レベル1〜3)
+  │     └── 対話型チャットUI
+  │
+  └── [右下エリア: 組み込み関数・構文辞書]
+        ├── タブ: 「検索」
+        ├── タブ: 「履歴」
+        ├── タブ: 「お気に入り」
+        └── タブ: 「頻出ワード」
+        </div>
+    </section>
+
+    <!-- 2. アクティビティ図 -->
+    <section>
+        <h2>2. アクティビティ図（エラー発生〜解決フロー）</h2>
+        <p>ユーザーがコードを実行し、エラーが発生してからAIと辞書を活用して解決するまでの処理フローです。</p>
+        
+        <div class="diagram-box">
+(開始)
+  │
+  ▼
+[ ユーザーがコードを記述・編集 ]
+  │
+  ▼
+[ 実行ボタンを押下 ] ── (Python実行エンジンへIPC送信)
+  │
+  ├─────── (成功) ────► [ コンソールに実行結果を表示 ] ────► (完了)
+  │
+  ▼ (エラー発生)
+[ やさしい日本語エラーに変換してコンソール表示 ]
+  │
+  ▼
+[ Rustバックエンドでエラー原因を解析 ]
+  │
+  ▼
+[ AIが年齢設定（こども/大人）に合わせて段階的ヒント生成 ]
+  │
+  ▼
+[ ヒント内に提示された関連関数リンクをクリック ]
+  │
+  ▼
+[ 関数辞書パネルが自動で開き、該当の構文解説・例を表示 ]
+  │
+  ▼
+[ ユーザーがコードを修正して再実行 ]
+  │
+  ▼
+[ エラー解消！ ➔ 成長カルテに記録 ＆ アチーブメント判定 ]
+  │
+  ▼
+(完了)
+        </div>
+        <p class="note">※ 画像（PNG/SVG）やMermaid.js等での図解表示へ差し替えることも可能です。</p>
+    </section>
+
+</div>
+
+</body>
+</html>
