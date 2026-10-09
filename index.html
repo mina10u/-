@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>初学者向けプログラミング学習AIアシスタント - アプリ仕様書（仮案）</title>
+    <title>初学者向けプログラミング学習AIアシスタント - アプリ仕様書</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -106,6 +106,7 @@
         .badge-frontend { background-color: #0284c7; color: white; }
         .badge-backend { background-color: #d97706; color: white; }
         .badge-core { background-color: #16a34a; color: white; }
+        .badge-new { background-color: #e11d48; color: white; }
 
         code {
             background-color: #0f172a;
@@ -129,7 +130,7 @@
 
 <div class="container">
     <header>
-        <h1>プログラミング初学者向け AI誤り分析アシスタント 仕様書（仮案）</h1>
+        <h1>プログラミング初学者向け AI誤り分析アシスタント 仕様書</h1>
         <div class="meta-info">
             <span>アーキテクチャ: Tauri v2 (Desktop App)</span>
             <span>対象OS: Windows 10/11</span>
@@ -140,55 +141,18 @@
     <!-- 1. 概要・目標 -->
     <section>
         <h2>1. アプリ概要・目的</h2>
-        <p>プログラミング初学者がコードを実行した際に発生したエラー文やソースコードを解析し、<strong>答えを直接教えるのではなく「原因とヒント」段階的に提示する</strong>デスクトップアプリケーション。</p>
+        <p>プログラミング初学者がコードを実行した際に発生したエラー文やソースコードを解析し、<strong>答えを直接教えるのではなく「原因・ヒント・関連する関数辞書」を段階的に提示する</strong>デスクトップアプリケーション。</p>
         <ul>
-            <li><strong>ターゲット層:</strong> 大学・専門学校のプログラミング初学者（Python / Rust / C / JS 等）</li>
-            <li><strong>コア体験:</strong> 「どこで詰まっているか」を即座にAIが察知し、気づきを与える教育的サポート</li>
+            <li><strong>ターゲット層:</strong> 大学・専門学校のプログラミング初学者</li>
+            <li><strong>コア体験:</strong> 「出力結果の確認」「エラー原因の気づき」「関数辞書での学び」を1つの画面で完結させるサポート体験</li>
         </ul>
     </section>
 
-    <!-- 2. システム構成・技術スタック -->
+    <!-- 2. 機能一覧 -->
     <section>
-        <h2>2. 技術スタック & 役割分担概要</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>区分</th>
-                    <th>使用技術</th>
-                    <th>主な役割</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><span class="badge badge-frontend">フロントエンド</span></td>
-                    <td>TypeScript, React, Tailwind CSS</td>
-                    <td>UIデザイン、入力フォーム、チャット/ヒント表示、エディタ制御</td>
-                </tr>
-                <tr>
-                    <td><span class="badge badge-frontend">エディタUI</span></td>
-                    <td>Monaco Editor (VS Code互換)</td>
-                    <td>コードのシンタックスハイライト、行番号表示、エラー箇所の波線表示</td>
-                </tr>
-                <tr>
-                    <td><span class="badge badge-backend">バックエンド</span></td>
-                    <td>Rust (Tauri v2)</td>
-                    <td>ローカルファイル操作、APIキー安全管理、外部AIサービス(OpenAI/Claude)との通信</td>
-                </tr>
-                <tr>
-                    <td><span class="badge badge-core">通信・データ交換</span></td>
-                    <td>Tauri Command (IPC通信, JSON)</td>
-                    <td>フロント（TypeScript）とバックエンド（Rust）間のデータ結合</td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
-
-    <!-- 3. 機能一覧（編集対象） -->
-    <section>
-        <h2>3. 機能一覧（仮定義）</h2>
-        <p>※こちらのリストを見て「追加したい機能」「不要な機能」をご指摘ください。</p>
+        <h2>2. 機能一覧</h2>
         
-        <h3>3.1 コア機能（AIお助け）</h3>
+        <h3>2.1 コア学習・開発機能</h3>
         <table>
             <thead>
                 <tr>
@@ -199,24 +163,24 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>1. コード＆エラー解析リクエスト</strong></td>
-                    <td>ユーザーが入力したソースコードとエラー文をあわせてAIへ送信する機能</td>
-                    <td>フロント / Rust両方</td>
+                    <td><strong>1. コードエディタ機能</strong></td>
+                    <td>コード記述・編集領域（Monaco Editor）。構文強調表示や行番号表示に対応。</td>
+                    <td><span class="badge badge-frontend">フロント</span></td>
                 </tr>
                 <tr>
-                    <td><strong>2. 段階的ヒント生成（段階表示）</strong></td>
-                    <td>「レベル1: エラーの意味」「レベル2: 間違いの行・原因」「レベル3: 修正への考え方」を段階別にAIに生成させる機能</td>
-                    <td>Rust (プロンプト)</td>
+                    <td><strong>2. 出力コンソール表示</strong> <span class="badge badge-new">NEW</span></td>
+                    <td>コード実行時の標準出力（print等）やエラーメッセージを表示するコンソールエリア。</td>
+                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
                 <tr>
-                    <td><strong>3. APIキー管理（設定画面）</strong></td>
-                    <td>ユーザー自身のOpenAI/Claude APIキーをローカルの安全な場所に保存・管理する機能</td>
-                    <td>Rust (設定ファイル)</td>
+                    <td><strong>3. 組み込み関数・構文辞書</strong> <span class="badge badge-new">NEW</span></td>
+                    <td>よく使われる基本関数（`print`, `len`, `input` 等）や構文の解説・コード例を検索・閲覧できる辞書パネル。</td>
+                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
             </tbody>
         </table>
 
-        <h3>3.2 UI・学習サポート機能</h3>
+        <h3>2.2 AI支援・ガイド機能</h3>
         <table>
             <thead>
                 <tr>
@@ -227,54 +191,55 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>4. コードエディタ機能</strong></td>
-                    <td>画面上でコードを直接記述・貼り付けできるエディタ（Monaco Editor）</td>
-                    <td>フロント</td>
+                    <td><strong>4. 段階的AIヒント生成</strong></td>
+                    <td>「レベル1: エラーの概要」「レベル2: 原因箇所」「レベル3: 考え方」を段階的に生成。</td>
+                    <td><span class="badge badge-backend">Rust (AI)</span></td>
                 </tr>
                 <tr>
-                    <td><strong>5. 対話型チャットUI</strong></td>
-                    <td>AIのヒントに対して「ここがよくわからない」と追加質問できるチャット画面</td>
-                    <td>フロント / Rust</td>
+                    <td><strong>5. ヒント ⇄ 辞書 連動機能</strong> <span class="badge badge-new">NEW</span></td>
+                    <td>AIが生成したヒント内に、関連する関数辞書（例: `len()`）への直接リンクを表示しクリックで辞書を開く機能。</td>
+                    <td><span class="badge badge-core">共通 (IPC)</span></td>
                 </tr>
                 <tr>
-                    <td><strong>6. 過去の誤り履歴（履歴保存）</strong></td>
-                    <td>過去に質問したエラーとAIの回答履歴をローカル（JSONまたはSQLite）に保存し振り返れる機能</td>
-                    <td>Rust (DB/ファイル)</td>
+                    <td><strong>6. 対話型お助けチャット</strong></td>
+                    <td>ヒントに対して「ここがよくわからない」と追加質問できる対話インターフェース。</td>
+                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
             </tbody>
         </table>
     </section>
 
-    <!-- 4. データ交換仕様 (API/IPC連携案) -->
+    <!-- 3. データ仕様 (IPC) -->
     <section>
-        <h2>4. フロント ⇄ Rust バックエンド間 データ仕様 (IPC)</h2>
-        <p>フロントとバックエンドを別々で開発し、最後に繋ぐためのデータインターフェースです。</p>
+        <h2>3. フロント ⇄ Rust バックエンド間 データ仕様 (IPC)</h2>
 
-        <h3>AI解析リクエスト (TypeScript → Rust)</h3>
-        <pre><code>// Tauri Command: invoke('analyze_code_error', { payload })
-{
-  "language": "python",
-  "code": "def add(a, b):\n    return a + b",
-  "errorMessage": "TypeError: unsupported operand type(s) for +: 'int' and 'str'",
-  "hintLevel": 1 // 1: 概要ヒント, 2: 原因箇所, 3: 修正例の方向性
-}</code></pre>
-
-        <h3>AI解析レスポンス (Rust → TypeScript)</h3>
+        <h3>AI解析レスポンス（辞書連動データ含む）</h3>
         <pre><code>{
   "status": "success",
-  "hintTitle": "型（データ種別）の不一致が原因です",
-  "hintContent": "数値（int）と文字列（str）を直接足し合わせようとしています。変数の中身が意図した型になっているか確認しましょう。",
-  "targetLine": 2
+  "hintTitle": "文字列と数値の結合エラーです",
+  "hintContent": "print文の中で数値と文字列を直接『+』で繋ごうとしています。数値を str() 関数で変換するか、カンマ区切りを使いましょう。",
+  "targetLine": 3,
+  "relatedDictionaryKeys": ["print", "str"]  // AIが自動抽出した関連する関数辞書のキーワード
+}</code></pre>
+
+        <h3>関数辞書データ構造案（JSON）</h3>
+        <pre><code>{
+  "key": "print",
+  "title": "print() 関数",
+  "category": "組み込み関数",
+  "description": "画面に文字や数値を出力するための関数です。",
+  "example": "print('Hello World')\nprint('結果:', 10)",
+  "tips": "カンマ (,) で区切ると、複数の値を並べて出力できます。"
 }</code></pre>
     </section>
 
-    <!-- 5. 課題提出・運用における前提ルール -->
+    <!-- 4. 画面レイアウト構成案 -->
     <section>
-        <h2>5. チーム開発・提出時の前提ルール</h2>
+        <h2>4. 画面レイアウト構成案（3分割パネル）</h2>
         <ul>
-            <li><strong>ローカル完結:</strong> 外部サーバーは準備せず、インストーラー（`.exe`）をビルドして提出可能にする。</li>
-            <li><strong>Git管理:</strong> `.env`（APIキー格納用）は絶対リポジトリに含めず、`.gitignore` で除外する。</li>
-            <li><strong>バージョン固定:</strong> `rust-toolchain.toml` と `package.json` でRustおよびNode.jsのバージョンを統一する。</li>
+            <li><strong>左エリア:</strong> コードエディタ ＆ 下部出力コンソール（実行結果 / print出力）</li>
+            <li><strong>右上エリア:</strong> AIヒント ＆ 対話チャット画面</li>
+            <li><strong>右下エリア:</strong> 関数・構文辞書パネル（AIヒントからのリンク移動対応）</li>
         </ul>
     </section>
 </div>
