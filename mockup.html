@@ -14,15 +14,15 @@
             --primary: #2563eb;
             --accent: #38bdf8;
             --border: #334155;
-            --success: #22c55e;
-            --error: #ef4444;
-            --warning: #f59e0b;
+            --resizer-bg: #1e293b;
+            --resizer-hover: #38bdf8;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            user-select: none;
         }
 
         body {
@@ -93,24 +93,58 @@
             color: var(--accent);
         }
 
-        /* メインレイアウト（2列構成） */
-        main {
+        /* リサイズ可能なメインコンテナ */
+        main.workspace {
             flex: 1;
-            display: grid;
-            grid-template-columns: 1fr 420px;
-            gap: 0.8rem;
-            padding: 0.8rem;
+            display: flex;
+            padding: 0.6rem;
+            overflow: hidden;
+            width: 100%;
+            height: calc(100vh - 55px);
+        }
+
+        /* 左右カラム */
+        .left-column, .right-column {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-width: 250px;
             overflow: hidden;
         }
 
-        /* 左カラム：課題お題 & エディタ & コンソール */
-        .left-column {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-            height: 100%;
+        .left-column { flex: 1; }
+        .right-column { width: 400px; min-width: 280px; }
+
+        /* リサイザー (ドラッグバー) */
+        .resizer-v {
+            width: 8px;
+            cursor: col-resize;
+            background-color: transparent;
+            position: relative;
+            z-index: 10;
+            transition: background-color 0.2s;
+            margin: 0 2px;
         }
 
+        .resizer-v:hover, .resizer-v.dragging {
+            background-color: var(--resizer-hover);
+        }
+
+        .resizer-h {
+            height: 8px;
+            cursor: row-resize;
+            background-color: transparent;
+            position: relative;
+            z-index: 10;
+            transition: background-color 0.2s;
+            margin: 2px 0;
+        }
+
+        .resizer-h:hover, .resizer-h.dragging {
+            background-color: var(--resizer-hover);
+        }
+
+        /* パネル構造 */
         .panel {
             background-color: var(--card-bg);
             border: 1px solid var(--border);
@@ -118,6 +152,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            min-height: 100px;
         }
 
         .panel-header {
@@ -130,9 +165,10 @@
             font-size: 0.85rem;
             font-weight: bold;
             color: var(--text-sub);
+            flex-shrink: 0;
         }
 
-        /* 課題お題表示エリア */
+        /* 課題バナー */
         .task-banner {
             background: rgba(30, 58, 138, 0.4);
             border: 1px solid rgba(56, 189, 248, 0.3);
@@ -142,26 +178,19 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.85rem;
+            margin-bottom: 0.6rem;
+            flex-shrink: 0;
         }
 
-        .task-title {
-            font-weight: bold;
-            color: var(--accent);
-        }
-
+        .task-title { font-weight: bold; color: var(--accent); }
         .task-target {
             background: var(--panel-bg);
             border: 1px solid var(--border);
-            padding: 0.3rem 0.6rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 4px;
             font-family: monospace;
             color: #4ade80;
             font-weight: bold;
-        }
-
-        .panel-tools {
-            display: flex;
-            gap: 0.4rem;
         }
 
         .tool-btn {
@@ -174,14 +203,10 @@
             cursor: pointer;
         }
 
-        .tool-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
+        .tool-btn:hover { background: rgba(255, 255, 255, 0.15); }
 
-        /* エディタ */
-        .editor-container {
-            flex: 1.2;
-        }
+        /* エディタ領域 */
+        .editor-container { flex: 1; }
 
         textarea.code-editor {
             width: 100%;
@@ -195,6 +220,7 @@
             line-height: 1.5;
             resize: none;
             outline: none;
+            user-select: text;
         }
 
         /* アクションバー */
@@ -206,6 +232,8 @@
             background-color: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 8px;
+            margin: 0.4rem 0;
+            flex-shrink: 0;
         }
 
         .test-pattern {
@@ -220,25 +248,16 @@
             background: linear-gradient(135deg, #16a34a, #15803d);
             color: white;
             border: none;
-            padding: 0.6rem 1.5rem;
+            padding: 0.5rem 1.4rem;
             border-radius: 6px;
             font-weight: bold;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             cursor: pointer;
             box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
-            transition: transform 0.1s, box-shadow 0.2s;
-        }
-
-        .run-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
         }
 
         /* コンソール */
-        .console-container {
-            flex: 1;
-        }
-
+        .console-container { height: 220px; }
         .console-body {
             flex: 1;
             background-color: var(--panel-bg);
@@ -247,17 +266,13 @@
             font-size: 0.85rem;
             overflow-y: auto;
             line-height: 1.6;
+            user-select: text;
         }
 
-        .console-msg {
-            margin-bottom: 0.4rem;
-        }
-
-        .console-msg.success { color: #4ade80; }
-        .console-msg.error { color: #f87171; }
         .console-msg.warning { color: #fbbf24; }
+        .console-msg.error { color: #f87171; }
+        .console-msg.success { color: #4ade80; }
 
-        /* 差分表示(Diff)スタイル */
         .diff-box {
             background: rgba(15, 23, 42, 0.8);
             border: 1px solid var(--border);
@@ -266,34 +281,14 @@
             margin-top: 0.5rem;
         }
 
-        .diff-line {
-            display: flex;
-            gap: 0.5rem;
-            font-size: 0.8rem;
-            margin-bottom: 0.2rem;
-        }
-
-        .diff-label {
-            width: 100px;
-            font-weight: bold;
-            color: var(--text-sub);
-        }
-
+        .diff-line { display: flex; gap: 0.5rem; font-size: 0.8rem; }
+        .diff-label { width: 100px; font-weight: bold; color: var(--text-sub); }
         .diff-val.expected { color: #4ade80; font-weight: bold; }
         .diff-val.actual { color: #f87171; font-weight: bold; }
 
-        /* 右カラム：AIチャット & 辞書 */
-        .right-column {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-            height: 100%;
-        }
-
-        /* AIチャット */
-        .ai-panel {
-            flex: 1.2;
-        }
+        /* 右パネル (AI & 辞書) */
+        .ai-panel { flex: 1; }
+        .dict-panel { height: 240px; }
 
         .chat-messages {
             flex: 1;
@@ -303,6 +298,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.6rem;
+            user-select: text;
         }
 
         .chat-bubble {
@@ -314,9 +310,7 @@
             line-height: 1.5;
         }
 
-        .chat-bubble.ai {
-            border-left: 3px solid var(--accent);
-        }
+        .chat-bubble.ai { border-left: 3px solid var(--accent); }
 
         .chat-input-area {
             display: flex;
@@ -334,6 +328,7 @@
             padding: 0.4rem 0.6rem;
             border-radius: 4px;
             font-size: 0.8rem;
+            user-select: text;
         }
 
         .send-btn {
@@ -346,16 +341,7 @@
             cursor: pointer;
         }
 
-        /* 辞書パネル */
-        .dict-panel {
-            flex: 1;
-        }
-
-        .dict-search {
-            padding: 0.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-
+        .dict-search { padding: 0.5rem; border-bottom: 1px solid var(--border); }
         .dict-input {
             width: 100%;
             background-color: var(--panel-bg);
@@ -364,6 +350,7 @@
             padding: 0.4rem 0.6rem;
             border-radius: 4px;
             font-size: 0.8rem;
+            user-select: text;
         }
 
         .dict-list {
@@ -373,29 +360,10 @@
             padding: 0.5rem;
         }
 
-        .dict-item {
-            padding: 0.5rem;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.8rem;
-        }
-
-        .dict-title {
-            font-weight: bold;
-            color: var(--accent);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .ruby {
-            font-size: 0.65rem;
-            color: var(--text-sub);
-        }
-
-        .dict-desc {
-            color: var(--text-sub);
-            margin-top: 0.2rem;
-            font-size: 0.75rem;
-        }
+        .dict-item { padding: 0.5rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+        .dict-title { font-weight: bold; color: var(--accent); display: flex; justify-content: space-between; }
+        .ruby { font-size: 0.65rem; color: var(--text-sub); }
+        .dict-desc { color: var(--text-sub); margin-top: 0.2rem; font-size: 0.75rem; }
     </style>
 </head>
 <body>
@@ -414,26 +382,22 @@
         </div>
     </header>
 
-    <!-- メインエリア -->
-    <main>
-        <!-- 左カラム：課題 & エディタ & コンソール -->
-        <div class="left-column">
-            <!-- 課題演習 お題バナー -->
+    <!-- リサイズ可能なメインエリア -->
+    <main class="workspace" id="workspace">
+        <!-- 左カラム：エディタ & コンソール -->
+        <div class="left-column" id="leftColumn">
+            <!-- 課題バナー -->
             <div class="task-banner">
-                <div>
-                    <span class="task-title">🎯 今日のお題:</span> 年齢（10歳）を表示するコードを書こう！
-                </div>
-                <div>
-                    期待される出力: <span class="task-target">ねんれいは 10さいです</span>
-                </div>
+                <div><span class="task-title">🎯 今日のお題:</span> 年齢（10歳）を表示するコードを書こう！</div>
+                <div>期待される出力: <span class="task-target">ねんれいは 10さいです</span></div>
             </div>
 
             <!-- コードエディタ -->
-            <div class="panel editor-container">
+            <div class="panel editor-container" id="editorPanel">
                 <div class="panel-header">
                     <span>📝 コードエディタ (Python)</span>
-                    <div class="panel-tools">
-                        <button class="tool-btn" onclick="formatCode()">✨ コード整形</button>
+                    <div style="display: flex; gap: 0.4rem;">
+                        <button class="tool-btn" onclick="formatCode()">✨ 整形</button>
                         <button class="tool-btn" onclick="insertSnippet('if')">＋ if文</button>
                         <button class="tool-btn" onclick="insertSnippet('print')">＋ print</button>
                     </div>
@@ -443,19 +407,22 @@ age = 10 + 5
 print("ねんれいは " + str(age) + "さいです")</textarea>
             </div>
 
-            <!-- アクションバー (実行 ＆ テストパターン切り替え) -->
+            <!-- アクションバー -->
             <div class="action-bar">
                 <div class="test-pattern">
-                    <span>💡 テスト実行パターン:</span>
+                    <span>💡 実行パターン:</span>
                     <label><input type="radio" name="testPattern" value="logic" checked> 期待と違う (論理エラー)</label>
                     <label><input type="radio" name="testPattern" value="syntax"> 文法エラー</label>
-                    <label><input type="radio" name="testPattern" value="success"> 大成功 (正常)</label>
+                    <label><input type="radio" name="testPattern" value="success"> 大成功</label>
                 </div>
                 <button class="run-btn" onclick="runCode()">▶ うごかす！</button>
             </div>
 
+            <!-- 横方向リサイザー (エディタ ⇄ コンソール) -->
+            <div class="resizer-h" id="resizerLeft"></div>
+
             <!-- 出力コンソール -->
-            <div class="panel console-container">
+            <div class="panel console-container" id="consolePanel">
                 <div class="panel-header">
                     <span>💻 しゅつりょく結果 (コンソール)</span>
                     <span style="font-size: 0.75rem; color: var(--accent);">[目標: ねんれいは 10さいです]</span>
@@ -466,17 +433,20 @@ print("ねんれいは " + str(age) + "さいです")</textarea>
             </div>
         </div>
 
-        <!-- 右カラム：AIサポート ＆ 辞書 -->
-        <div class="right-column">
-            <!-- AIチャットサポート -->
-            <div class="panel ai-panel">
+        <!-- 縦方向リサイザー (左 ⇄ 右) -->
+        <div class="resizer-v" id="resizerMain"></div>
+
+        <!-- 右カラム：AIチャット & 辞書 -->
+        <div class="right-column" id="rightColumn">
+            <!-- AIチャット -->
+            <div class="panel ai-panel" id="aiPanel">
                 <div class="panel-header">
                     <span>🤖 AIロボ アシスタント</span>
                 </div>
                 <div id="chatMessages" class="chat-messages">
                     <div class="chat-bubble ai">
                         こんにちは！今日のお題は「ねんれいは 10さいです」と表示することだよ。<br>
-                        コードが書けたら「▶ うごかす！」を押してね！
+                        「▶ うごかす！」を押して試してみてね！
                     </div>
                 </div>
                 <div class="chat-input-area">
@@ -485,8 +455,11 @@ print("ねんれいは " + str(age) + "さいです")</textarea>
                 </div>
             </div>
 
-            <!-- 関数・構文辞書 -->
-            <div class="panel dict-panel">
+            <!-- 横方向リサイザー (AI ⇄ 辞書) -->
+            <div class="resizer-h" id="resizerRight"></div>
+
+            <!-- 辞書パネル -->
+            <div class="panel dict-panel" id="dictPanel">
                 <div class="panel-header">
                     <span>📖 ふりがな付き 関数・構文辞書</span>
                 </div>
@@ -515,30 +488,20 @@ print("ねんれいは " + str(age) + "さいです")</textarea>
     </main>
 
     <script>
+        // モード切り替え
         let isKidMode = true;
-
-        // モード切り替え (子ども向け / 大人向け)
         function toggleAudienceMode() {
             isKidMode = !isKidMode;
-            const badge = document.getElementById('modeBadge');
-            const toggleText = document.getElementById('toggleText');
-
-            if (isKidMode) {
-                badge.textContent = "子ども向け表示 (ルビあり)";
-                toggleText.textContent = "👨‍💼 大人向け表示に切替";
-            } else {
-                badge.textContent = "大人向け表示 (標準表記)";
-                toggleText.textContent = "👶 子ども向け表示に切替";
-            }
+            document.getElementById('modeBadge').textContent = isKidMode ? "子ども向け表示 (ルビあり)" : "大人向け表示 (標準表記)";
+            document.getElementById('toggleText').textContent = isKidMode ? "👨‍💼 大人向け表示に切替" : "👶 子ども向け表示に切替";
         }
 
-        // コード実行 ＆ 判定ロジック
+        // コード実行 ＆ 判定
         function runCode() {
             const pattern = document.querySelector('input[name="testPattern"]:checked').value;
             const consoleOut = document.getElementById('consoleOutput');
 
             if (pattern === 'logic') {
-                // 論理エラー（期待した出力と異なる）
                 consoleOut.innerHTML = `
                     <div class="console-msg warning"><strong>🤔 期待した結果と少しちがうみたい！</strong></div>
                     <div class="diff-box">
@@ -546,33 +509,19 @@ print("ねんれいは " + str(age) + "さいです")</textarea>
                         <div class="diff-line"><span class="diff-label">【今のしゅつりょく】</span><span class="diff-val actual">ねんれいは 15さいです</span></div>
                     </div>
                 `;
-                appendAiMessage(`
-                    🤖 <strong>AIロボ:</strong><br>
-                    プログラムは動いたけれど、<strong>表示結果が「15歳」になっているよ！</strong><br>
-                    目標は「10歳」を出すことだから、エディタの <code>10 + 5</code> の部分を見直してみよう！
-                `);
+                appendAiMessage(`🤖 <strong>AIロボ:</strong><br>表示結果が「15歳」になっているよ！エディタの <code>10 + 5</code> の部分を見直してみよう！`);
             } else if (pattern === 'syntax') {
-                // 文法エラー
                 consoleOut.innerHTML = `
                     <div class="console-msg error"><strong>⚠️ つなぎ方の間違いが見つかったよ！</strong></div>
                     <div style="color: #fca5a5; font-size: 0.8rem; margin-top: 0.4rem;">TypeError: can only concatenate str (not "int") to str</div>
                 `;
-                appendAiMessage(`
-                    🤖 <strong>AIロボ:</strong><br>
-                    文字と数字をそのまま <code>+</code> でつなげようとしてエラーになったよ！<br>
-                    数字の変数 <code>age</code> を <code>str(age)</code> に包んであげよう。
-                `);
+                appendAiMessage(`🤖 <strong>AIロボ:</strong><br>数字の <code>age</code> を <code>str(age)</code> に包んであげよう！`);
             } else {
-                // 大成功
                 consoleOut.innerHTML = `
                     <div class="console-msg success"><strong>🎉 ねんれいは 10さいです</strong></div>
                     <div class="console-msg success" style="margin-top: 0.4rem;">大成功！お題通りの期待値が出力されました！</div>
                 `;
-                appendAiMessage(`
-                    🤖 <strong>AIロボ:</strong><br>
-                    <strong>パーフェクト！✨</strong><br>
-                    バッチリ目標通りの「ねんれいは 10さいです」が出せたね！
-                `);
+                appendAiMessage(`🤖 <strong>AIロボ:</strong><br><strong>パーフェクト！✨</strong> 目標通りの結果が出せたね！`);
             }
         }
 
@@ -585,28 +534,19 @@ print("ねんれいは " + str(age) + "さいです")</textarea>
             chatMsgs.scrollTop = chatMsgs.scrollHeight;
         }
 
-        // コード整形
         function formatCode() {
-            const editor = document.getElementById('codeEditor');
-            editor.value = editor.value.trim();
-            alert("✨ コードのレイアウト（インデント）を整えました！");
+            document.getElementById('codeEditor').value = document.getElementById('codeEditor').value.trim();
         }
 
-        // スニペット挿入
         function insertSnippet(type) {
             const editor = document.getElementById('codeEditor');
-            if (type === 'if') {
-                editor.value += "\nif age == 10:\n    print('10さいです')";
-            } else if (type === 'print') {
-                editor.value += "\nprint('こんにちは')";
-            }
+            if (type === 'if') editor.value += "\nif age == 10:\n    print('10さいです')";
+            else if (type === 'print') editor.value += "\nprint('こんにちは')";
         }
 
-        // チャット送信
         function sendMessage() {
             const input = document.getElementById('chatInput');
             if (!input.value.trim()) return;
-
             const chatMsgs = document.getElementById('chatMessages');
             const userBubble = document.createElement('div');
             userBubble.className = 'chat-bubble';
@@ -614,18 +554,90 @@ print("ねんれいは " + str(age) + "さいです")</textarea>
             userBubble.style.backgroundColor = '#2563eb';
             userBubble.textContent = input.value;
             chatMsgs.appendChild(userBubble);
-
-            const userText = input.value;
             input.value = '';
-
-            setTimeout(() => {
-                appendAiMessage(`「${userText}」についてだね！エディタのコードを確認しながら一緒に考えてみよう。`);
-            }, 600);
         }
 
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
+        function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
+
+        /* --- マウスドラッグによる画面サイズ調整 (リサイズ機能) --- */
+
+        // 1. 左右カラムの縦方向リサイズ
+        const resizerMain = document.getElementById('resizerMain');
+        const rightColumn = document.getElementById('rightColumn');
+
+        resizerMain.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            resizerMain.classList.add('dragging');
+            
+            const onMouseMove = (e) => {
+                const workspaceWidth = document.getElementById('workspace').clientWidth;
+                const newRightWidth = workspaceWidth - e.clientX;
+                if (newRightWidth > 260 && newRightWidth < workspaceWidth - 300) {
+                    rightColumn.style.width = `${newRightWidth}px`;
+                }
+            };
+
+            const onMouseUp = () => {
+                resizerMain.classList.remove('dragging');
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+            };
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        });
+
+        // 2. 左カラム (エディタ ⇄ コンソール) の横方向リサイズ
+        const resizerLeft = document.getElementById('resizerLeft');
+        const consolePanel = document.getElementById('consolePanel');
+
+        resizerLeft.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            resizerLeft.classList.add('dragging');
+
+            const onMouseMove = (e) => {
+                const leftColumnRect = document.getElementById('leftColumn').getBoundingClientRect();
+                const newConsoleHeight = leftColumnRect.bottom - e.clientY;
+                if (newConsoleHeight > 100 && newConsoleHeight < leftColumnRect.height - 180) {
+                    consolePanel.style.height = `${newConsoleHeight}px`;
+                }
+            };
+
+            const onMouseUp = () => {
+                resizerLeft.classList.remove('dragging');
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+            };
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        });
+
+        // 3. 右カラム (AIチャット ⇄ 辞書) の横方向リサイズ
+        const resizerRight = document.getElementById('resizerRight');
+        const dictPanel = document.getElementById('dictPanel');
+
+        resizerRight.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            resizerRight.classList.add('dragging');
+
+            const onMouseMove = (e) => {
+                const rightColumnRect = rightColumn.getBoundingClientRect();
+                const newDictHeight = rightColumnRect.bottom - e.clientY;
+                if (newDictHeight > 100 && newDictHeight < rightColumnRect.height - 150) {
+                    dictPanel.style.height = `${newDictHeight}px`;
+                }
+            };
+
+            const onMouseUp = () => {
+                resizerRight.classList.remove('dragging');
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+            };
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        });
     </script>
 </body>
 </html>
