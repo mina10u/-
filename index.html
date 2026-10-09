@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>初学者向けプログラミング学習AIアシスタント - アプリ仕様書</title>
+    <title>プログラミング学習AIアシスタント - アプリ仕様書</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -136,9 +136,9 @@
 
 <div class="container">
     <header>
-        <h1>プログラミング初学者向け AI誤り分析アシスタント 仕様書</h1>
+        <h1>プログラミング学習 AI誤り分析アシスタント 仕様書</h1>
         <div class="meta-info">
-            <span class="updated-date">最終更新日時: 2026年10月9日 10:15</span>
+            <span class="updated-date">最終更新日時: 2026年10月9日 10:20</span>
             <span>アーキテクチャ: Tauri v2 (Desktop App)</span>
             <span>対象OS: Windows 10/11</span>
             <span>チーム規模: 6名</span>
@@ -148,10 +148,10 @@
     <!-- 1. 概要・目標 -->
     <section>
         <h2>1. アプリ概要・目的</h2>
-        <p>プログラミング初学者がコードを実行した際に発生したエラー文やソースコードを解析し、<strong>答えを直接教えるのではなく「原因・ヒント・関連する関数辞書」を段階的に提示する</strong>デスクトップアプリケーション。</p>
+        <p>小学生高学年から大人までのプログラミング初心者が、コード実行時のエラーや疑問を直感的に解消できるデスクトップアプリケーション。<strong>答えを直接教えるのではなく「原因・ひらがな解説・関連する辞書」を親しみやすく提示</strong>します。</p>
         <ul>
-            <li><strong>ターゲット層:</strong> 大学・専門学校のプログラミング初学者</li>
-            <li><strong>コア体験:</strong> 「自由記述でのエラー解析」「辞書（検索履歴・お気に入り機能付き）での学習」「スキルチェック問題演習」を1つの環境で提供する統合学習システム</li>
+            <li><strong>ターゲット層:</strong> 小学生高学年、中高生、大学・専門学校生、社会人のプログラミング初学者</li>
+            <li><strong>コア体験:</strong> 「やさしい言葉でのエラー解説」「ふりがな表示対応の関数辞書」「楽しみながらレベルアップできる問題演習」の統合学習体験</li>
         </ul>
     </section>
 
@@ -171,33 +171,33 @@
             <tbody>
                 <tr>
                     <td><strong>1. コードエディタ機能</strong></td>
-                    <td>コード記述・編集領域（Monaco Editor）。構文強調表示や行番号表示に対応。</td>
+                    <td>文字サイズ変更・色分け表示（Monaco Editor）に対応した読みやすいエディタ。</td>
                     <td><span class="badge badge-frontend">フロント</span></td>
                 </tr>
                 <tr>
-                    <td><strong>2. 出力コンソール表示</strong></td>
-                    <td>コード実行時の標準出力（print等）やエラーメッセージを表示するコンソールエリア。</td>
+                    <td><strong>2. やさしい出力コンソール</strong></td>
+                    <td>実行結果（print等）を表示。英語エラーを自動で「わかりやすい日本語」に翻訳表示。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
                 <tr>
-                    <td><strong>3. 組み込み関数・構文辞書</strong></td>
-                    <td>よく使われる基本関数（`print`, `len`, `input` 等）や構文の解説・コード例を検索・閲覧できる辞書パネル。</td>
+                    <td><strong>3. ふりがな付き関数・構文辞書</strong> <span class="badge badge-new">NEW</span></td>
+                    <td>基本関数（`print`, `len` 等）の解説。難解な漢字や専門用語にふりがな（ルビ）を表示可能。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
                 <tr>
                     <td><strong>4. 辞書便利機能（履歴/頻出/お気に入り）</strong></td>
-                    <td>「検索履歴」「よく調べるワード（アクセス順）」「単語のお気に入り登録（ブックマーク）」機能。</td>
+                    <td>「検索履歴」「よく調べるワード」「単語のお気に入り登録（ブックマーク）」機能。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
                 <tr>
-                    <td><strong>5. スキルチェック・問題演習機能</strong></td>
-                    <td>難易度別の課題を出題し、プログラムの実行結果を自動採点してレベル測定する機能。</td>
+                    <td><strong>5. スキルチェック・問題演習</strong> <span class="badge badge-new">NEW</span></td>
+                    <td>「小学生・入門モード（選択肢/穴埋め）」から「中級モード（自由記述）」まで対応した問題演習。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
             </tbody>
         </table>
 
-        <h3>2.2 AI支援・ガイド機能</h3>
+        <h3>2.2 AI支援・アクセシビリティ機能</h3>
         <table>
             <thead>
                 <tr>
@@ -208,18 +208,23 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>6. 段階的AIヒント生成</strong></td>
-                    <td>「レベル1: エラーの概要」「レベル2: 原因箇所」「レベル3: 考え方」を段階的に生成。</td>
+                    <td><strong>6. やさしさ切り替え（モード設定）</strong> <span class="badge badge-new">NEW</span></td>
+                    <td>「こども（ふりがなあり・やさしい言葉）」/「大人（標準表記）」のUI表現切り替えスイッチ。</td>
+                    <td><span class="badge badge-frontend">フロント</span></td>
+                </tr>
+                <tr>
+                    <td><strong>7. 段階的AIヒント生成</strong></td>
+                    <td>設定されたモード（年齢層）に合わせてAIがヒントの言葉遣いや難易度を自動調整。</td>
                     <td><span class="badge badge-backend">Rust (AI)</span></td>
                 </tr>
                 <tr>
-                    <td><strong>7. ヒント ⇄ 辞書 連動機能</strong></td>
-                    <td>AIが生成したヒント内に、関連する関数辞書（例: `len()`）への直接リンクを表示しクリックで辞書を開く機能。</td>
+                    <td><strong>8. ヒント ⇄ 辞書 連動機能</strong></td>
+                    <td>AIヒント内の関連キーワードから直接ワンタップで関数辞書へ移動できる機能。</td>
                     <td><span class="badge badge-core">共通 (IPC)</span></td>
                 </tr>
                 <tr>
-                    <td><strong>8. 対話型お助けチャット</strong></td>
-                    <td>ヒントや問題の解き方に対して「ここがよくわからない」と追加質問できる対話インターフェース。</td>
+                    <td><strong>9. 対話型お助けチャット</strong></td>
+                    <td>「ここがよくわからない」と気軽に話しかけて質問できるチャット機能。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
             </tbody>
@@ -230,32 +235,36 @@
     <section>
         <h2>3. フロント ⇄ Rust バックエンド間 データ仕様 (IPC)</h2>
 
-        <h3>拡張された辞書データ構造案（JSON）</h3>
+        <h3>年齢層（モード）対応AIリクエスト構造</h3>
+        <pre><code>{
+  "language": "python",
+  "code": "print('こんにちは' + 10)",
+  "errorMessage": "TypeError: can only concatenate str (not 'int') to str",
+  "userMode": "junior", // "junior" (小学生高学年〜中学生向け) / "standard" (一般・大学生向け)
+  "hintLevel": 1
+}</code></pre>
+
+        <h3>辞書データ構造（ふりがな・難易度フラグ対応）</h3>
         <pre><code>{
   "key": "print",
   "title": "print() 関数",
+  "titleRuby": "プリント かんすう",  // 小学生向けふりがな
   "category": "組み込み関数",
-  "description": "画面に文字や数値を出力するための関数です。",
-  "example": "print('Hello World')\nprint('結果:', 10)",
-  "tips": "カンマ (,) で区切ると、複数の値を並べて出力できます。",
-  "isBookmarked": true,  // お気に入り登録フラグ
-  "searchCount": 12      // 検索・閲覧回数（よく調べるワード用）
-}</code></pre>
-
-        <h3>検索履歴・お気に入りリスト共有構造</h3>
-        <pre><code>{
-  "searchHistory": ["print", "if", "type_error"], // 最近検索した単語（上限10件）
-  "favoriteKeys": ["print", "len", "for"]         // お気に入り登録された単語キー一覧
+  "description": "画面（がめん）に文字や数値を表示（ひょうじ）するための基本コマンドです。",
+  "example": "print('Hello World')\nprint('けっか:', 10)",
+  "isBookmarked": false,
+  "searchCount": 5
 }</code></pre>
     </section>
 
     <!-- 4. 画面レイアウト構成案 -->
     <section>
-        <h2>4. 画面レイアウト構成案（3分割＋辞書タブ）</h2>
+        <h2>4. 画面レイアウト構成案（3分割＋モード切替）</h2>
         <ul>
-            <li><strong>左エリア:</strong> コードエディタ ＆ 下部出力コンソール</li>
-            <li><strong>右上エリア:</strong> AIヒント ＆ 対話チャット画面</li>
-            <li><strong>右下エリア:</strong> 関数・構文辞書（「検索」「履歴」「お気に入り」「頻出」のタブ切り替え対応）</li>
+            <li><strong>ヘッダー:</strong> モード切り替え（「こどもモード / ふりがな表示」スイッチ）</li>
+            <li><strong>左エリア:</strong> コードエディタ ＆ やさしい出力コンソール</li>
+            <li><strong>右上エリア:</strong> AIヒント ＆ やさしいチャット画面</li>
+            <li><strong>右下エリア:</strong> 関数・構文辞書（ルビ表示対応、タブ切り替え機能付き）</li>
         </ul>
     </section>
 </div>
