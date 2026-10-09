@@ -15,7 +15,7 @@
                 primaryBorderColor: '#38bdf8',
                 lineColor: '#94a3b8',
                 fontFamily: 'sans-serif',
-                fontSize: '14px'
+                fontSize: '13px'
             },
             flowchart: {
                 useMaxWidth: true,
@@ -55,17 +55,17 @@
         header {
             background-color: var(--card-bg);
             border-bottom: 2px solid var(--border);
-            padding: 0.8rem 1.5rem;
+            padding: 0.6rem 1.2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 60px;
+            height: 50px;
             flex-shrink: 0;
         }
 
         h1 {
             color: var(--accent);
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             margin: 0;
         }
 
@@ -73,10 +73,10 @@
             color: var(--primary);
             text-decoration: none;
             background-color: rgba(37, 99, 235, 0.2);
-            padding: 0.4rem 0.9rem;
+            padding: 0.35rem 0.8rem;
             border-radius: 6px;
             border: 1px solid var(--primary);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: bold;
         }
 
@@ -85,12 +85,12 @@
             color: white;
         }
 
-        /* 画面全体にフィットさせる領域 */
+        /* 全画面に無理なく収める表示領域 */
         .diagram-viewport {
             flex: 1;
             width: 100%;
-            height: calc(100vh - 60px);
-            padding: 1rem;
+            height: calc(100vh - 50px);
+            padding: 0.5rem;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -98,7 +98,6 @@
             overflow: hidden;
         }
 
-        /* SVGを図全体が画面内に収まるサイズに自動調整 */
         .mermaid {
             width: 100%;
             height: 100%;
@@ -111,17 +110,17 @@
             width: 100% !important;
             height: 100% !important;
             max-width: 100% !important;
-            max-height: calc(100vh - 90px) !important;
+            max-height: calc(100vh - 60px) !important;
         }
 
         .mermaid .node rect,
         .mermaid .node circle,
         .mermaid .node polygon {
-            stroke-width: 2px !important;
+            stroke-width: 1.5px !important;
         }
 
         .mermaid .node .label {
-            font-size: 14px !important;
+            font-size: 13px !important;
             font-weight: bold !important;
         }
     </style>
@@ -137,13 +136,13 @@
 
     <div class="diagram-viewport">
         <div class="mermaid">
-flowchart TD
+flowchart LR
     %% アプリ起動
     Start([アプリ起動]) --> MainScreen[メイン画面]
 
     %% ① 学習機能 サブグラフ
     subgraph Sub1 [① 学習機能]
-        direction TB
+        direction LR
         LearningMode[学習モード] --> ModeFree[自由創作]
         LearningMode --> ModeTask[課題演習]
         
@@ -153,16 +152,16 @@ flowchart TD
         Editor --> Run[コード実行]
         Run --> Result[実行結果]
         
-        Result --> TaskCheck[自動採点・課題チェック]
-        TaskCheck --> ResultCheck{実行結果は？}
+        Result --> TaskCheck[自動採点]
+        TaskCheck --> ResultCheck{判定}
         
-        ResultCheck -- 文法エラー --> ErrExplain[やさしいエラー解説]
-        ErrExplain --> AiSupport[AIサポート・チャット]
+        ResultCheck -- 文法エラー --> ErrExplain[エラー解説]
+        ErrExplain --> AiSupport[AIサポート]
         
-        ResultCheck -- 期待と違う --> LogicExplain[どこがどう違うかの差分解説]
+        ResultCheck -- 期待と違う --> LogicExplain[差分解説]
         LogicExplain --> AiSupport
         
-        ResultCheck -- 正常（大成功） --> Continue[学習を継続]
+        ResultCheck -- 大成功 --> Continue[学習継続]
         Continue --> Editor
     end
 
@@ -183,7 +182,7 @@ flowchart TD
         MainScreen --> Karte[成長カルテ]
         
         Achieve --> BadgeConfirm[実績・バッジ確認]
-        Karte --> LogConfirm[エラー履歴・修正ログ]
+        Karte --> LogConfirm[エラー履歴ログ]
     end
 
     %% ④ 共通機能 サブグラフ
