@@ -57,13 +57,18 @@
         .mode-badge {
             background: linear-gradient(135deg, #0284c7, #38bdf8);
             color: white;
-            padding: 0.25rem 0.7rem;
+            padding: 0.25rem 0.75rem;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: bold;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             cursor: pointer;
             user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .mode-badge:hover {
+            transform: scale(1.05);
         }
 
         .nav-tools {
@@ -267,13 +272,13 @@
     <header>
         <div class="logo">
             <span style="font-size: 1.3rem;">🤖</span>
-            <span>AIプログラミングノート</span>
-            <span class="mode-badge" id="modeBadge" onclick="toggleKidMode()">こどもモード (ルビつき)</span>
+            <span id="appTitle">AIプログラミングノート</span>
+            <span class="mode-badge" id="modeBadge" onclick="toggleKidMode()">こどもモード (切替: クリック)</span>
         </div>
         <div class="nav-tools">
-            <button class="btn" onclick="alert('自由創作（サンドボックス）モードです！自由にコードを書いて試せます。')">🎨 モード: 自由創作</button>
-            <button class="btn" onclick="alert('成長カルテ: 克服したエラー数 1件')">📋 成長カルテ</button>
-            <button class="btn" onclick="alert('獲得バッジ: 「はじめての実行」「エラー克服者」')">🏆 あちーぶめんと</button>
+            <button class="btn" id="btnMode" onclick="alert('自由創作（サンドボックス）モードです！自由にコードを書いて試せます。')">🎨 モード: 自由創作</button>
+            <button class="btn" id="btnKarte" onclick="alert('成長カルテ: 克服したエラー数 1件')">📋 成長カルテ</button>
+            <button class="btn" id="btnAchieve" onclick="alert('獲得バッジ: 「はじめての実行」「エラー克服者」')">🏆 あちーぶめんと</button>
         </div>
     </header>
 
@@ -286,9 +291,9 @@
                 <div class="card-header">
                     <span>📄 main.py</span>
                     <div style="display: flex; gap: 0.4rem;">
-                        <button class="btn" onclick="formatCode()">✨ コード整形</button>
-                        <button class="btn" onclick="insertSnippet()">＋ パーツいれる</button>
-                        <button class="btn btn-run" onclick="runCode()">▶ うごかす！</button>
+                        <button class="btn" id="btnFormat" onclick="formatCode()">✨ コード整形</button>
+                        <button class="btn" id="btnSnippet" onclick="insertSnippet()">＋ パーツいれる</button>
+                        <button class="btn btn-run" id="btnRun" onclick="runCode()">▶ うごかす！</button>
                     </div>
                 </div>
                 <textarea class="editor-textarea" id="codeEditor" spellcheck="false"># ここに じゆうに コードを かいてみよう！
@@ -315,13 +320,13 @@ print("ねんれいは " + age + "さいです")</textarea>
             <!-- 右上: AIアドバイス -->
             <div class="card ai-card">
                 <div class="card-header" style="color: var(--accent-blue);">
-                    <span>💡 AIの アドバイス</span>
+                    <span id="aiHeaderTitle">💡 AIの アドバイス</span>
                     <span style="font-size: 0.75rem; color: var(--accent-yellow);" id="hintLevelText">★ 待機中</span>
                 </div>
                 <div class="chat-history">
                     <div class="ai-speech-bubble" id="aiMessage">
-                        <strong style="color: var(--accent-green);">🤖 AIロボ:</strong><br>
-                        準備完了（じゅんびかんりょう）だよ！コードを書いて「▶ うごかす！」を押してみてね。
+                        <strong style="color: var(--accent-green);" id="aiName">🤖 AIロボ:</strong><br>
+                        <span id="aiWelcomeMsg">準備完了（じゅんびかんりょう）だよ！コードを書いて「▶ うごかす！」を押してみてね。</span>
                     </div>
                 </div>
             </div>
@@ -329,23 +334,13 @@ print("ねんれいは " + age + "さいです")</textarea>
             <!-- 右下: かんたん辞書 -->
             <div class="card dict-card">
                 <div class="dict-tabs">
-                    <div class="tab active" onclick="switchTab(this, 'search')">🔍 じしょ</div>
-                    <div class="tab" onclick="switchTab(this, 'history')">🕒 りれき</div>
-                    <div class="tab" onclick="switchTab(this, 'fav')">⭐ お気に入り</div>
-                    <div class="tab" onclick="switchTab(this, 'popular')">🔥 よくつかう</div>
+                    <div class="tab active" id="tabSearch" onclick="switchTab(this, 'search')">🔍 じしょ</div>
+                    <div class="tab" id="tabHistory" onclick="switchTab(this, 'history')">🕒 りれき</div>
+                    <div class="tab" id="tabFav" onclick="switchTab(this, 'fav')">⭐ お気に入り</div>
+                    <div class="tab" id="tabPopular" onclick="switchTab(this, 'popular')">🔥 よくつかう</div>
                 </div>
                 <div class="dict-body" id="dictContent">
-                    <h3 style="color: var(--accent-blue); font-size: 1rem; margin-bottom: 0.4rem;">
-                        str() 関数 <span style="font-size: 0.75rem; color: var(--text-sub);">(えすてぃーあーる かんすう)</span>
-                    </h3>
-                    <p style="margin-bottom: 0.6rem; color: #cbd5e1;">
-                        数字（すうじ）や ほかの データを 文字列（もじれつ）に へんかんするための かんすうです。
-                    </p>
-                    <div style="background-color: #131822; padding: 0.6rem; border-radius: 10px; border: 1px solid var(--border); font-family: monospace;">
-                        <span style="color: var(--text-sub);"># れい:</span><br>
-                        age = 10<br>
-                        print("ねんれい: " + <span style="color: var(--accent-yellow);">str(age)</span>)
-                    </div>
+                    <!-- JavaScriptで動的生成 -->
                 </div>
             </div>
 
@@ -356,15 +351,87 @@ print("ねんれいは " + age + "さいです")</textarea>
     <!-- 簡易動作ロジック (JavaScript) -->
     <script>
         let isKidMode = true;
+        let currentTabType = 'search';
 
-        // モード切替
+        // テキストデータの管理（こども / 大人）
+        const textData = {
+            kid: {
+                badge: "こどもモード (切替: クリック)",
+                badgeBg: "linear-gradient(135deg, #0284c7, #38bdf8)",
+                btnMode: "🎨 モード: 自由創作",
+                btnKarte: "📋 成長カルテ",
+                btnAchieve: "🏆 あちーぶめんと",
+                btnFormat: "✨ コード整形",
+                btnSnippet: "＋ パーツいれる",
+                btnRun: "▶ うごかす！",
+                consoleTitle: "💬 実行結果（じっこうけっか）と おしらせ",
+                consoleDefault: "「▶ うごかす！」ボタンを押すと、ここに結果が表示されるよ！",
+                aiTitle: "💡 AIの アドバイス",
+                aiName: "🤖 AIロボ:",
+                aiWelcome: "準備完了（じゅんびかんりょう）だよ！コードを書いて「▶ うごかす！」を押してみてね。",
+                tabSearch: "🔍 じしょ",
+                tabHistory: "🕒 りれき",
+                tabFav: "⭐ お気に入り",
+                tabPopular: "🔥 よくつかう",
+                dictSearchTitle: 'str() 関数 <span style="font-size: 0.75rem; color: var(--text-sub);">(えすてぃーあーる かんすう)</span>',
+                dictSearchDesc: "数字（すうじ）や ほかの データを 文字列（もじれつ）に へんかんするための かんすうです。"
+            },
+            adult: {
+                badge: "大人モード (切替: クリック)",
+                badgeBg: "linear-gradient(135deg, #475569, #64748b)",
+                btnMode: "🎨 モード: サンドボックス",
+                btnKarte: "📋 成長カルテ",
+                btnAchieve: "🏆 アチーブメント",
+                btnFormat: "✨ 自動整形",
+                btnSnippet: "＋ スニペット挿入",
+                btnRun: "▶ 実行",
+                consoleTitle: "💬 実行結果 / 標準出力・エラーコンソール",
+                consoleDefault: "「▶ 実行」ボタンを押すと、実行結果が表示されます。",
+                aiTitle: "💡 AIアシスタント解析",
+                aiName: "💡 AIアシスタント:",
+                aiWelcome: "準備完了です。コードを入力して「▶ 実行」をクリックしてください。",
+                tabSearch: "🔍 辞書検索",
+                tabHistory: "🕒 検索履歴",
+                tabFav: "⭐ お気に入り",
+                tabPopular: "🔥 頻出ワード",
+                dictSearchTitle: 'str() 関数 <span style="font-size: 0.75rem; color: var(--text-sub);">(文字列変換)</span>',
+                dictSearchDesc: "数値やその他のオブジェクトを文字列型（str型）に変換するための組み込み関数です。"
+            }
+        };
+
+        // 画面全体の UI テキストを更新
+        function updateUI() {
+            const data = isKidMode ? textData.kid : textData.adult;
+            
+            const badge = document.getElementById('modeBadge');
+            badge.innerText = data.badge;
+            badge.style.background = data.badgeBg;
+
+            document.getElementById('btnMode').innerText = data.btnMode;
+            document.getElementById('btnKarte').innerText = data.btnKarte;
+            document.getElementById('btnAchieve').innerText = data.btnAchieve;
+            document.getElementById('btnFormat').innerText = data.btnFormat;
+            document.getElementById('btnSnippet').innerText = data.btnSnippet;
+            document.getElementById('btnRun').innerText = data.btnRun;
+            document.getElementById('consoleTitle').innerText = data.consoleTitle;
+            document.getElementById('aiHeaderTitle').innerText = data.aiTitle;
+            document.getElementById('aiName').innerText = data.aiName;
+            
+            document.getElementById('tabSearch').innerText = data.tabSearch;
+            document.getElementById('tabHistory').innerText = data.tabHistory;
+            document.getElementById('tabFav').innerText = data.tabFav;
+            document.getElementById('tabPopular').innerText = data.tabPopular;
+
+            // 辞書タブの再描画
+            renderDictTab(currentTabType);
+        }
+
+        // やさしさ切り替え（モード切替）
         function toggleKidMode() {
             isKidMode = !isKidMode;
-            const badge = document.getElementById('modeBadge');
-            badge.innerText = isKidMode ? 'こどもモード (ルビつき)' : '大人モード (標準)';
-            badge.style.background = isKidMode 
-                ? 'linear-gradient(135deg, #0284c7, #38bdf8)' 
-                : 'linear-gradient(135deg, #475569, #64748b)';
+            updateUI();
+            // 現在のコード状態に合わせて再評価
+            runCode();
         }
 
         // コード実行（模擬判定）
@@ -373,37 +440,59 @@ print("ねんれいは " + age + "さいです")</textarea>
             const consoleOut = document.getElementById('consoleOutput');
             const aiMsg = document.getElementById('aiMessage');
             const hintLevel = document.getElementById('hintLevelText');
+            const aiNameStr = isKidMode ? '🤖 AIロボ:' : '💡 AIアシスタント:';
 
             if (code.includes('" + age + "') || code.includes("'+age+'")) {
-                // エラー発生の模擬
                 consoleOut.className = 'console-body error';
-                consoleOut.innerHTML = `
-                    <strong>⚠️ エラーが発生したよ！</strong><br>
-                    TypeError: can only concatenate str (not "int") to str<br>
-                    👉 文字（もじ）と 数字（すうじ）を そのまま 「+」で つなぐことは できません。
-                `;
-
-                aiMsg.innerHTML = `
-                    <strong style="color: var(--accent-green);">🤖 AIロボ:</strong><br>
-                    \`print\` の 中で 数字の変数（\`age\`）を そのまま 文字と つなげようとして エラーに なっているよ！<br><br>
-                    数字を 文字に変える <span class="code-tag">str()</span> を 使うか、カンマ「,」で くぎってみよう。
-                `;
-                hintLevel.innerText = '★ ヒント 1 / 3';
+                if (isKidMode) {
+                    consoleOut.innerHTML = `
+                        <strong>⚠️ エラーが発生したよ！</strong><br>
+                        TypeError: can only concatenate str (not "int") to str<br>
+                        👉 文字（もじ）と 数字（すうじ）を そのまま 「+」で つなぐことは できません。
+                    `;
+                    aiMsg.innerHTML = `
+                        <strong style="color: var(--accent-green);">${aiNameStr}</strong><br>
+                        \`print\` の 中で 数字の変数（\`age\`）を そのまま 文字と つなげようとして エラーに なっているよ！<br><br>
+                        数字を 文字に変える <span class="code-tag">str()</span> を 使うか、カンマ「,」で くぎってみよう。
+                    `;
+                } else {
+                    consoleOut.innerHTML = `
+                        <strong>⚠️ TypeError 発生</strong><br>
+                        TypeError: can only concatenate str (not "int") to str<br>
+                        👉 文字列 (str) と 数値型 (int) の直接結合は許可されていません。
+                    `;
+                    aiMsg.innerHTML = `
+                        <strong style="color: var(--accent-green);">${aiNameStr}</strong><br>
+                        文字列型の変数 \`name\` と 数値型の変数 \`age\` を \`+\` 演算子で直接結合しようとしているため型エラーが発生しています。<br><br>
+                        <span class="code-tag">str(age)</span> で明示的に文字列へキャストするか、\`print("歳です", age)\` のように引数をカンマ区切りで渡してください。
+                    `;
+                }
+                hintLevel.innerText = isKidMode ? '★ ヒント 1 / 3' : '★ Hint Level 1';
             } else {
-                // 正常実行の模擬
                 consoleOut.className = 'console-body success';
-                consoleOut.innerHTML = `
-                    <strong>🎉 実行成功（じっこうせいこう）！</strong><br>
-                    ぼくの名前は たろう<br>
-                    ねんれいは 10さいです
-                `;
-
-                aiMsg.innerHTML = `
-                    <strong style="color: var(--accent-green);">🤖 AIロボ:</strong><br>
-                    すごい！エラーなしで 正しくうごいたよ！✨<br>
-                    この調子で どんどん コードを かいてみよう！
-                `;
-                hintLevel.innerText = '★ 成功！';
+                if (isKidMode) {
+                    consoleOut.innerHTML = `
+                        <strong>🎉 実行成功（じっこうせいこう）！</strong><br>
+                        ぼくの名前は たろう<br>
+                        ねんれいは 10さいです
+                    `;
+                    aiMsg.innerHTML = `
+                        <strong style="color: var(--accent-green);">${aiNameStr}</strong><br>
+                        すごい！エラーなしで 正しくうごいたよ！✨<br>
+                        この調子で どんどん コードを かいてみよう！
+                    `;
+                } else {
+                    consoleOut.innerHTML = `
+                        <strong>🎉 正常終了 (Exit Code: 0)</strong><br>
+                        ぼくの名前は たろう<br>
+                        ねんれいは 10さいです
+                    `;
+                    aiMsg.innerHTML = `
+                        <strong style="color: var(--accent-green);">${aiNameStr}</strong><br>
+                        コードが正常に実行されました。エラーは発生していません。
+                    `;
+                }
+                hintLevel.innerText = isKidMode ? '★ 成功！' : '★ Solved';
             }
         }
 
@@ -413,35 +502,61 @@ print("ねんれいは " + age + "さいです")</textarea>
             let lines = editor.value.split('\n');
             let formatted = lines.map(line => line.trim()).filter(line => line !== '').join('\n');
             editor.value = formatted;
-            alert('✨ コードの無駄な空行やスペースを綺麗に整理したよ！');
+            alert(isKidMode ? '✨ コードの無駄な空行やスペースを綺麗に整理したよ！' : '✨ コードのインデントおよび空行を自動整形しました。');
         }
 
         // スニペット挿入
         function insertSnippet() {
             const editor = document.getElementById('codeEditor');
-            editor.value += '\n\n# ifぶんの れい\nif age >= 10:\n    print("10さい以上だよ")';
-            alert('＋ if文のサンプルパーツをコードの最後に追加したよ！');
+            if (isKidMode) {
+                editor.value += '\n\n# ifぶんの れい\nif age >= 10:\n    print("10さい以上だよ")';
+                alert('＋ if文のサンプルパーツをコードの最後に追加したよ！');
+            } else {
+                editor.value += '\n\n# 条件分岐のサンプル\nif age >= 10:\n    print("10歳以上です")';
+                alert('＋ if文スニペットをコードに追加しました。');
+            }
         }
 
-        // タブ切り替え
+        // タブ切り替えと描画
         function switchTab(element, type) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             element.classList.add('active');
+            currentTabType = type;
+            renderDictTab(type);
+        }
 
+        function renderDictTab(type) {
             const dict = document.getElementById('dictContent');
+            const data = isKidMode ? textData.kid : textData.adult;
+
             if (type === 'search') {
                 dict.innerHTML = `
-                    <h3 style="color: var(--accent-blue); font-size: 1rem; margin-bottom: 0.4rem;">str() 関数</h3>
-                    <p style="margin-bottom: 0.6rem; color: #cbd5e1;">数字や ほかの データを 文字列に 変換するための 関数です。</p>
+                    <h3 style="color: var(--accent-blue); font-size: 1rem; margin-bottom: 0.4rem;">${data.dictSearchTitle}</h3>
+                    <p style="margin-bottom: 0.6rem; color: #cbd5e1;">${data.dictSearchDesc}</p>
+                    <div style="background-color: #131822; padding: 0.6rem; border-radius: 10px; border: 1px solid var(--border); font-family: monospace;">
+                        <span style="color: var(--text-sub);"># 例:</span><br>
+                        age = 10<br>
+                        print("ねんれい: " + <span style="color: var(--accent-yellow);">str(age)</span>)
+                    </div>
                 `;
             } else if (type === 'history') {
-                dict.innerHTML = `<p style="color: var(--text-sub);">🕒 さいきん調べた単語:<br>1. str()<br>2. print()<br>3. len()</p>`;
+                dict.innerHTML = isKidMode 
+                    ? `<p style="color: var(--text-sub);">🕒 さいきん調べた単語:<br>1. str()<br>2. print()<br>3. len()</p>`
+                    : `<p style="color: var(--text-sub);">🕒 閲覧履歴ログ:<br>1. str() [11:20]<br>2. print() [11:15]<br>3. len() [11:02]</p>`;
             } else if (type === 'fav') {
-                dict.innerHTML = `<p style="color: var(--text-sub);">⭐ お気に入り:<br>・print() - がめんに出す<br>・input() - 文字を入力してもらう</p>`;
+                dict.innerHTML = isKidMode
+                    ? `<p style="color: var(--text-sub);">⭐ お気に入り:<br>・print() - がめんに出す<br>・input() - 文字を入力してもらう</p>`
+                    : `<p style="color: var(--text-sub);">⭐ ブックマーク単語:<br>・print() - 標準出力<br>・input() - 標準入力</p>`;
             } else if (type === 'popular') {
-                dict.innerHTML = `<p style="color: var(--text-sub);">🔥 みんながよく調べる単語:<br>1. print() (120回)<br>2. if文 (98回)<br>3. for文 (85回)</p>`;
+                dict.innerHTML = isKidMode
+                    ? `<p style="color: var(--text-sub);">🔥 みんながよく調べる単語:<br>1. print() (120回)<br>2. if文 (98回)<br>3. for文 (85回)</p>`
+                    : `<p style="color: var(--text-sub);">🔥 検索頻度ランキング:<br>1. print() [Count: 120]<br>2. if構文 [Count: 98]<br>3. for構文 [Count: 85]</p>`;
             }
         }
+
+        // 初期描画
+        updateUI();
+        runCode();
     </script>
 </body>
 </html>
