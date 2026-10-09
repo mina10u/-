@@ -151,7 +151,7 @@
         <p>プログラミング初学者がコードを実行した際に発生したエラー文やソースコードを解析し、<strong>答えを直接教えるのではなく「原因・ヒント・関連する関数辞書」を段階的に提示する</strong>デスクトップアプリケーション。</p>
         <ul>
             <li><strong>ターゲット層:</strong> 大学・専門学校のプログラミング初学者</li>
-            <li><strong>コア体験:</strong> 「出力結果の確認」「エラー原因の気づき」「関数辞書での学び」を1つの画面で完結させるサポート体験</li>
+            <li><strong>コア体験:</strong> 「自由記述でのエラー解析」「組み込み関数辞書での学び」「スキルチェック問題演習」を1つの環境でシームレスに提供する統合学習システム</li>
         </ul>
     </section>
 
@@ -175,13 +175,18 @@
                     <td><span class="badge badge-frontend">フロント</span></td>
                 </tr>
                 <tr>
-                    <td><strong>2. 出力コンソール表示</strong> <span class="badge badge-new">NEW</span></td>
+                    <td><strong>2. 出力コンソール表示</strong></td>
                     <td>コード実行時の標準出力（print等）やエラーメッセージを表示するコンソールエリア。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
                 <tr>
-                    <td><strong>3. 組み込み関数・構文辞書</strong> <span class="badge badge-new">NEW</span></td>
+                    <td><strong>3. 組み込み関数・構文辞書</strong></td>
                     <td>よく使われる基本関数（`print`, `len`, `input` 等）や構文の解説・コード例を検索・閲覧できる辞書パネル。</td>
+                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
+                </tr>
+                <tr>
+                    <td><strong>4. スキルチェック・問題演習機能</strong> <span class="badge badge-new">NEW</span></td>
+                    <td>難易度別の課題（例: 変数・IF文・For文）を出題し、プログラムの実行結果を自動採点してレベル測定する機能。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
             </tbody>
@@ -198,18 +203,18 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>4. 段階的AIヒント生成</strong></td>
-                    <td>「レベル1: エラーの概要」「レベル2: 原因箇所」「レベル3: 考え方」を段階的に生成。</td>
+                    <td><strong>5. 段階的AIヒント生成</strong></td>
+                    <td>「レベル1: エラーの概要」「レベル2: 原因箇所」「レベル3: 考え方」を段階的に生成。問題演習時にもヒントを提供。</td>
                     <td><span class="badge badge-backend">Rust (AI)</span></td>
                 </tr>
                 <tr>
-                    <td><strong>5. ヒント ⇄ 辞書 連動機能</strong> <span class="badge badge-new">NEW</span></td>
+                    <td><strong>6. ヒント ⇄ 辞書 連動機能</strong></td>
                     <td>AIが生成したヒント内に、関連する関数辞書（例: `len()`）への直接リンクを表示しクリックで辞書を開く機能。</td>
                     <td><span class="badge badge-core">共通 (IPC)</span></td>
                 </tr>
                 <tr>
-                    <td><strong>6. 対話型お助けチャット</strong></td>
-                    <td>ヒントに対して「ここがよくわからない」と追加質問できる対話インターフェース。</td>
+                    <td><strong>7. 対話型お助けチャット</strong></td>
+                    <td>ヒントや問題の解き方に対して「ここがよくわからない」と追加質問できる対話インターフェース。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
             </tbody>
@@ -220,33 +225,36 @@
     <section>
         <h2>3. フロント ⇄ Rust バックエンド間 データ仕様 (IPC)</h2>
 
-        <h3>AI解析レスポンス（辞書連動データ含む）</h3>
+        <h3>問題データの構造案（JSON）</h3>
         <pre><code>{
-  "status": "success",
-  "hintTitle": "文字列と数値の結合エラーです",
-  "hintContent": "print文の中で数値と文字列を直接『+』で繋ごうとしています。数値を str() 関数で変換するか、カンマ区切りを使いましょう。",
-  "targetLine": 3,
-  "relatedDictionaryKeys": ["print", "str"]  // AIが自動抽出した関連する関数辞書のキーワード
+  "problemId": "p_001",
+  "title": "偶数・奇数の判定プログラムを作ろう",
+  "difficulty": "初級", // 入門 / 初級 / 中級
+  "description": "変数 num が偶数の場合は 'Even'、奇数の場合は 'Odd' と出力するプログラムを作成してください。",
+  "templateCode": "num = 7\n# ここにコードを書いてください\n",
+  "testCases": [
+    { "input": "num = 4", "expectedOutput": "Even" },
+    { "input": "num = 7", "expectedOutput": "Odd" }
+  ],
+  "relatedDictKeys": ["if", "print"]
 }</code></pre>
 
-        <h3>関数辞書データ構造案（JSON）</h3>
+        <h3>採点結果レスポンス (Rust → TypeScript)</h3>
         <pre><code>{
-  "key": "print",
-  "title": "print() 関数",
-  "category": "組み込み関数",
-  "description": "画面に文字や数値を出力するための関数です。",
-  "example": "print('Hello World')\nprint('結果:', 10)",
-  "tips": "カンマ (,) で区切ると、複数の値を並べて出力できます。"
+  "status": "passed", // passed / failed
+  "score": 100,
+  "passedCases": 2,
+  "totalCases": 2,
+  "feedback": "全テストケースをクリアしました！条件分岐（if文）が正しく理解できています。"
 }</code></pre>
     </section>
 
     <!-- 4. 画面レイアウト構成案 -->
     <section>
-        <h2>4. 画面レイアウト構成案（3分割パネル）</h2>
+        <h2>4. 画面レイアウト構成案（モード切り替え対応）</h2>
         <ul>
-            <li><strong>左エリア:</strong> コードエディタ ＆ 下部出力コンソール（実行結果 / print出力）</li>
-            <li><strong>右上エリア:</strong> AIヒント ＆ 対話チャット画面</li>
-            <li><strong>右下エリア:</strong> 関数・構文辞書パネル（AIヒントからのリンク移動対応）</li>
+            <li><strong>フリー記述モード:</strong> 左側にコードエディタ＆出力コンソール、右側にAIヒント＆関数辞書。</li>
+            <li><strong>問題演習モード:</strong> 左上に問題文＆テストケース、左下にコードエディタ、右側にAIヒント＆関数辞書。</li>
         </ul>
     </section>
 </div>
