@@ -15,6 +15,10 @@
             --border: #334155;
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-dark);
@@ -36,18 +40,20 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         h1 {
             color: var(--accent);
             font-size: 1.8rem;
-            margin-bottom: 0.5rem;
+            margin: 0 0 0.5rem 0;
         }
 
         .meta-info {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.5rem;
+            gap: 1.2rem;
             color: var(--text-sub);
             font-size: 0.9rem;
         }
@@ -57,19 +63,35 @@
             font-weight: bold;
         }
 
-        .nav-link {
+        .nav-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .btn {
             color: white;
             background-color: var(--primary);
             text-decoration: none;
-            padding: 0.6rem 1.2rem;
+            padding: 0.5rem 1rem;
             border-radius: 6px;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             white-space: nowrap;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.2s;
         }
 
-        .nav-link:hover {
+        .btn:hover {
             background-color: #1d4ed8;
+        }
+
+        .btn-mockup {
+            background-color: #0284c7;
+        }
+
+        .btn-mockup:hover {
+            background-color: #0369a1;
         }
 
         section {
@@ -129,8 +151,6 @@
 
         .badge-frontend { background-color: #0284c7; color: white; }
         .badge-backend { background-color: #d97706; color: white; }
-        .badge-core { background-color: #16a34a; color: white; }
-        .badge-new { background-color: #e11d48; color: white; }
 
         code {
             background-color: #0f172a;
@@ -148,6 +168,12 @@
             color: #e2e8f0;
             border: 1px solid var(--border);
         }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            header { flex-direction: column; }
+            .nav-group { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -157,24 +183,26 @@
         <div>
             <h1>プログラミング学習 AI誤り分析アシスタント 仕様書</h1>
             <div class="meta-info">
-                <span class="updated-date">最終更新日時: 2026年10月9日 14:26</span>
+                <span class="updated-date">最終更新日時: 2026年10月9日 14:30</span>
                 <span>アーキテクチャ: Tauri v2 (Desktop App)</span>
                 <span>対象OS: Windows 10/11</span>
                 <span>チーム規模: 6名</span>
             </div>
         </div>
-        <a href="diagram.html" class="btn">画面遷移図を見る</a>
-        <a href="activity.html" class="btn">アクティビティ図を見る</a>
-        <a href="mockup.html" class="nav-link" style="background-color: #16a3a4; margin-left: 0.5rem;">画面モックアップ(仮)を開く ➔</a>
+        <div class="nav-group">
+            <a href="diagram.html" class="btn">画面遷移図を見る</a>
+            <a href="activity.html" class="btn">アクティビティ図を見る</a>
+            <a href="mockup.html" class="btn btn-mockup">画面モックアップ(仮)を開く ➔</a>
+        </div>
     </header>
 
     <!-- 1. 概要・目標 -->
     <section>
         <h2>1. アプリ概要・目的</h2>
-        <p>小学生高学年から大人までのプログラミング初心者が、自分で一からコードを書きながらエラーや疑問を直感的に解消できるデスクトップアプリケーション。<strong>「自由創作」と「一から書く課題演習」の2モードを用意し、コーディング支援ツールや成長カルテで楽しく学習をサポート</strong>します。</p>
+        <p>小学生高学年から大人までのプログラミング初心者が、自分で一からコードを書きながらエラーや疑問を直感的に解消できるデスクトップアプリケーション。<strong>「自由創作」と「一から書く課題演習」の2モードを用意し、文法エラーだけでなく「期待と異なる実行結果（論理エラー）」の差分解説やAIサポートで楽しく学習をサポート</strong>します。</p>
         <ul>
             <li><strong>ターゲット層:</strong> 小学生高学年、中高生、大学・専門学校生、社会人のプログラミング初学者</li>
-            <li><strong>コア体験:</strong> 「自由記述・サンドボックス」「一から書く課題演習」「やさしいエラー解説」「エラー履歴・成長カルテ」「ふりがな付き関数辞書」「アチーブメント獲得」の統合学習体験</li>
+            <li><strong>コア体験:</strong> 「自由記述・サンドボックス」「一から書く課題演習」「やさしいエラー解説 ＆ 期待値との差分解説」「エラー履歴・成長カルテ」「ふりがな付き関数辞書」「アチーブメント獲得」の統合学習体験</li>
         </ul>
     </section>
 
@@ -208,8 +236,8 @@
                     <td><span class="badge badge-frontend">フロント</span></td>
                 </tr>
                 <tr>
-                    <td><strong>4. やさしい出力コンソール</strong></td>
-                    <td>実行結果（print等）を表示。英語エラーを自動で「わかりやすい日本語」に翻訳表示。</td>
+                    <td><strong>4. やさしい出力コンソール ＆ 差分解説</strong></td>
+                    <td>実行結果を表示。文法エラーの日本語解説に加え、期待結果と異なる場合の差分（Diff）ヒント表示。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
                 <tr>
@@ -237,7 +265,7 @@
             <tbody>
                 <tr>
                     <td><strong>7. エラー履歴・成長カルテ</strong></td>
-                    <td>過去に発生したエラー、AIの解決ヒント、自分の修正ログを蓄積し、いつでも振り返れる成長カルテ機能。</td>
+                    <td>過去に発生したエラー（文法・論理）、AIの解決ヒント、自分の修正ログを蓄積し、いつでも振り返れる成長カルテ機能。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
                 <tr>
@@ -252,7 +280,7 @@
                 </tr>
                 <tr>
                     <td><strong>10. モード別AIサポート ＆ チャット</strong></td>
-                    <td>【自由創作】相談応答 / 【課題演習】組み立てヒント提示。対話形式で質問も可能。</td>
+                    <td>【自由創作】相談応答 / 【課題演習】組み立て・差分指摘ヒント提示。対話形式で質問も可能。</td>
                     <td><span class="badge badge-backend">Rust (AI)</span></td>
                 </tr>
             </tbody>
@@ -266,10 +294,13 @@
         <h3>エラー履歴・成長カルテ データ構造案（JSON）</h3>
         <pre><code>{
   "errorLogId": "err_log_20261009_001",
-  "timestamp": "2026-10-09 11:10:00",
-  "originalError": "SyntaxError: invalid syntax",
-  "translatedError": "文法（ぶんぽう）のエラーです。カッコやクォーテーションの閉じ忘れがないか確認してみましょう。",
-  "resolvedCode": "print('Hello World')",
+  "timestamp": "2026-10-09 14:30:00",
+  "errorType": "LogicError", // "SyntaxError" または "LogicError"
+  "originalError": "出力結果の相違",
+  "expectedOutput": "ねんれいは 10さいです",
+  "actualOutput": "ねんれいは 15さいです",
+  "translatedError": "お題の期待する結果と少し違っています。計算ロジックを見直してみましょう。",
+  "resolvedCode": "age = 10\nprint('ねんれいは ' + str(age) + 'さいです')",
   "isResolved": true
 }</code></pre>
 
@@ -285,8 +316,8 @@
         <h2>4. 画面レイアウト構成案</h2>
         <ul>
             <li><strong>ヘッダー:</strong> モード切替（「自由創作」/「課題演習」） ＆ やさしさ切替 ＆ 「成長カルテ」「アチーブメント」アイコン</li>
-            <li><strong>左エリア:</strong> フリーエディタ（「コード整形」「スニペット挿入」ボタン付き） ＆ やさしい出力コンソール</li>
-            <li><strong>右上エリア:</strong> AIヒント・対話チャット（モードに応じてAIの対応が変化）</li>
+            <li><strong>左エリア:</strong> フリーエディタ（「コード整形」「スニペット挿入」ボタン付き） ＆ やさしい出力コンソール（差分表示対応）</li>
+            <li><strong>右上エリア:</strong> AIヒント・対話チャット（文法エラー解説 / 差分ヒントの対話）</li>
             <li><strong>右下エリア:</strong> 関数・構文辞書（ルビ表示対応、タブ切り替え機能付き）</li>
         </ul>
     </section>
