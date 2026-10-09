@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>画面遷移図・機能フロー図 - アプリ仕様書</title>
-    <!-- Mermaid.js (図の自動描画ライブラリ) -->
+    <title>画面遷移図・機能フロー図 - 全画面表示</title>
+    <!-- Mermaid.js -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <script>
         mermaid.initialize({
@@ -15,6 +15,10 @@
                 primaryBorderColor: '#38bdf8',
                 lineColor: '#94a3b8',
                 fontFamily: 'sans-serif'
+            },
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true
             }
         });
     </script>
@@ -29,32 +33,37 @@
             --border: #334155;
         }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
-            margin: 0;
-            padding: 2rem;
-            line-height: 1.6;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
+        /* ヘッダー固定表示 */
         header {
+            background-color: var(--card-bg);
             border-bottom: 2px solid var(--border);
-            padding-bottom: 1.5rem;
-            margin-bottom: 2rem;
+            padding: 0.8rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            height: 60px;
+            z-index: 10;
         }
 
         h1 {
             color: var(--accent);
-            font-size: 1.8rem;
+            font-size: 1.3rem;
             margin: 0;
         }
 
@@ -62,10 +71,10 @@
             color: var(--primary);
             text-decoration: none;
             background-color: rgba(37, 99, 235, 0.2);
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.9rem;
             border-radius: 6px;
             border: 1px solid var(--primary);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: bold;
         }
 
@@ -74,52 +83,45 @@
             color: white;
         }
 
-        section {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border);
-        }
-
-        h2 {
-            color: var(--primary);
-            font-size: 1.3rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 0.5rem;
-            margin-top: 0;
-        }
-
-        .diagram-container {
-            background-color: #0f172a;
-            border-radius: 8px;
-            padding: 1rem;
-            overflow-x: auto;
-            border: 1px solid var(--border);
+        /* 図を表示するメイン領域（画面全体をカバー） */
+        .diagram-viewport {
+            flex: 1;
+            width: 100%;
+            height: calc(100vh - 60px);
+            overflow: auto;
+            padding: 2rem;
             display: flex;
             justify-content: center;
+            align-items: flex-start;
+            background-color: #0b1120;
+        }
+
+        /* Mermaid図のサイズ拡大設定 */
+        .mermaid {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mermaid svg {
+            width: 100% !important;
+            max-width: 1400px !important;
+            height: auto !important;
+            min-height: 800px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
     <header>
         <div>
             <h1>システム機能・画面遷移フロー図</h1>
-            <span style="color: var(--text-sub); font-size: 0.9rem;">最終更新: 2026年10月9日</span>
         </div>
         <a href="index.html" class="back-link">← 仕様書トップに戻る</a>
     </header>
 
-    <section>
-        <h2>全体機能 ＆ 画面遷移フロー</h2>
-        <p style="color: var(--text-sub); font-size: 0.9rem; margin-bottom: 1rem;">
-            ※ アプリの起動から学習・サポート・記録・共通設定までの全体構造を表しています。
-        </p>
-
-        <div class="diagram-container">
-            <div class="mermaid">
+    <div class="diagram-viewport">
+        <div class="mermaid">
 flowchart TD
     %% アプリ起動
     Start([アプリ起動]) --> MainScreen[メイン画面]
@@ -143,7 +145,6 @@ flowchart TD
         ErrExplain --> AiSupport[AIサポート・チャット]
         
         ResultCheck -- 正常 --> Continue[学習を継続]
-        %% 修正ポイント：正常時はエディタに戻って次の作成へ
         Continue --> Editor
     end
 
@@ -179,10 +180,8 @@ flowchart TD
 
     %% 接続
     MainScreen --> LearningMode
-            </div>
         </div>
-    </section>
-</div>
+    </div>
 
 </body>
 </html>
