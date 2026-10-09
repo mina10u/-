@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アクティビティ図 - コード実行＆AIサポートフロー</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: "dark",
+  themeVariables: {
+    background: "#0b1120",
+    primaryColor: "#1e293b",
+    primaryTextColor: "#f8fafc",
+    primaryBorderColor: "#38bdf8",
+    lineColor: "#94a3b8",
+    secondaryColor: "#172554",
+    tertiaryColor: "#172033",
+    fontFamily: "sans-serif",
+    fontSize: "12px"
+  },
+  flowchart: {
+    useMaxWidth: true,
+    htmlLabels: true,
+    curve: "linear",
+    nodeSpacing: 25,
+    rankSpacing: 35,
+    padding: 10
+  }
+});
+</script>
+<style>
+:root {
+  --bg: #0b1120;
+  --panel: #1e293b;
+  --border: #334155;
+  --accent: #38bdf8;
+  --text: #f8fafc;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 22px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+h1 { margin: 0; color: var(--accent); font-size: 1.1rem; }
+.back-link {
+  color: var(--text);
+  text-decoration: none;
+  border: 1px solid #2563eb;
+  background: #1e3a8a;
+  padding: 6px 12px;
+  border-radius: 7px;
+  font-size: .8rem;
+  white-space: nowrap;
+}
+.back-link:hover { background: #2563eb; }
+.intro {
+  flex-shrink: 0;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 8px 22px 0;
+  color: #cbd5e1;
+  font-size: .85rem;
+  line-height: 1.4;
+}
+.viewport {
+  flex: 1;
+  width: 100%;
+  margin: 0 auto;
+  padding: 8px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+.mermaid {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.mermaid svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+.note {
+  flex-shrink: 0;
+  max-width: 1500px;
+  margin: 0 auto 12px;
+  padding: 0 22px;
+  color: #94a3b8;
+  font-size: .78rem;
+  line-height: 1.4;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>アクティビティ図（コード実行・エラー解決アクティビティ）</h1>
+  <a class="back-link" href="index.html">← 仕様書トップに戻る</a>
+</header>
+
+<p class="intro">ユーザーがコードを入力してから実行結果・判定を経て、エラー時のやさしい解説やロジック差分アドバイスを受け取って再挑戦するまでの具体的なアクティビティ（処理手順）を表しています。</p>
+
+<main class="viewport">
+<div class="mermaid">
+flowchart TD
+    %% アクティビティ開始
+    Start(("●")) --> InputCode["ユーザー：コードを入力 / 編集"]
+    InputCode --> ClickRun["ユーザー：「▶ うごかす！」ボタンを押下"]
+    
+    ClickRun --> CheckSyntax{"システム：構文判定<br/>(Syntax Check)"}
+    
+    %% 文法エラー
+    CheckSyntax -- "構文エラーあり" --> ParseErr["やさしい言葉に変換した<br/>文法エラー解説を生成"]
+    ParseErr --> AiExplain["AIロボ：修正ポイントと<br/>ヒントをチャットに表示"]
+    AiExplain --> SaveKarte1["成長カルテに<br/>エラーログを自動保存"]
+    SaveKarte1 --> InputCode
+
+    %% 構文正常
+    CheckSyntax -- "構文正常" --> RunCode["プログラム実行 & 実行結果を出力"]
+    RunCode --> CheckLogic{"システム / 課題機能：<br/>期待する出力結果と一致？"}
+
+    %% 論理エラー (期待と違う)
+    CheckLogic -- "期待と違う (ロジックエラー)" --> GenDiff["期待する結果と現在結果の<br/>差分 (Diff) 解説メッセージを生成"]
+    GenDiff --> AiDiffHint["AIロボ：どこがどう違うかの<br/>アドバイスを表示"]
+    AiDiffHint --> SaveKarte2["成長カルテに<br/>修正ログを自動保存"]
+    SaveKarte2 --> InputCode
+
+    %% 完全成功
+    CheckLogic -- "一致 (大成功！)" --> ShowSuccess["大成功アニメーション表示 &<br/>AIロボが褒めるメッセージ送信"]
+    ShowSuccess --> CheckAchievement{"アチーブメント条件の<br/>達成チェック"}
+    
+    CheckAchievement -- "条件達成" --> UnlockBadge["ごほうびバッジを獲得！"]
+    CheckAchievement -- "未達成" --> NextAction
+    UnlockBadge --> NextAction["次の課題へ進む or 自由創作を継続"]
+    
+    NextAction --> End(("◉"))
+
+    %% クラス定義（スタイル）
+    classDef startEnd fill:#10b981,stroke:#6ee7b7,color:#ffffff,stroke-width:2px;
+    classDef action fill:#1e293b,stroke:#38bdf8,color:#f8fafc,stroke-width:1.5px;
+    classDef decision fill:#1e3a8a,stroke:#60a5fa,color:#ffffff,stroke-width:1.5px;
+    classDef error fill:#7f1d1d,stroke:#f87171,color:#ffffff,stroke-width:1.5px;
+    classDef success fill:#14532d,stroke:#4ade80,color:#ffffff,stroke-width:1.5px;
+
+    class Start,End startEnd;
+    class InputCode,ClickRun,RunCode,SaveKarte1,SaveKarte2,NextAction action;
+    class CheckSyntax,CheckLogic,CheckAchievement decision;
+    class ParseErr,AiExplain,GenDiff,AiDiffHint error;
+    class ShowSuccess,UnlockBadge success;
+</div>
+</main>
+
+<p class="note">補足：●（開始）から◉（終了）までのレーン処理を表しています。文法エラーと論理エラーの2パターンのフィードバックルーティンを明示しています。</p>
+</body>
+</html>
