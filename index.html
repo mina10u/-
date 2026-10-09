@@ -138,7 +138,7 @@
     <header>
         <h1>プログラミング学習 AI誤り分析アシスタント 仕様書</h1>
         <div class="meta-info">
-            <span class="updated-date">最終更新日時: 2026年10月9日 10:46</span>
+            <span class="updated-date">最終更新日時: 2026年10月9日 11:11</span>
             <span>アーキテクチャ: Tauri v2 (Desktop App)</span>
             <span>対象OS: Windows 10/11</span>
             <span>チーム規模: 6名</span>
@@ -148,10 +148,10 @@
     <!-- 1. 概要・目標 -->
     <section>
         <h2>1. アプリ概要・目的</h2>
-        <p>小学生高学年から大人までのプログラミング初心者が、自分で一からコードを書きながらエラーや疑問を直感的に解消できるデスクトップアプリケーション。<strong>「答えのない自由創作」と「一から書く課題演習」の2つの学習モードを提供</strong>し、AIが親身にサポートします。</p>
+        <p>小学生高学年から大人までのプログラミング初心者が、自分で一からコードを書きながらエラーや疑問を直感的に解消できるデスクトップアプリケーション。<strong>「自由創作」と「一から書く課題演習」の2モードを用意し、コーディング支援ツールや成長カルテで楽しく学習をサポート</strong>します。</p>
         <ul>
             <li><strong>ターゲット層:</strong> 小学生高学年、中高生、大学・専門学校生、社会人のプログラミング初学者</li>
-            <li><strong>コア体験:</strong> 「自由記述・サンドボックス」「一から書く課題演習」「やさしいエラー解説」「ふりがな付き関数辞書」「アチーブメント獲得」の統合学習体験</li>
+            <li><strong>コア体験:</strong> 「自由記述・サンドボックス」「一から書く課題演習」「やさしいエラー解説」「エラー履歴・成長カルテ」「ふりがな付き関数辞書」「アチーブメント獲得」の統合学習体験</li>
         </ul>
     </section>
 
@@ -159,7 +159,7 @@
     <section>
         <h2>2. 機能一覧</h2>
         
-        <h3>2.1 コア学習・開発機能</h3>
+        <h3>2.1 コア学習・開発補助機能</h3>
         <table>
             <thead>
                 <tr>
@@ -170,7 +170,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>1. フリープレイ・サンドボックスモード</strong> <span class="badge badge-new">NEW</span></td>
+                    <td><strong>1. フリープレイ・サンドボックスモード</strong></td>
                     <td>お題や正解がない完全自由な環境。自分のアイデアを自由に記述・実行・ファイル保存できる機能。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
@@ -180,29 +180,29 @@
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
                 <tr>
-                    <td><strong>3. やさしい出力コンソール</strong></td>
+                    <td><strong>3. コード整形 ＆ スニペット挿入</strong> <span class="badge badge-new">NEW</span></td>
+                    <td>ワンタップでインデント等を自動整列するフォーマッタ機能、および基本構文（if/for等）の型挿入ボタン。</td>
+                    <td><span class="badge badge-frontend">フロント</span></td>
+                </tr>
+                <tr>
+                    <td><strong>4. やさしい出力コンソール</strong></td>
                     <td>実行結果（print等）を表示。英語エラーを自動で「わかりやすい日本語」に翻訳表示。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
                 <tr>
-                    <td><strong>4. ふりがな付き関数・構文辞書</strong></td>
+                    <td><strong>5. ふりがな付き関数・構文辞書</strong></td>
                     <td>基本関数（`print`, `len` 等）の解説。難解な漢字や専門用語にふりがな（ルビ）を表示可能。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
                 <tr>
-                    <td><strong>5. 辞書便利機能（履歴/頻出/お気に入り）</strong></td>
+                    <td><strong>6. 辞書便利機能（履歴/頻出/お気に入り）</strong></td>
                     <td>「検索履歴」「よく調べるワード」「単語のお気に入り登録（ブックマーク）」機能。</td>
-                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
-                </tr>
-                <tr>
-                    <td><strong>6. アチーブメント（実績・バッジ）獲得機能</strong></td>
-                    <td>課題達成・自由創作での成果・学習継続に応じてバッジや称号を獲得できる機能。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
             </tbody>
         </table>
 
-        <h3>2.2 AI支援・アクセシビリティ機能</h3>
+        <h3>2.2 AI支援・成長記録・モチベーション機能</h3>
         <table>
             <thead>
                 <tr>
@@ -213,24 +213,24 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>7. やさしさ切り替え（モード設定）</strong></td>
+                    <td><strong>7. エラー履歴・成長カルテ</strong> <span class="badge badge-new">NEW</span></td>
+                    <td>過去に発生したエラー、AIの解決ヒント、自分の修正ログを蓄積し、いつでも振り返れる成長カルテ機能。</td>
+                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
+                </tr>
+                <tr>
+                    <td><strong>8. アチーブメント（実績・バッジ）獲得機能</strong></td>
+                    <td>課題達成・自由創作での成果・学習継続・エラー解決に応じてバッジや称号を獲得できる機能。</td>
+                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
+                </tr>
+                <tr>
+                    <td><strong>9. やさしさ切り替え（モード設定）</strong></td>
                     <td>「こども（ふりがなあり・やさしい言葉）」/「大人（標準表記）」のUI表現切り替えスイッチ。</td>
                     <td><span class="badge badge-frontend">フロント</span></td>
                 </tr>
                 <tr>
-                    <td><strong>8. モード別AIサポート</strong> <span class="badge badge-new">NEW</span></td>
-                    <td>【自由創作】「〇〇を作るにはどう書く？」の相談に応答。<br>【課題演習】組み立ての順序や考え方のヒントを提示。</td>
+                    <td><strong>10. モード別AIサポート ＆ チャット</strong></td>
+                    <td>【自由創作】相談応答 / 【課題演習】組み立てヒント提示。対話形式で質問も可能。</td>
                     <td><span class="badge badge-backend">Rust (AI)</span></td>
-                </tr>
-                <tr>
-                    <td><strong>9. ヒント ⇄ 辞書 連動機能</strong></td>
-                    <td>AIヒント内の関連キーワードから直接ワンタップで関数辞書へ移動できる機能。</td>
-                    <td><span class="badge badge-core">共通 (IPC)</span></td>
-                </tr>
-                <tr>
-                    <td><strong>10. 対話型お助けチャット</strong></td>
-                    <td>「ここがよくわからない」と気軽に話しかけて質問できるチャット機能。</td>
-                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
             </tbody>
         </table>
@@ -240,32 +240,30 @@
     <section>
         <h2>3. フロント ⇄ Rust バックエンド間 データ仕様 (IPC)</h2>
 
-        <h3>モード切り替え（自由創作 / 課題演習）時の状態管理</h3>
+        <h3>エラー履歴・成長カルテ データ構造案（JSON）</h3>
         <pre><code>{
-  "currentMode": "sandbox", // "sandbox" (自由創作) / "challenge" (課題演習)
-  "sandboxState": {
-    "fileName": "my_first_script.py",
-    "code": "print('自由にコードを書いてみよう！')"
-  }
+  "errorLogId": "err_log_20261009_001",
+  "timestamp": "2026-10-09 11:10:00",
+  "originalError": "SyntaxError: invalid syntax",
+  "translatedError": "文法（ぶんぽう）のエラーです。カッコやクォーテーションの閉じ忘れがないか確認してみましょう。",
+  "resolvedCode": "print('Hello World')",
+  "isResolved": true
 }</code></pre>
 
-        <h3>アチーブメント構造案（自由創作バッジ含む）</h3>
-        <pre><code>{
-  "achievementId": "achieve_creator_1",
-  "title": "未来のクリエイター",
-  "description": "自由創作（サンドボックス）で自分のコードを書いて実行・保存した！",
-  "icon": "palette",
-  "isUnlocked": true
-}</code></pre>
+        <h3>スニペット定義構造案</h3>
+        <pre><code>[
+  { "label": "if文（条件分岐）", "snippet": "if 条件:\n    # ここに処理を書く\n" },
+  { "label": "for文（繰り返し）", "snippet": "for i in range(5):\n    # ここに処理を書く\n" }
+]</code></pre>
     </section>
 
     <!-- 4. 画面レイアウト構成案 -->
     <section>
         <h2>4. 画面レイアウト構成案</h2>
         <ul>
-            <li><strong>ヘッダー:</strong> メインモード切替（「サンドボックス（自由創作）」/「課題演習」） ＆ やさしさ（こども/大人）切り替え</li>
-            <li><strong>左エリア:</strong> フリーエディタ ＆ やさしい出力コンソール（実行結果 / エラー）</li>
-            <li><strong>右上エリア:</strong> AIヒント・対話チャット（モードに応じてAIの会話スタイルが自動変化）</li>
+            <li><strong>ヘッダー:</strong> モード切替（「自由創作」/「課題演習」） ＆ やさしさ切替 ＆ 「成長カルテ」「アチーブメント」アイコン</li>
+            <li><strong>左エリア:</strong> フリーエディタ（「コード整形」「スニペット挿入」ボタン付き） ＆ やさしい出力コンソール</li>
+            <li><strong>右上エリア:</strong> AIヒント・対話チャット（モードに応じてAIの対応が変化）</li>
             <li><strong>右下エリア:</strong> 関数・構文辞書（ルビ表示対応、タブ切り替え機能付き）</li>
         </ul>
     </section>
