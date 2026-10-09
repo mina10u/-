@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIプログラミング学習ノート (モックアップ)</title>
+    <title>AIプログラミング学習ノート (動くモックアップ)</title>
     <style>
         :root {
             --bg-main: #181e2a;
@@ -62,6 +62,8 @@
             font-size: 0.8rem;
             font-weight: bold;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            cursor: pointer;
+            user-select: none;
         }
 
         .nav-tools {
@@ -139,7 +141,7 @@
             color: var(--text-sub);
         }
 
-        .editor-area {
+        .editor-textarea {
             flex: 1;
             background-color: #131822;
             padding: 1.2rem;
@@ -147,8 +149,11 @@
             font-size: 1rem;
             line-height: 1.6;
             color: #f1f5f9;
-            white-space: pre;
-            overflow: auto;
+            border: none;
+            outline: none;
+            resize: none;
+            width: 100%;
+            height: 100%;
         }
 
         .console-card {
@@ -159,11 +164,21 @@
             padding: 0.8rem 1.2rem;
             font-family: monospace;
             font-size: 0.9rem;
-            color: #fca5a5;
             background-color: #0f131c;
             flex: 1;
             overflow-y: auto;
-            border-left: 4px solid #ef4444;
+            border-left: 4px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .console-body.error {
+            color: #fca5a5;
+            border-left-color: #ef4444;
+        }
+
+        .console-body.success {
+            color: #86efac;
+            border-left-color: #22c55e;
         }
 
         /* 右エリア (AIサポート & 辞書) */
@@ -188,7 +203,6 @@
             background-color: #1a2230;
         }
 
-        /* ふきだし風のメッセージ */
         .ai-speech-bubble {
             background: linear-gradient(135deg, #2d384e, #242d3d);
             border: 1px solid var(--border);
@@ -219,6 +233,7 @@
             color: var(--text-sub);
             border-radius: 8px 8px 0 0;
             cursor: pointer;
+            user-select: none;
         }
 
         .tab.active {
@@ -253,12 +268,12 @@
         <div class="logo">
             <span style="font-size: 1.3rem;">🤖</span>
             <span>AIプログラミングノート</span>
-            <span class="mode-badge">こどもモード (ルビつき)</span>
+            <span class="mode-badge" id="modeBadge" onclick="toggleKidMode()">こどもモード (ルビつき)</span>
         </div>
         <div class="nav-tools">
-            <button class="btn">🎨 モード: 自由創作</button>
-            <button class="btn">📋 成長カルテ</button>
-            <button class="btn">🏆 あちーぶめんと</button>
+            <button class="btn" onclick="alert('自由創作（サンドボックス）モードです！自由にコードを書いて試せます。')">🎨 モード: 自由創作</button>
+            <button class="btn" onclick="alert('成長カルテ: 克服したエラー数 1件')">📋 成長カルテ</button>
+            <button class="btn" onclick="alert('獲得バッジ: 「はじめての実行」「エラー克服者」')">🏆 あちーぶめんと</button>
         </div>
     </header>
 
@@ -271,27 +286,25 @@
                 <div class="card-header">
                     <span>📄 main.py</span>
                     <div style="display: flex; gap: 0.4rem;">
-                        <button class="btn">✨ コードせいせい</button>
-                        <button class="btn">＋ パーツいれる</button>
-                        <button class="btn btn-run">▶ うごかす！</button>
+                        <button class="btn" onclick="formatCode()">✨ コード整形</button>
+                        <button class="btn" onclick="insertSnippet()">＋ パーツいれる</button>
+                        <button class="btn btn-run" onclick="runCode()">▶ うごかす！</button>
                     </div>
                 </div>
-                <div class="editor-area"># ここに じゆうに コードを かいてみよう！
+                <textarea class="editor-textarea" id="codeEditor" spellcheck="false"># ここに じゆうに コードを かいてみよう！
 name = "たろう"
 age = 10
 
 print("ぼくの名前は " + name)
-print("ねんれいは " + age + "さいです")</div>
+print("ねんれいは " + age + "さいです")</textarea>
             </div>
 
             <div class="card console-card">
-                <div class="card-header" style="color: #fca5a5;">
-                    <span>💬 実行結果（じっこうけっか）と おしらせ</span>
+                <div class="card-header">
+                    <span id="consoleTitle">💬 実行結果（じっこうけっか）と おしらせ</span>
                 </div>
-                <div class="console-body">
-                    <strong>⚠️ エラーが発生したよ！</strong><br>
-                    `TypeError: can only concatenate str (not "int") to str`<br>
-                    👉 文字（もじ）と 数字（すうじ）を そのまま 「+」で つなぐことは できません。
+                <div class="console-body" id="consoleOutput">
+                    「▶ うごかす！」ボタンを押すと、ここに結果が表示されるよ！
                 </div>
             </div>
         </div>
@@ -303,13 +316,12 @@ print("ねんれいは " + age + "さいです")</div>
             <div class="card ai-card">
                 <div class="card-header" style="color: var(--accent-blue);">
                     <span>💡 AIの アドバイス</span>
-                    <span style="font-size: 0.75rem; color: var(--accent-yellow);">★ ヒント 1 / 3</span>
+                    <span style="font-size: 0.75rem; color: var(--accent-yellow);" id="hintLevelText">★ 待機中</span>
                 </div>
                 <div class="chat-history">
-                    <div class="ai-speech-bubble">
+                    <div class="ai-speech-bubble" id="aiMessage">
                         <strong style="color: var(--accent-green);">🤖 AIロボ:</strong><br>
-                        `print` の 中で 数字の変数（`age`）を そのまま 文字と つなげようとして エラーに なっているよ！<br><br>
-                        数字を 文字に変える <span class="code-tag">str()</span> を 使うか、カンマ「,」で くぎってみよう。
+                        準備完了（じゅんびかんりょう）だよ！コードを書いて「▶ うごかす！」を押してみてね。
                     </div>
                 </div>
             </div>
@@ -317,12 +329,12 @@ print("ねんれいは " + age + "さいです")</div>
             <!-- 右下: かんたん辞書 -->
             <div class="card dict-card">
                 <div class="dict-tabs">
-                    <div class="tab active">🔍 じしょ</div>
-                    <div class="tab">🕒 りれき</div>
-                    <div class="tab">⭐ お気に入り</div>
-                    <div class="tab">🔥 よくつかう</div>
+                    <div class="tab active" onclick="switchTab(this, 'search')">🔍 じしょ</div>
+                    <div class="tab" onclick="switchTab(this, 'history')">🕒 りれき</div>
+                    <div class="tab" onclick="switchTab(this, 'fav')">⭐ お気に入り</div>
+                    <div class="tab" onclick="switchTab(this, 'popular')">🔥 よくつかう</div>
                 </div>
-                <div class="dict-body">
+                <div class="dict-body" id="dictContent">
                     <h3 style="color: var(--accent-blue); font-size: 1rem; margin-bottom: 0.4rem;">
                         str() 関数 <span style="font-size: 0.75rem; color: var(--text-sub);">(えすてぃーあーる かんすう)</span>
                     </h3>
@@ -341,5 +353,95 @@ print("ねんれいは " + age + "さいです")</div>
 
     </div>
 
+    <!-- 簡易動作ロジック (JavaScript) -->
+    <script>
+        let isKidMode = true;
+
+        // モード切替
+        function toggleKidMode() {
+            isKidMode = !isKidMode;
+            const badge = document.getElementById('modeBadge');
+            badge.innerText = isKidMode ? 'こどもモード (ルビつき)' : '大人モード (標準)';
+            badge.style.background = isKidMode 
+                ? 'linear-gradient(135deg, #0284c7, #38bdf8)' 
+                : 'linear-gradient(135deg, #475569, #64748b)';
+        }
+
+        // コード実行（模擬判定）
+        function runCode() {
+            const code = document.getElementById('codeEditor').value;
+            const consoleOut = document.getElementById('consoleOutput');
+            const aiMsg = document.getElementById('aiMessage');
+            const hintLevel = document.getElementById('hintLevelText');
+
+            if (code.includes('" + age + "') || code.includes("'+age+'")) {
+                // エラー発生の模擬
+                consoleOut.className = 'console-body error';
+                consoleOut.innerHTML = `
+                    <strong>⚠️ エラーが発生したよ！</strong><br>
+                    TypeError: can only concatenate str (not "int") to str<br>
+                    👉 文字（もじ）と 数字（すうじ）を そのまま 「+」で つなぐことは できません。
+                `;
+
+                aiMsg.innerHTML = `
+                    <strong style="color: var(--accent-green);">🤖 AIロボ:</strong><br>
+                    \`print\` の 中で 数字の変数（\`age\`）を そのまま 文字と つなげようとして エラーに なっているよ！<br><br>
+                    数字を 文字に変える <span class="code-tag">str()</span> を 使うか、カンマ「,」で くぎってみよう。
+                `;
+                hintLevel.innerText = '★ ヒント 1 / 3';
+            } else {
+                // 正常実行の模擬
+                consoleOut.className = 'console-body success';
+                consoleOut.innerHTML = `
+                    <strong>🎉 実行成功（じっこうせいこう）！</strong><br>
+                    ぼくの名前は たろう<br>
+                    ねんれいは 10さいです
+                `;
+
+                aiMsg.innerHTML = `
+                    <strong style="color: var(--accent-green);">🤖 AIロボ:</strong><br>
+                    すごい！エラーなしで 正しくうごいたよ！✨<br>
+                    この調子で どんどん コードを かいてみよう！
+                `;
+                hintLevel.innerText = '★ 成功！';
+            }
+        }
+
+        // コード整形
+        function formatCode() {
+            const editor = document.getElementById('codeEditor');
+            let lines = editor.value.split('\n');
+            let formatted = lines.map(line => line.trim()).filter(line => line !== '').join('\n');
+            editor.value = formatted;
+            alert('✨ コードの無駄な空行やスペースを綺麗に整理したよ！');
+        }
+
+        // スニペット挿入
+        function insertSnippet() {
+            const editor = document.getElementById('codeEditor');
+            editor.value += '\n\n# ifぶんの れい\nif age >= 10:\n    print("10さい以上だよ")';
+            alert('＋ if文のサンプルパーツをコードの最後に追加したよ！');
+        }
+
+        // タブ切り替え
+        function switchTab(element, type) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+
+            const dict = document.getElementById('dictContent');
+            if (type === 'search') {
+                dict.innerHTML = `
+                    <h3 style="color: var(--accent-blue); font-size: 1rem; margin-bottom: 0.4rem;">str() 関数</h3>
+                    <p style="margin-bottom: 0.6rem; color: #cbd5e1;">数字や ほかの データを 文字列に 変換するための 関数です。</p>
+                `;
+            } else if (type === 'history') {
+                dict.innerHTML = `<p style="color: var(--text-sub);">🕒 さいきん調べた単語:<br>1. str()<br>2. print()<br>3. len()</p>`;
+            } else if (type === 'fav') {
+                dict.innerHTML = `<p style="color: var(--text-sub);">⭐ お気に入り:<br>・print() - がめんに出す<br>・input() - 文字を入力してもらう</p>`;
+            } else if (type === 'popular') {
+                dict.innerHTML = `<p style="color: var(--text-sub);">🔥 みんながよく調べる単語:<br>1. print() (120回)<br>2. if文 (98回)<br>3. for文 (85回)</p>`;
+            }
+        }
+    </script>
 </body>
 </html>
