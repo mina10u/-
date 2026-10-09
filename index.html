@@ -33,6 +33,9 @@
             border-bottom: 2px solid var(--border);
             padding-bottom: 1.5rem;
             margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
         }
 
         h1 {
@@ -52,6 +55,21 @@
         .updated-date {
             color: #f59e0b;
             font-weight: bold;
+        }
+
+        .nav-link {
+            color: white;
+            background-color: var(--primary);
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            background-color: #1d4ed8;
         }
 
         section {
@@ -136,13 +154,16 @@
 
 <div class="container">
     <header>
-        <h1>プログラミング学習 AI誤り分析アシスタント 仕様書</h1>
-        <div class="meta-info">
-            <span class="updated-date">最終更新日時: 2026年10月9日 11:11</span>
-            <span>アーキテクチャ: Tauri v2 (Desktop App)</span>
-            <span>対象OS: Windows 10/11</span>
-            <span>チーム規模: 6名</span>
+        <div>
+            <h1>プログラミング学習 AI誤り分析アシスタント 仕様書</h1>
+            <div class="meta-info">
+                <span class="updated-date">最終更新日時: 2026年10月9日 11:17</span>
+                <span>アーキテクチャ: Tauri v2 (Desktop App)</span>
+                <span>対象OS: Windows 10/11</span>
+                <span>チーム規模: 6名</span>
+            </div>
         </div>
+        <a href="diagram.html" class="nav-link">画面遷移図・設計図ページへ →</a>
     </header>
 
     <!-- 1. 概要・目標 -->
@@ -180,7 +201,7 @@
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
                 <tr>
-                    <td><strong>3. コード整形 ＆ スニペット挿入</strong> <span class="badge badge-new">NEW</span></td>
+                    <td><strong>3. コード整形 ＆ スニペット挿入</strong></td>
                     <td>ワンタップでインデント等を自動整列するフォーマッタ機能、および基本構文（if/for等）の型挿入ボタン。</td>
                     <td><span class="badge badge-frontend">フロント</span></td>
                 </tr>
@@ -213,7 +234,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>7. エラー履歴・成長カルテ</strong> <span class="badge badge-new">NEW</span></td>
+                    <td><strong>7. エラー履歴・成長カルテ</strong></td>
                     <td>過去に発生したエラー、AIの解決ヒント、自分の修正ログを蓄積し、いつでも振り返れる成長カルテ機能。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
