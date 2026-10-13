@@ -100,7 +100,7 @@ code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
   </div>
   <h1>コードラボ<br>プログラミング学習 AI誤り分析アシスタント 仕様書</h1>
   <div class="meta">
-    <span class="updated">改訂日時：2026年10月13日 14:21</span>
+    <span class="updated">改訂日時：2026年10月13日 14:45</span>
     <span>アーキテクチャ：Tauri v2</span>
     <span>画面：React / TypeScript</span>
     <span>バックエンド：Rust</span>
@@ -416,6 +416,15 @@ code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
     </tbody>
   </table>
   <p class="note">この改訂版では、今回の修正案を反映して曖昧な動作を明文化した。数値のうち実行時間5秒・出力上限1 MiBは初期基準案であり、実装・負荷・安全性試験で最終確定する。その他の未決定項目は表に記載した担当・タイミングで確定する[cite: 3]。</p>
+</section>
+
+<section>
+  <h2>13. 発展的機能（将来検討・実装できれば）</h2>
+  <p><b>自作シナリオ・カスタム課題作成機能：</b></p>
+  <ul>
+    <li>ユーザー自身が自由創作モード等で「独自のお題（シナリオ）」と「判定用のテストケース（入力・期待値）」を定義・保存し、自分で作成した問題を自分で解いてテスト・自己採点できる仕組み。</li>
+    <li>本機能は必須要件（初期版）のスコープ外とし、基本機能・基盤が安定したあとの追加機能（Nice-to-have）として将来的に検討する。</li>
+  </ul>
 </section>
 
 <footer class="small" style="padding:10px 4px 30px">
