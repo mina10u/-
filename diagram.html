@@ -94,7 +94,6 @@ h1 { margin: 0; color: var(--accent); font-size: 1.1rem; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
 
-/* メイン表示領域: 画面いっぱいに無理なく収める */
 .viewport {
   flex: 1;
   width: 100%;
@@ -142,22 +141,22 @@ h1 { margin: 0; color: var(--accent); font-size: 1.1rem; }
   <h1>システム機能・画面遷移フロー図</h1>
   <a class="back-link" href="index.html">← 仕様書トップに戻る</a>
 </header>
-<p class="intro">メイン画面から各機能へ進む構成と、学習中の操作フローを分けて表示しています。グループからメイン画面へ戻る矢印は省き、学習の流れを中心に整理しています。</p>
+<p class="intro">複数言語（Python/JS）対応のエディタ、ローカルAIによる分析機能、クラウド同期型の学習記録を反映したシステム構造を表しています。</p>
 <div class="legend">
   <span><i class="swatch" style="background:#2563eb"></i>起点・メイン画面</span>
   <span><i class="swatch" style="background:#0284c7"></i>学習機能</span>
-  <span><i class="swatch" style="background:#b91c1c"></i>エラー対応</span>
-  <span><i class="swatch" style="background:#7e22ce"></i>学習記録</span>
-  <span><i class="swatch" style="background:#0e7490"></i>共通機能</span>
+  <span><i class="swatch" style="background:#b91c1c"></i>ローカルAI・エラー対応</span>
+  <span><i class="swatch" style="background:#0e7490"></i>クラウド同期・学習記録</span>
+  <span><i class="swatch" style="background:#164e63"></i>共通機能</span>
 </div>
 <main class="viewport">
 <div class="mermaid">
 flowchart TB
-    Start(["アプリ起動"]) --> Main["メイン画面"]
+    Start(["アプリ起動"]) --> Main["メイン画面<br/>(言語切替: Python/JS)"]
 
     Main --> Mode{"学習モードを選択"}
     Main --> Support["学習サポート"]
-    Main --> Records["学習記録"]
+    Main --> Records["学習記録<br/>(クラウド同期対応)"]
     Main --> Common["共通機能"]
 
     subgraph Learning["① 学習機能"]
@@ -166,20 +165,20 @@ flowchart TB
       Mode --> Task["課題演習"]
       Free --> Editor["コードエディタ"]
       Task --> Editor
-      Editor --> Run["コード実行"]
+      Editor --> Run["ローカルランタイム実行"]
       Run --> Result["実行結果"]
       Result --> Judge{"実行結果の判定"}
 
       Judge -- "正常終了" --> Continue["学習を継続<br/>次のコードを書く"]
       Continue --> Editor
 
-      Judge -- "文法エラー" --> Error["やさしいエラー解説"]
-      Judge -- "期待と違う" --> Diff["期待結果との差分解説"]
+      Judge -- "文法エラー" --> Error["ローカルAI:<br/>やさしいエラー解説"]
+      Judge -- "期待と違う" --> Diff["ローカルAI:<br/>期待結果との差分解説"]
       Error --> AI["AIサポート・チャット"]
       Diff --> AI
       AI --> Editor
 
-      Task -. "課題演習のみ" .-> Check["自動採点・課題チェック"]
+      Task -. "課題演習のみ" .-> Check["AI採点・課題チェック<br/>(クラウドへ結果送信)"]
       Result -. "課題演習のみ" .-> Check
       Check --> Editor
     end
@@ -187,24 +186,24 @@ flowchart TB
     subgraph SupportGroup["② 学習サポート"]
       direction TB
       Support --> Format["コード整形"]
-      Support --> Dictionary["関数・構文辞書"]
+      Support --> Dictionary["関数・構文辞書<br/>(選択言語に連動)"]
       Support --> Snippet["スニペット挿入"]
       Dictionary <--> DictFeatures["検索・履歴・お気に入り"]
     end
 
-    subgraph RecordGroup["③ 学習記録"]
+    subgraph RecordGroup["③ 学習記録 (クラウド同期)"]
       direction TB
-      Records --> Achievement["アチーブメント"]
-      Records --> Karte["成長カルテ"]
-      Achievement --> Badge["実績・バッジ確認"]
-      Karte --> Logs["エラー履歴・修正ログ"]
+      Records --> Achievement["アチーブメント<br/>(バッジ獲得)"]
+      Records --> Karte["成長カルテ<br/>(エラー・修正ログ)"]
+      Achievement --> CloudSync1["サーバーへ保存・同期"]
+      Karte --> CloudSync2["サーバーへ保存・同期"]
     end
 
     subgraph CommonGroup["④ 共通機能"]
       direction TB
       Common --> Save["ファイル保存"]
       Common --> Switch["表示モード切替"]
-      Switch --> Kid["子ども向け表示"]
+      Switch --> Kid["子ども向け表示<br/>(ルビあり)"]
       Switch --> Adult["大人向け表示"]
     end
 
@@ -212,16 +211,16 @@ flowchart TB
     classDef main fill:#1d4ed8,stroke:#60a5fa,color:#ffffff,stroke-width:2px;
     classDef learning fill:#172554,stroke:#38bdf8,color:#f8fafc,stroke-width:1.5px;
     classDef error fill:#7f1d1d,stroke:#f87171,color:#ffffff,stroke-width:1.5px;
-    classDef record fill:#581c87,stroke:#c084fc,color:#ffffff,stroke-width:1.5px;
+    classDef record fill:#0e7490,stroke:#22d3ee,color:#ffffff,stroke-width:1.5px;
     classDef common fill:#164e63,stroke:#22d3ee,color:#ffffff,stroke-width:1.5px;
     class Start start;
     class Main main;
     class Editor,Run,Result,Continue,Check learning;
     class Error,Diff,AI error;
-    class Records,Achievement,Karte,Badge,Logs record;
+    class Records,Achievement,Karte,CloudSync1,CloudSync2 record;
     class Common,Save,Switch,Kid,Adult common;
 </div>
 </main>
-<p class="note">補足：点線は「課題演習のみ」など、条件付きで使う機能を示します。画面遷移と学習中の処理フローを一つの図にまとめているため、細部を説明する資料では学習機能だけを別図にするとさらに読みやすくなります。</p>
+<p class="note">補足：AI分析はローカル（PC内）で高速に処理され、成長カルテやアチーブメント等の永続データのみがクラウドサーバーと同期されるアーキテクチャになっています。</p>
 </body>
 </html>
