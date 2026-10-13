@@ -11,7 +11,500 @@
             --card-bg: #1e293b;
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
+            --accent: #38bdf8;<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プログラミング学習 AI誤り分析アシスタント 仕様書</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
             --accent: #38bdf8;
+            --border: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        h1 {
+            color: var(--accent);
+            font-size: 1.8rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            color: var(--text-sub);
+            font-size: 0.9rem;
+        }
+
+        .updated-date {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+
+        .nav-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            color: white;
+            background-color: var(--primary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-mockup {
+            background-color: #0284c7;
+        }
+
+        .btn-mockup:hover {
+            background-color: #0369a1;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 1.3rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+
+        h3 {
+            color: var(--accent);
+            font-size: 1.1rem;
+            margin-top: 1.2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: rgba(37, 99, 235, 0.2);
+            color: var(--accent);
+        }
+
+        ul, ol {
+            padding-left: 1.2rem;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge-frontend { background-color: #0284c7; color: white; }
+        .badge-backend { background-color: #d97706; color: white; }
+        .badge-ai { background-color: #7c2d12; color: white; }
+
+        code {
+            background-color: #0f172a;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            color: #f43f5e;
+            font-family: monospace;
+        }
+
+        pre {
+            background-color: #0f172a;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            color: #e2e8f0;
+            border: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            header { flex-direction: column; }
+            .nav-group { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1>プログラミング学習 AI誤り分析アシスタント 仕様書</h1>
+            <div class="meta-info">
+                <span class="updated-date">最終更新日時: 2026年10月13日 13:40</span>
+                <span>アーキテクチャ: Tauri v2 (Desktop App)</span>
+                <span>対象OS: Windows 10/11</span>
+                <span>チーム規模: 6名</span>
+            </div>
+        </div>
+        <div class="nav-group">
+            <a href="diagram.html" class="btn">画面遷移図を見る</a>
+            <a href="activity.html" class="btn">アクティビティ図を見る</a>
+            <a href="mockup.html" class="btn btn-mockup">画面モックアップを開く ➔</a>
+        </div>
+    </header>
+
+    <!-- 1. 概要・目標 -->
+    <section>
+        <h2>1. アプリ概要・目的</h2>
+        <p>小学生高学年から大人までのプログラミング初心者が、自分で一からコードを書きながらエラーや疑問を直感的に解消できるデスクトップアプリケーション。<strong>「自由創作」と「一から書く課題演習」の2モードを用意し、ローカルAIによるエラー・論理分析、クラウドによる学習履歴同期で楽しく学習をサポート</strong>します[cite: 3]。初期リリースではPythonに特化して完成度を高め、将来的な複数言語展開に備えます[cite: 2]。また、AIが簡単に答えを教えず自力で考える力を育てる「段階式ヒント」や、他言語との違いに気づける学習支援を取り入れています。</p>
+        <ul>
+            <li><strong>ターゲット層:</strong> 小学生高学年、中高生、大学・専門学校生、社会人のプログラミング初学者[cite: 3]</li>
+            <li><strong>コア体験:</strong> Python同梱による環境構築不要の実行、ローカルAIモデルの自動ダウンロード、段階式ヒント（修正例は希望時のみ）、他言語（Java/JS等）との比較サポート、クラウド同期型の成長カルテ、AIによる課題採点（80点以上合格）の統合学習体験[cite: 2, 3]</li>
+        </ul>
+    </section>
+
+    <!-- 2. システム全体構成 -->
+    <section>
+        <h2>2. システム全体構成案</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>レイヤー</th>
+                    <th>役割・担当</th>
+                    <th>主要技術</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>デスクトップアプリ層 (画面)</strong></td>
+                    <td>コードエディタ、実行結果コンソール、AIチャット、辞書、学習履歴画面のUI提供[cite: 2, 3]。</td>
+                    <td>Tauri v2 (React / TypeScript)[cite: 2, 3]</td>
+                </tr>
+                <tr>
+                    <td><strong>ローカル実行環境 (内部処理)</strong></td>
+                    <td>同梱Pythonによるコード実行、実行結果の取得、タイムアウト・プロセス管理[cite: 2]。</td>
+                    <td>Rust バックエンド / Pythonランタイム[cite: 2, 3]</td>
+                </tr>
+                <tr>
+                    <td><strong>ローカルAI層</strong></td>
+                    <td>自動ダウンロード対応モデルによるエラー解説、段階式ヒント、他言語対比サポート、チャット（PC内で完結）[cite: 2, 3]。</td>
+                    <td>ローカルAIモデル (Rust連携)[cite: 2, 3]</td>
+                </tr>
+                <tr>
+                    <td><strong>クラウドサーバー層</strong></td>
+                    <td>ユーザー認証、学習履歴、進捗、アチーブメントの永続保存・同期[cite: 2, 3]。</td>
+                    <td>Web API / データベース[cite: 2, 3]</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 3. 機能一覧 -->
+    <section>
+        <h2>3. 機能一覧 (初期Python特化版)</h2>
+        
+        <h3>3.1 コア学習・開発補助機能</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>機能名</th>
+                    <th>機能概要</th>
+                    <th>担当領域</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>1. フリープレイ・サンドボックスモード</strong></td>
+                    <td>お題や正解がない完全自由な環境。同梱Pythonでコードを自由に記述・実行・保存[cite: 2, 3]。</td>
+                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span>[cite: 3]</td>
+                </tr>
+                <tr>
+                    <td><strong>2. 一から書く課題演習モード</strong></td>
+                    <td>課題文を読み、白紙からPythonコードを作成し、機械的検証とAI評価を組み合わせた自動採点を受けられる機能[cite: 2, 3]。</td>
+                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-ai">ローカルAI</span>[cite: 3]</td>
+                </tr>
+                <tr>
+                    <td><strong>3. コード整形 ＆ スニペット挿入</strong></td>
+                    <td>ワンタップでインデント等を自動整列するフォーマッタ機能、および基本構文の型挿入ボタン[cite: 3]。</td>
+                    <td><span class="badge badge-frontend">フロント</span>[cite: 3]</td>
+                </tr>
+                <tr>
+                    <td><strong>4. やさしい出力コンソール ＆ 段階式ヒント</strong></td>
+                    <td>実行結果を表示。AIが答えを直ぐに教えず、①問題説明 ➔ ②確認箇所 ➔ ③修正方向 ➔ ④希望時の修正例の順に段階的支援。他言語（Java/JS等）の書き方との違いにも言及[cite: 2, 3]。</td>
+                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-ai">ローカルAI</span>[cite: 3]</td>
+                </tr>
+                <tr>
+                    <td><strong>5. ふりがな付き関数・構文辞書 (他言語対比対応)</strong></td>
+                    <td>基本関数の解説に加え、JavaやJavaScriptなど他言語を知る初学者に向けて「Pythonでの書き方の違い」を対比表示可能（履歴・お気に入り対応）[cite: 3]。</td>
+                    <td><span class="badge badge-frontend">フロント</span>[cite: 3]</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>3.2 AI支援・クラウド同期・モチベーション機能</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>機能名</th>
+                    <th>機能概要</th>
+                    <th>担当領域</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>6. エラー履歴・成長カルテ (クラウド同期)</strong></td>
+                    <td>過去のエラー、AIのヒント、修正ログを蓄積し、ゲスト利用およびクラウド経由でのマルチデバイス同期に対応[cite: 2, 3]。</td>
+                    <td><span class="badge badge-backend">サーバー/DB</span> / <span class="badge badge-frontend">フロント</span>[cite: 3]</td>
+                </tr>
+                <tr>
+                    <td><strong>7. アチーブメント（実績・バッジ）獲得機能</strong></td>
+                    <td>課題達成・学習継続・エラー解決に応じてバッジや称号を獲得しクラウド保存する機能[cite: 2, 3]。</td>
+                    <td><span class="badge badge-backend">サーバー/DB</span>[cite: 3]</td>
+                </tr>
+                <tr>
+                    <td><strong>8. やさしさ切り替え（モード設定）</strong></td>
+                    <td>「こども（ふりがなあり・やさしい言葉）」/「大人（標準表記）」のUI表現切り替えスイッチ[cite: 3]。</td>
+                    <td><span class="badge badge-frontend">フロント</span>[cite: 3]</td>
+                </tr>
+                <tr>
+                    <td><strong>9. AIモデル自動ダウンロード ＆ チャット</strong></td>
+                    <td>初回起動時にAIモデルの有無を確認して自動ダウンロード（進捗・再試行対応）。オフラインでも対話・採点（80点以上合格）が可能[cite: 2, 3]。</td>
+                    <td><span class="badge badge-ai">ローカルAI</span>[cite: 3]</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 4. 追加詳細仕様 -->
+    <section>
+        <h2>4. 追加詳細仕様（Python同梱・AI自動ダウンロード・段階式ヒント・他言語対比）</h2>
+
+        <h3>① Pythonランタイムの同梱</h3>
+        <ul>
+            <li><strong>同梱方針:</strong> 配布版には動作確認済みのPython実行環境を同梱し、ユーザーによる個別インストールを不要にする。バージョン差をなくし、Rust側でプロセス管理・タイムアウト（最大制限時間）や出力制限を行う[cite: 2]。将来の言語追加に備え実行処理層は分離。</li>
+        </ul>
+
+        <h3>② ローカルAIモデルの自動ダウンロード仕様</h3>
+        <ul>
+            <li><strong>初期導入フロー:</strong> 初回起動時にAIモデルの有無を判定し、未導入なら容量表示付きの自動ダウンロードを開始する（進捗表示、キャンセル、再試行に対応）。</li>
+            <li><strong>フォールバック:</strong> ダウンロード中や失敗時でも、エディタ・Python実行・基本的なエラー表示・コードのオートセーブは利用可能にする。モデル導入完了後にAI機能を有効化。</li>
+        </ul>
+
+        ### ③ 段階式ヒント＆他言語比較サポート仕様</h3>
+        <ul>
+            <li><strong>支援ステップ:</strong> AIは即座に正解コードを出さず、以下の段階で自力解決を促す。
+                <ol>
+                    <li><strong>問題の理解:</strong> 入力値と実際の出力を比べる案内[cite: 2]。</li>
+                    <li><strong>注目箇所の提示:</strong> 処理や変数の変化を確認する箇所を示す[cite: 2]。</li>
+                    <li><strong>修正方針の提案:</strong> 条件式やロジックの見直し方向を示す[cite: 2]。</li>
+                    <li><strong>修正例の提示:</strong> 学習者が「修正例を見る」ボタンを押した場合のみ、コード例と変更理由を表示する[cite: 2]。</li>
+                </ol>
+            </li>
+            <li><strong>他言語（Java/JS等）との対比サポート:</strong> 初学者が他の言語の構文（例: 末尾のセミコロン `;` や `System.out.println` 等）と混同した際のエラーに対し、AIヒントや辞書項目で「Javaではこうだけど、Pythonではこう書くよ」という対比情報を提示し、理解をスムーズにする。</li>
+        </ul>
+
+        ### ④ 課題データの管理とプライバシー
+        <ul>
+            <li><strong>課題データ:</strong> オフライン動作のため基本課題をアプリ内に同梱し、将来的にクラウド配信で追加できる拡張性を持たせる。</li>
+            <li><strong>コード保存ポリシー:</strong> コード全文の無制限なクラウド保存を避け、メタデータ（スコア、エラー種類、解決フラグ）や要約・ハッシュに留めることでプライバシーに配慮[cite: 2]。</li>
+        </ul>
+
+        ### ⑤ AIによる課題採点の仕様と例外ルール
+        <ul>
+            <li><strong>採点配点（合計100点満点・80点以上合格）[cite: 2]:</strong>
+                <ul>
+                    <li>要件達成度: 50点（指定された処理を満たしているか）[cite: 2]</li>
+                    <li>実行結果: 30点（テスト入力に対する出力が期待値と合うか）[cite: 2]</li>
+                    <li>コードの妥当性: 20点（ローカルAIによるコードの適切さ評価。模範解答と異なっていても正しく動作すれば合格）[cite: 2]</li>
+                </ul>
+            </li>
+            <li><strong>例外ルール:</strong> 構文エラー時は合格としない。必須テスト失敗時は点数に反映。AI応答失敗時は再試行（仮の合格点としない）。</li>
+        </ul>
+
+        <h3>⑥ オフライン・ログイン仕様</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>認証状態</th>
+                    <th>ネットワーク</th>
+                    <th>利用できる機能・動作[cite: 2]</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>ゲスト</strong></td>
+                    <td>オンライン</td>
+                    <td>ローカル機能を利用。クラウド同期はログイン後に実施[cite: 2]。</td>
+                </tr>
+                <tr>
+                    <td><strong>ログイン済み</strong></td>
+                    <td>オンライン</td>
+                    <td>ローカル機能、クラウド履歴の取得・同期[cite: 2]。</td>
+                </tr>
+                <tr>
+                    <td><strong>ゲスト / ログイン</strong></td>
+                    <td>オフライン</td>
+                    <td>Python実行、ダウンロード済みローカルAI、端末内保存データを利用[cite: 2]。</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 5. 開発の順番とチーム分担 -->
+    <section>
+        <h2>5. 開発の順番と6名チーム分担案</h2>
+        <h3>更新後の開発優先順位</h3>
+        <ol>
+            <li><strong>基盤・実行環境:</strong> Tauri、React、Rustの連携と、同梱Pythonによる実行・停止・出力表示の完成[cite: 2]。</li>
+            <li><strong>安全性・保存:</strong> 実行制限、エディタのコード自動保存（オートセーブ）、異常終了からの復元[cite: 2]。</li>
+            <li><strong>課題と採点:</strong> 課題データ、テストケース、80点以上の合格判定ロジック[cite: 2]。</li>
+            <li><strong>ローカルAI:</strong> モデルの自動ダウンロード、動作確認、段階式ヒント（他言語比較含む）、希望時の修正例表示[cite: 2]。</li>
+            <li><strong>ゲスト・アカウント・同期:</strong> 端末内履歴保存、ログイン、クラウド同期[cite: 2]。</li>
+            <li><strong>仕上げ:</strong> 辞書（他言語対比ルビ付き）、ふりがな、アチーブメント、インストーラー作成、総合テスト[cite: 2]。</li>
+        </ol>
+
+        <h3>6名チームの担当分け</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>担当ロール</th>
+                    <th>主な作業内容[cite: 2]</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>1. 画面担当</strong></td>
+                    <td>エディタ、コンソール、段階式ヒント・他言語対比UI、画面遷移[cite: 2]。</td>
+                </tr>
+                <tr>
+                    <td><strong>2. 実行担当</strong></td>
+                    <td>Rust連携、同梱Pythonのプロセス実行・停止・時間制限管理[cite: 2]。</td>
+                </tr>
+                <tr>
+                    <td><strong>3. AI担当</strong></td>
+                    <td>AIモデル自動ダウンロード機能、推論処理、段階式ヒントのプロンプト設計[cite: 2]。</td>
+                </tr>
+                <tr>
+                    <td><strong>4. 課題担当</strong></td>
+                    <td>課題データ構成、テストケース、採点ロジックの構築[cite: 2]。</td>
+                </tr>
+                <tr>
+                    <td><strong>5. サーバー担当</strong></td>
+                    <td>ユーザー認証、Web API、データベース、履歴同期[cite: 2]。</td>
+                </tr>
+                <tr>
+                    <td><strong>6. 統合・テスト担当</strong></td>
+                    <td>オートセーブ、共通データ形式定義、結合試験、配布インストーラー確認[cite: 2]。</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 6. データ仕様 (IPC / JSON) -->
+    <section>
+        <h2>6. データ仕様 (IPC / サーバーAPI)</h2>
+
+        <h3>学習履歴・エラーログ データ構造案（JSON）</h3>
+        <pre><code>{
+  "errorLogId": "err_log_20261013_001",
+  "userId": "usr_987654321",
+  "timestamp": "2026-10-13 13:40:00",
+  "language": "python",
+  "errorType": "LogicError", // "SyntaxError" または "LogicError"
+  "expectedOutput": "ねんれいは 10さいです",
+  "actualOutput": "ねんれいは 15さいです",
+  "translatedError": "お題の期待する結果と少し違っています。計算ロジックを見直してみましょう。",
+  "resolvedCodeHash": "hash_a1b2c3d4...", // プライバシー考慮のためコード全文ではなくハッシュや要約を保存
+  "isResolved": true,
+  "syncStatus": "synced" // "synced" または "pending"
+}</code></pre>
+
+        <h3>AI課題採点結果の出力構造案</h3>
+        <pre><code>{
+  "taskId": "task_python_001",
+  "isPassed": true,
+  "score": 95,
+  "evaluationBreakdown": {
+    "requirement": 50,
+    "executionResult": 30,
+    "codeValidity": 15
+  },
+  "feedback": "バッチリ目標通りの出力ができました！文字と数字の結合も正しく行えています。"
+}</code></pre>
+    </section>
+
+    <!-- 7. 画面レイアウト構成案 -->
+    <section>
+        <h2>7. 画面レイアウト構成案</h2>
+        <ul>
+            <li><strong>ヘッダー:</strong> ライト／ダークモード切替 ＆ 認証・接続ステータス表示[cite: 3]</li>
+            <li><strong>左エリア:</strong> 課題バナー ＆ フリーエディタ（コード整形、スニペット挿入、オートセーブ） ＆ 出力コンソール[cite: 3]</li>
+            <li><strong>右上エリア:</strong> AI学習アシスタント（段階式ヒント・他言語対比・希望時の修正例表示対応）[cite: 3]</li>
+            <li><strong>右下エリア:</strong> 他言語対比可能なふりがな付き関数・構文辞書 ＆ クラウド学習履歴進捗[cite: 3]</li>
+        </ul>
+    </section>
+</div>
+
+</body>
+</html>
             --border: #334155;
         }
 
