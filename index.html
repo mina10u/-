@@ -4,32 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>プログラミング学習 AI誤り分析アシスタント 仕様書</title>
-    <!-- Mermaid.jsの読み込み -->
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-    <script>
-        mermaid.initialize({
-            startOnLoad: true,
-            theme: "dark",
-            themeVariables: {
-                background: "#1e293b",
-                primaryColor: "#1e293b",
-                primaryTextColor: "#f8fafc",
-                primaryBorderColor: "#38bdf8",
-                lineColor: "#94a3b8",
-                secondaryColor: "#172554",
-                tertiaryColor: "#172033",
-                fontFamily: "sans-serif",
-                fontSize: "13px"
-            },
-            flowchart: {
-                useMaxWidth: true,
-                htmlLabels: true,
-                curve: "linear",
-                nodeSpacing: 25,
-                rankSpacing: 35
-            }
-        });
-    </script>
     <style>
         :root {
             --primary: #2563eb;
@@ -197,17 +171,6 @@
             border: 1px solid var(--border);
         }
 
-        .diagram-container {
-            background-color: #0b1120;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 1.5rem;
-            display: flex;
-            justify-content: center;
-            overflow-x: auto;
-            margin-top: 1rem;
-        }
-
         @media (max-width: 768px) {
             body { padding: 1rem; }
             header { flex-direction: column; }
@@ -222,14 +185,15 @@
         <div>
             <h1>プログラミング学習 AI誤り分析アシスタント 仕様書</h1>
             <div class="meta-info">
-                <span class="updated-date">最終更新日時: 2026年10月13日</span>
+                <span class="updated-date">最終更新日時: 2026年10月13日 10:28</span>
                 <span>アーキテクチャ: Tauri v2 (Desktop App)</span>
                 <span>対象OS: Windows 10/11</span>
                 <span>チーム規模: 6名</span>
             </div>
         </div>
         <div class="nav-group">
-            <a href="activity.html" class="btn">アクティビティ図を開く</a>
+            <a href="diagram.html" class="btn">画面遷移図を見る</a>
+            <a href="activity.html" class="btn">アクティビティ図を見る</a>
             <a href="mockup.html" class="btn btn-mockup">画面モックアップを開く ➔</a>
         </div>
     </header>
@@ -239,7 +203,7 @@
         <h2>1. アプリ概要・目的</h2>
         <p>小学生高学年から大人までのプログラミング初心者が、自分で一からコードを書きながらエラーや疑問を直感的に解消できるデスクトップアプリケーション。<strong>「自由創作」と「一から書く課題演習」の2モードを用意し、ローカルAIによるエラー・論理分析、クラウドによる学習履歴同期で楽しく学習をサポート</strong>します。</p>
         <ul>
-            <li><strong>ターゲット層:</strong> 小学生高学年、中高生、大学・専門学校生、社会人のプログラミング初学者[cite: 2]</li>
+            <li><strong>ターゲット層:</strong> 小学生高学年、中高生、大学・専門学校生、社会人のプログラミング初学者</li>
             <li><strong>コア体験:</strong> 複数言語対応（Python/JavaScript）、ローカルAIによるやさしいエラー・差分解説、クラウド同期型の成長カルテ、AIによる課題採点、アチーブメント獲得の統合学習体験</li>
         </ul>
     </section>
@@ -259,7 +223,7 @@
                 <tr>
                     <td><strong>デスクトップアプリ層</strong></td>
                     <td>コードエディタ、実行結果コンソール、AIチャット、辞書、学習履歴画面のUI提供。</td>
-                    <td>Tauri v2 (React / TypeScript)[cite: 2]</td>
+                    <td>Tauri v2 (React / TypeScript)</td>
                 </tr>
                 <tr>
                     <td><strong>ローカル実行環境</strong></td>
@@ -306,18 +270,18 @@
                 </tr>
                 <tr>
                     <td><strong>3. コード整形 ＆ スニペット挿入</strong></td>
-                    <td>言語ごとのフォーマッタによる自動インデント整列、および基本構文の型挿入ボタン[cite: 2]。</td>
-                    <td><span class="badge badge-frontend">フロント</span>[cite: 2]</td>
+                    <td>言語ごとのフォーマッタによる自動インデント整列、および基本構文の型挿入ボタン。</td>
+                    <td><span class="badge badge-frontend">フロント</span></td>
                 </tr>
                 <tr>
                     <td><strong>4. やさしい出力コンソール ＆ 差分解説</strong></td>
-                    <td>実行結果を表示。文法エラーの日本語翻訳に加え、期待結果と異なる場合の差分（Diff）ヒント表示[cite: 2]。</td>
+                    <td>実行結果を表示。文法エラーの日本語翻訳に加え、期待結果と異なる場合の差分（Diff）ヒント表示。</td>
                     <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-ai">ローカルAI</span></td>
                 </tr>
                 <tr>
                     <td><strong>5. ふりがな付き関数・構文辞書</strong></td>
-                    <td>選択言語に応じた関数解説。難解な漢字や専門用語にふりがな（ルビ）を表示可能（履歴・お気に入り対応）[cite: 2]。</td>
-                    <td><span class="badge badge-frontend">フロント</span>[cite: 2]</td>
+                    <td>選択言語に応じた関数解説。難解な漢字や専門用語にふりがな（ルビ）を表示可能（履歴・お気に入り対応）。</td>
+                    <td><span class="badge badge-frontend">フロント</span></td>
                 </tr>
             </tbody>
         </table>
@@ -334,18 +298,18 @@
             <tbody>
                 <tr>
                     <td><strong>6. エラー履歴・成長カルテ (クラウド同期)</strong></td>
-                    <td>過去のエラー、ローカルAIのヒント、修正ログを蓄積し、クラウド経由でマルチデバイス同期する機能[cite: 2]。</td>
+                    <td>過去のエラー、ローカルAIのヒント、修正ログを蓄積し、クラウド経由でマルチデバイス同期する機能。</td>
                     <td><span class="badge badge-backend">サーバー/DB</span> / <span class="badge badge-frontend">フロント</span></td>
                 </tr>
                 <tr>
                     <td><strong>7. アチーブメント（実績・バッジ）獲得機能</strong></td>
-                    <td>課題達成・学習継続・エラー解決に応じてバッジや称号を獲得しクラウド保存する機能[cite: 2]。</td>
+                    <td>課題達成・学習継続・エラー解決に応じてバッジや称号を獲得しクラウド保存する機能。</td>
                     <td><span class="badge badge-backend">サーバー/DB</span></td>
                 </tr>
                 <tr>
                     <td><strong>8. やさしさ切り替え（モード設定）</strong></td>
-                    <td>「こども（ふりがなあり）」/「大人（標準表記）」のUI表現切り替えスイッチ[cite: 2]。</td>
-                    <td><span class="badge badge-frontend">フロント</span>[cite: 2]</td>
+                    <td>「こども（ふりがなあり）」/「大人（標準表記）」のUI表現切り替えスイッチ。</td>
+                    <td><span class="badge badge-frontend">フロント</span></td>
                 </tr>
                 <tr>
                     <td><strong>9. ローカルAIによる課題評価・チャット</strong></td>
@@ -356,87 +320,9 @@
         </table>
     </section>
 
-    <!-- 4. システム機能・画面遷移フロー図 -->
+    <!-- 4. 追加詳細仕様 -->
     <section>
-        <h2>4. システム機能・画面遷移フロー図</h2>
-        <p>メイン画面から各機能へ進む構成と、学習中の操作フローを表しています。</p>
-        <div class="diagram-container">
-            <div class="mermaid">
-flowchart TB
-    Start(["アプリ起動"]) --> Main["メイン画面<br/>(言語切替: Python/JS)"]
-
-    Main --> Mode{"学習モードを選択"}
-    Main --> Support["学習サポート"]
-    Main --> Records["学習記録<br/>(クラウド同期対応)"]
-    Main --> Common["共通機能"]
-
-    subgraph Learning["① 学習機能"]
-      direction TB
-      Mode --> Free["自由創作"]
-      Mode --> Task["課題演習"]
-      Free --> Editor["コードエディタ"]
-      Task --> Editor
-      Editor --> Run["ローカルランタイム実行"]
-      Run --> Result["実行結果"]
-      Result --> Judge{"実行結果の判定"}
-
-      Judge -- "正常終了" --> Continue["学習を継続<br/>次のコードを書く"]
-      Continue --> Editor
-
-      Judge -- "文法エラー" --> Error["ローカルAI:<br/>やさしいエラー解説"]
-      Judge -- "期待と違う" --> Diff["ローカルAI:<br/>期待結果との差分解説"]
-      Error --> AI["AIサポート・チャット"]
-      Diff --> AI
-      AI --> Editor
-
-      Task -. "課題演習のみ" .-> Check["AI採点・課題チェック<br/>(クラウドへ結果送信)"]
-      Result -. "課題演習のみ" .-> Check
-      Check --> Editor
-    end
-
-    subgraph SupportGroup["② 学習サポート"]
-      direction TB
-      Support --> Format["コード整形"]
-      Support --> Dictionary["関数・構文辞書<br/>(選択言語に連動)"]
-      Support --> Snippet["スニペット挿入"]
-      Dictionary <--> DictFeatures["検索・履歴・お気に入り"]
-    end
-
-    subgraph RecordGroup["③ 学習記録 (クラウド同期)"]
-      direction TB
-      Records --> Achievement["アチーブメント<br/>(バッジ獲得)"]
-      Records --> Karte["成長カルテ<br/>(エラー・修正ログ)"]
-      Achievement --> CloudSync1["サーバーへ保存・同期"]
-      Karte --> CloudSync2["サーバーへ保存・同期"]
-    end
-
-    subgraph CommonGroup["④ 共通機能"]
-      direction TB
-      Common --> Save["ファイル保存"]
-      Common --> Switch["表示モード切替"]
-      Switch --> Kid["子ども向け表示<br/>(ルビあり)"]
-      Switch --> Adult["大人向け表示"]
-    end
-
-    classDef start fill:#14532d,stroke:#4ade80,color:#f8fafc,stroke-width:2px;
-    classDef main fill:#1d4ed8,stroke:#60a5fa,color:#ffffff,stroke-width:2px;
-    classDef learning fill:#172554,stroke:#38bdf8,color:#f8fafc,stroke-width:1.5px;
-    classDef error fill:#7f1d1d,stroke:#f87171,color:#ffffff,stroke-width:1.5px;
-    classDef record fill:#0e7490,stroke:#22d3ee,color:#ffffff,stroke-width:1.5px;
-    classDef common fill:#164e63,stroke:#22d3ee,color:#ffffff,stroke-width:1.5px;
-    class Start start;
-    class Main main;
-    class Editor,Run,Result,Continue,Check learning;
-    class Error,Diff,AI error;
-    class Records,Achievement,Karte,CloudSync1,CloudSync2 record;
-    class Common,Save,Switch,Kid,Adult common;
-            </div>
-        </div>
-    </section>
-
-    <!-- 5. 追加詳細仕様 -->
-    <section>
-        <h2>5. 追加詳細仕様（AI・クラウド・複数言語・採点）</h2>
+        <h2>4. 追加詳細仕様（AI・クラウド・複数言語・採点）</h2>
 
         <h3>① 複数プログラミング言語への対応</h3>
         <ul>
@@ -448,12 +334,12 @@ flowchart TB
         <h3>② ローカルAI仕様</h3>
         <ul>
             <li><strong>実行場所:</strong> ユーザーのPC内（外部APIに依存しないため、オフラインでもエラー解説やチャットが利用可能）。</li>
-            <li><strong>入力・出力:</strong> コード、実行結果、エラー情報、課題文を入力し、初心者向け解説・問題箇所・改善ヒントを出力[cite: 2]。</li>
+            <li><strong>入力・出力:</strong> コード、実行結果、エラー情報、課題文を入力し、初心者向け解説・問題箇所・改善ヒントを出力。</li>
         </ul>
 
         <h3>③ クラウド保存・学習履歴の同期ルール</h3>
         <ul>
-            <li><strong>保存データ:</strong> ユーザーID、エラー履歴（発生日時、種類、解決状態）、修正ログ（コード変遷）、学習進捗（課題達成状況）、アチーブメント、辞書お気に入り[cite: 2]。</li>
+            <li><strong>保存データ:</strong> ユーザーID、エラー履歴（発生日時、種類、解決状態）、修正ログ（コード変遷）、学習進捗（課題達成状況）、アチーブメント、辞書お気に入り。</li>
             <li><strong>同期フロー:</strong> ログイン後にサーバーから最新データを取得 ➔ 記録作成時に自動送信 ➔ 失敗時は未同期として保持しオフライン再送。</li>
         </ul>
 
@@ -464,15 +350,15 @@ flowchart TB
         </ul>
     </section>
 
-    <!-- 6. データ仕様 (IPC / JSON) -->
+    <!-- 5. データ仕様 (IPC / JSON) -->
     <section>
-        <h2>6. データ仕様 (IPC / サーバーAPI)</h2>
+        <h2>5. データ仕様 (IPC / サーバーAPI)</h2>
 
         <h3>学習履歴・エラーログ データ構造案（JSON）</h3>
         <pre><code>{
   "errorLogId": "err_log_20261013_001",
   "userId": "usr_987654321",
-  "timestamp": "2026-10-13 10:16:00",
+  "timestamp": "2026-10-13 10:28:00",
   "language": "python",
   "errorType": "LogicError", // "SyntaxError" または "LogicError"
   "expectedOutput": "ねんれいは 10さいです",
@@ -495,6 +381,17 @@ flowchart TB
   },
   "feedback": "バッチリ目標通りの出力ができました！文字と数字の結合も正しく行えています。"
 }</code></pre>
+    </section>
+
+    <!-- 6. 画面レイアウト構成案 -->
+    <section>
+        <h2>6. 画面レイアウト構成案</h2>
+        <ul>
+            <li><strong>ヘッダー:</strong> 言語切替 ＆ モード切替（「自由創作」/「課題演習」） ＆ やさしさ切替 ＆ 成長カルテ・アチーブメントアイコン</li>
+            <li><strong>左エリア:</strong> 課題バナー ＆ フリーエディタ（コード整形、スニペット挿入） ＆ 出力コンソール（目標値・差分表示対応）</li>
+            <li><strong>右上エリア:</strong> ローカルAIヒント・対話チャット</li>
+            <li><strong>右下エリア:</strong> ふりがな付き関数・構文辞書（選択言語に連動）</li>
+        </ul>
     </section>
 </div>
 
