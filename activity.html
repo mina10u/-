@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>アクティビティ図 - コード実行＆AIサポートフロー</title>
+<title>アクティビティ図 - AI誤り分析＆クラウド同期フロー</title>
 <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 <script>
 mermaid.initialize({
@@ -117,7 +117,6 @@ h1 { margin: 0; color: var(--accent); font-size: 1.1rem; }
   max-width: 100% !important;
   max-height: 100% !important;
 }
-
 .note {
   flex-shrink: 0;
   max-width: 1500px;
@@ -138,65 +137,61 @@ h1 { margin: 0; color: var(--accent); font-size: 1.1rem; }
 </head>
 <body>
 <header>
-  <h1>アクティビティ図（コード実行・AIフィードバック）</h1>
+  <h1>アクティビティ図（ローカル実行・AI分析・クラウド同期フロー）</h1>
   <a class="back-link" href="index.html">← 仕様書トップに戻る</a>
 </header>
-<p class="intro">ユーザーがコードを入力してからシステムが判定を行い、エラー判定やAIアドバイスを経て再挑戦・達成へ向かう処理手順を表しています。</p>
+<p class="intro">複数言語（Python/JS）のコード入力からローカルランタイムでの実行、ローカルAIによるエラー・論理分析、クラウドへの学習履歴同期までの処理手順を表しています。</p>
 <div class="legend">
-  <span><i class="swatch" style="background:#14532d"></i>開始 / 成功 / 終了</span>
-  <span><i class="swatch" style="background:#1e293b; border: 1px solid #38bdf8;"></i>ユーザー操作・基本処理</span>
-  <span><i class="swatch" style="background:#1d4ed8"></i>システム判定・分岐</span>
-  <span><i class="swatch" style="background:#7f1d1d"></i>文法エラー対応</span>
-  <span><i class="swatch" style="background:#7c2d12"></i>期待との差分対応 (論理エラー)</span>
+  <span><i class="swatch" style="background:#14532d"></i>開始 / 達成・終了</span>
+  <span><i class="swatch" style="background:#1e293b; border: 1px solid #38bdf8;"></i>ユーザー操作・実行</span>
+  <span><i class="swatch" style="background:#1d4ed8"></i>システム判定</span>
+  <span><i class="swatch" style="background:#7f1d1d"></i>エラー・差分対応</span>
+  <span><i class="swatch" style="background:#0e7490"></i>クラウド同期</span>
 </div>
 <main class="viewport">
 <div class="mermaid">
 flowchart TB
-    Start(["● 開始"]) --> InputCode["ユーザー：コードを入力・編集"]
-    InputCode --> ClickRun["ユーザー：「▶ うごかす！」を押下"]
+    Start(["● 開始"]) --> SelectLang["言語選択 (Python / JS) & コード入力"]
+    SelectLang --> ClickRun["「▶ うごかす！」を押下"]
     
-    ClickRun --> CheckSyntax{"システム：構文判定<br/>(Syntax Check)"}
+    ClickRun --> CheckSyntax{"Rust: 構文・ランタイム判定"}
     
-    %% 構文エラー
-    CheckSyntax -- "文法エラー" --> ParseErr["やさしい言葉に変換した<br/>文法エラー解説を生成"]
-    ParseErr --> AiExplain["AIロボ：修正ポイントと<br/>ヒントをチャットに表示"]
-    AiExplain --> SaveKarte1["成長カルテに<br/>エラーログを自動保存"]
-    SaveKarte1 --> InputCode
+    %% 文法エラー
+    CheckSyntax -- "文法エラー" --> ParseErr["ローカルAI: やさしいエラー解説を生成"]
+    ParseErr --> SaveLocal1["ローカルにエラーログを保存"]
+    SaveLocal1 --> SyncCloud1["クラウドサーバーへ非同期送信"]
+    SyncCloud1 --> SelectLang
 
     %% 構文正常
-    CheckSyntax -- "構文正常" --> RunCode["プログラム実行 & 実行結果を出力"]
-    RunCode --> CheckLogic{"判定：期待する出力と一致？"}
+    CheckSyntax -- "構文正常" --> RunCode["選択言語の実行環境でコード実行"]
+    RunCode --> CheckLogic{"判定：期待値と一致？"}
 
     %% 論理エラー (期待と違う)
-    CheckLogic -- "期待と違う" --> GenDiff["期待結果と現在結果の<br/>差分(Diff)メッセージを生成"]
-    GenDiff --> AiDiffHint["AIロボ：どこがどう違うかの<br/>アドバイスを表示"]
-    AiDiffHint --> SaveKarte2["成長カルテに<br/>修正ログを自動保存"]
-    SaveKarte2 --> InputCode
+    CheckLogic -- "期待と違う" --> GenDiff["ローカルAI: 差分(Diff)解説を生成"]
+    GenDiff --> SaveLocal2["ローカルに修正ログを保存"]
+    SaveLocal2 --> SyncCloud2["クラウドサーバーへログ同期"]
+    SyncCloud2 --> SelectLang
 
-    %% 完全成功
-    CheckLogic -- "一致 (大成功！)" --> ShowSuccess["大成功アニメーション表示 &<br/>AIロボが褒めるメッセージ送信"]
-    ShowSuccess --> CheckAchievement{"アチーブメント判定"}
-    
-    CheckAchievement -- "条件達成" --> UnlockBadge["ごほうびバッジを獲得！"]
-    CheckAchievement -- "未達成" --> NextAction
-    UnlockBadge --> NextAction["次の課題へ進む or 自由創作を継続"]
-    
-    NextAction --> End(["◉ 終了"])
+    %% 完全成功 (AI採点クリア)
+    CheckLogic -- "一致 (大成功！)" --> AiScore["ローカルAI: 採点＆評価 (100点満点)"]
+    AiScore --> SaveSuccess["学習達成データを保存"]
+    SaveSuccess --> SyncCloud3["クラウドへアチーブメント・進捗を同期"]
+    SyncCloud3 --> End(["◉ 達成・終了"])
 
     %% スタイル定義
     classDef startEnd fill:#14532d,stroke:#4ade80,color:#f8fafc,stroke-width:2px;
     classDef action fill:#1e293b,stroke:#38bdf8,color:#f8fafc,stroke-width:1.5px;
     classDef decision fill:#1d4ed8,stroke:#60a5fa,color:#ffffff,stroke-width:1.5px;
-    classDef syntaxErr fill:#7f1d1d,stroke:#f87171,color:#ffffff,stroke-width:1.5px;
-    classDef logicErr fill:#7c2d12,stroke:#fb923c,color:#ffffff,stroke-width:1.5px;
+    classDef error fill:#7f1d1d,stroke:#f87171,color:#ffffff,stroke-width:1.5px;
+    classDef cloud fill:#0e7490,stroke:#22d3ee,color:#ffffff,stroke-width:1.5px;
 
-    class Start,End,ShowSuccess,UnlockBadge startEnd;
-    class InputCode,ClickRun,RunCode,SaveKarte1,SaveKarte2,NextAction action;
-    class CheckSyntax,CheckLogic,CheckAchievement decision;
-    class ParseErr,AiExplain syntaxErr;
-    class GenDiff,AiDiffHint logicErr;
+    class Start,End,SaveSuccess startEnd;
+    class SelectLang,ClickRun,RunCode,AiScore action;
+    class CheckSyntax,CheckLogic decision;
+    class ParseErr,GenDiff error;
+    class SaveLocal1,SaveLocal2,SyncCloud1,SyncCloud2,SyncCloud3 cloud;
 </div>
 </main>
-<p class="note">補足：「文法エラー」と「期待と違う（論理エラー）」で別々のフィードバックルートを用意し、どちらの場合もAIサポートを経てコード再編集へ戻るループ構造になっています。</p>
+<p class="note">補足：AI解析はすべてユーザーのPC内（ローカルAI）で行われ、データの永続化やマルチデバイス同期のみクラウドサーバーを介して行われるハイブリッド構成です。</p>
 </body>
 </html>
