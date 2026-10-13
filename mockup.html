@@ -5,188 +5,146 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>コードラボ | プログラミング学習 AI誤り分析アシスタント</title>
 <style>
-/* デフォルト：親しみやすい明るいライトモード */
-:root {
-  --bg: #f8fafc;
-  --panel: #ffffff;
-  --panel2: #f1f5f9;
-  --border: #cbd5e1;
-  --text: #1e293b;
-  --muted: #64748b;
-  --blue: #2563eb;
-  --cyan: #0284c7;
-  --green: #16a34a;
-  --orange: #d97706;
-  --red: #dc2626;
-  --editor-bg: #ffffff;
-  --editor-text: #0f172a;
-  --line-num-bg: #f8fafc;
-  --line-num-text: #94a3b8;
-  --code-border: #e2e8f0;
+:root{
+  --bg:#0b1120;--panel:#111b2e;--panel2:#162238;--border:#293750;
+  --text:#e8eef8;--muted:#91a1bb;--blue:#4f8cff;--cyan:#54d6e8;
+  --green:#49d6a0;--orange:#ffbd69;--red:#ff7185;
 }
-
-/* ダークモード設定 */
-[data-theme="dark"] {
-  --bg: #0b1120;
-  --panel: #111b2e;
-  --panel2: #162238;
-  --border: #293750;
-  --text: #e8eef8;
-  --muted: #91a1bb;
-  --blue: #4f8cff;
-  --cyan: #54d6e8;
-  --green: #49d6a0;
-  --orange: #ffbd69;
-  --red: #ff7185;
-  --editor-bg: #0c1423;
-  --editor-text: #dbeafe;
-  --line-num-bg: #0c1423;
-  --line-num-text: #53637c;
-  --code-border: #1d2b40;
+[data-theme="light"]{
+  --bg:#f1f5f9;--panel:#ffffff;--panel2:#f8fafc;--border:#cbd5e1;
+  --text:#0f172a;--muted:#64748b;--blue:#2563eb;--cyan:#0284c7;
+  --green:#16a34a;--orange:#d97706;--red:#dc2626;
 }
-
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 "Segoe UI",Meiryo,sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;transition:background 0.3s, color 0.3s;}
-button,textarea,input{font:inherit}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 "Segoe UI",Meiryo,sans-serif;transition:background 0.2s,color 0.2s}
+button,textarea{font:inherit}
 button{cursor:pointer}
-
-.app{height:100vh;display:flex;flex-direction:column}
-.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:var(--panel);gap:18px;flex-shrink:0;transition:background 0.3s, border-color 0.3s;}
+.app{min-height:100vh;display:flex;flex-direction:column}
+.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:var(--panel2);gap:18px}
 .brand{display:flex;align-items:center;gap:12px;font-weight:750;font-size:17px;white-space:nowrap}
 .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3986ff,#48d7d0);display:grid;place-items:center;color:#061323;font-weight:900;font-size:19px}
 .brand small{display:block;color:var(--muted);font-size:11px;font-weight:500;letter-spacing:.04em}
 .top-actions{display:flex;align-items:center;gap:10px}
-.pill{border:1px solid var(--border);border-radius:999px;padding:6px 11px;color:var(--muted);font-size:12px;background:var(--panel2)}
-.pill.online{color:var(--green);border-color:#245847}
-.avatar{width:32px;height:32px;border-radius:50%;background:var(--panel2);border:1px solid var(--border);display:grid;place-items:center;font-weight:700}
-
-.layout{display:grid;grid-template-columns:220px minmax(380px,1fr) minmax(290px,340px);gap:16px;padding:18px;flex:1;min-height:0;overflow:hidden}
-.sidebar,.workspace,.rightbar{min-width:0;display:flex;flex-direction:column;height:100%;overflow:hidden}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:background 0.3s, border-color 0.3s;}
-.sidebar .panel{padding:16px;overflow-y:auto}
+.pill{border:1px solid var(--border);border-radius:999px;padding:6px 11px;color:var(--muted);font-size:12px}
+.pill.online{color:var(--green);border-color:var(--border)}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--border);display:grid;place-items:center;font-weight:700}
+.nav-links{display:flex;gap:8px;margin-right:10px}
+.nav-link{text-decoration:none;font-size:12px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);color:var(--text);background:var(--panel)}
+.nav-link:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.layout{display:grid;grid-template-columns:220px minmax(380px,1fr) minmax(290px,340px);gap:16px;padding:18px;flex:1;min-height:0}
+.sidebar,.workspace,.rightbar{min-width:0}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.sidebar .panel{padding:16px}
 .side-title{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.12em;margin:8px 8px 10px}
-.nav{display:flex;align-items:center;gap:10px;padding:10px 11px;margin:3px 0;border-radius:9px;color:var(--text);cursor:pointer;opacity:0.8}
-.nav:hover{opacity:1;background:var(--panel2)}
-.nav.active{background:var(--blue);color:#fff;font-weight:600;opacity:1}
+.nav{display:flex;align-items:center;gap:10px;padding:10px 11px;margin:3px 0;border-radius:9px;color:var(--text);cursor:pointer}
+.nav.active{background:var(--panel2);color:var(--blue);border:1px solid var(--border);font-weight:700}
 .nav .ico{width:19px;text-align:center;font-size:16px}
 .side-note{margin-top:18px;padding:13px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:12px}
 .side-note strong{display:block;color:var(--cyan);margin-bottom:4px}
-
-.workspace{overflow-y:auto;padding-right:4px}
-.mainhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:3px 2px 14px;flex-shrink:0}
+.mainhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:3px 2px 14px}
 h1{font-size:21px;margin:0 0 4px}
 .sub{color:var(--muted);font-size:12px}
 .mode-switch{display:flex;padding:4px;border-radius:10px;border:1px solid var(--border);background:var(--panel2);white-space:nowrap}
 .mode-switch button{background:transparent;color:var(--muted);border:0;border-radius:7px;padding:7px 10px;font-size:12px}
-.mode-switch button.active{background:var(--blue);color:#fff;font-weight:600}
-
-.editor-panel{display:flex;flex-direction:column;flex:1;min-height:300px}
-.panel-head{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;border-bottom:1px solid var(--border);background:var(--panel2);flex-shrink:0}
+.mode-switch button.active{background:var(--blue);color:#fff}
+.editor-panel{display:flex;flex-direction:column;min-height:420px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;border-bottom:1px solid var(--border);background:var(--panel2)}
 .panel-head strong{font-size:13px}
 .file-label{display:flex;align-items:center;gap:8px;color:var(--text);font-size:12px}
 .py-icon{display:inline-grid;place-items:center;width:20px;height:20px;background:#f1c75b;color:#18233a;border-radius:5px;font-size:11px;font-weight:900}
 .tools{display:flex;gap:7px}
 .btn{border:1px solid var(--border);background:var(--panel);color:var(--text);border-radius:8px;padding:7px 11px;font-size:12px}
-.btn:hover{filter:brightness(0.95)}
-.btn-run{background:var(--green);border-color:var(--green);color:#ffffff;font-weight:800}
-
-.editor-wrap{display:grid;grid-template-columns:42px minmax(0,1fr);flex:1;min-height:200px;background:var(--editor-bg);overflow:hidden;border-bottom:1px solid var(--code-border)}
-.line-numbers{padding:17px 10px 17px 0;text-align:right;color:var(--line-num-text);white-space:pre;user-select:none;font:13px/1.8 Consolas,monospace;background:var(--line-num-bg);border-right:1px solid var(--code-border)}
-#code{resize:none;width:100%;height:100%;background:transparent;border:0;outline:none;color:var(--editor-text);padding:17px 16px;font:13px/1.8 Consolas,"Cascadia Code",monospace;tab-size:4;white-space:pre;overflow:auto}
-.editor-footer{display:flex;justify-content:space-between;gap:10px;padding:8px 14px;background:var(--panel);color:var(--muted);font-size:11px;flex-shrink:0}
-
-.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;flex-shrink:0}
+.btn:hover{filter:brightness(1.15)}
+.btn-primary{background:var(--blue);border-color:var(--blue);color:white;font-weight:700;padding:8px 16px}
+.btn-run{background:#1d9c75;border-color:#1d9c75;color:#fff;font-weight:800}
+.editor-wrap{display:grid;grid-template-columns:42px minmax(0,1fr);flex:1;min-height:300px;background:var(--bg)}
+.line-numbers{padding:17px 10px 17px 0;text-align:right;color:var(--muted);white-space:pre;user-select:none;font:13px/1.8 Consolas,monospace;border-right:1px solid var(--border)}
+#code{resize:none;width:100%;height:100%;min-height:300px;background:transparent;border:0;outline:none;color:var(--text);padding:17px 16px;font:13px/1.8 Consolas,"Cascadia Code",monospace;tab-size:4;white-space:pre;overflow:auto}
+.editor-footer{display:flex;justify-content:space-between;gap:10px;padding:8px 14px;border-top:1px solid var(--border);color:var(--muted);font-size:11px}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
 .output-panel,.hint-panel{min-height:160px}
-.small-head{padding:11px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:12px;background:var(--panel2)}
-.status{font-size:10px;padding:3px 7px;border-radius:999px;background:var(--panel);border:1px solid var(--border);color:var(--muted)}
-.output-body{padding:12px 14px;color:var(--text);font:12px/1.8 Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:140px;overflow-y:auto;background:var(--editor-bg)}
+.small-head{padding:11px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:12px}
+.status{font-size:10px;padding:3px 7px;border-radius:999px;background:var(--panel2);color:var(--muted)}
+.output-body{padding:12px 14px;color:var(--text);font:12px/1.8 Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
 .output-body .success{color:var(--green)}
 .output-body .error{color:var(--red)}
-.hint-body{padding:12px 14px;color:var(--text);font-size:12px;max-height:140px;overflow-y:auto}
+.hint-body{padding:12px 14px;color:var(--text);font-size:12px}
 .hint-body strong{color:var(--cyan)}
-
-.rightbar{display:flex;flex-direction:column;gap:14px;overflow-y:auto}
+.rightbar{display:flex;flex-direction:column;gap:14px}
 .ai-head{display:flex;align-items:center;gap:9px}
-.ai-mark{width:29px;height:29px;border-radius:9px;background:var(--panel2);color:var(--cyan);display:grid;place-items:center;font-weight:900;border:1px solid var(--border)}
+.ai-mark{width:29px;height:29px;border-radius:9px;background:var(--panel2);color:var(--cyan);display:grid;place-items:center;font-weight:900}
 .ai-card{padding:15px}
 .ai-card h2{font-size:14px;margin:0}
 .ai-card .sub{margin-top:3px}
-.ai-message{margin:12px 0 10px;background:var(--panel2);border:1px solid var(--border);border-radius:11px;padding:12px;color:var(--text);font-size:12px;max-height:110px;overflow-y:auto}
+.ai-message{margin:15px 0 12px;background:var(--panel2);border:1px solid var(--border);border-radius:11px;padding:12px;color:var(--text);font-size:12px}
 .ai-message strong{color:var(--text)}
-.quick-prompts{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 10px}
-.quick-prompts button{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:999px;padding:5px 8px;font-size:11px}
+.quick-prompts{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 13px}
+.quick-prompts button{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:999px;padding:6px 9px;font-size:11px}
 .chat-form{display:flex;gap:7px}
-.chat-form input{width:100%;min-width:0;background:var(--editor-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);outline:none;font-size:12px}
-.chat-form button{border:0;border-radius:8px;background:var(--blue);color:white;padding:0 12px;font-weight:700;font-size:12px}
-
+.chat-form input{width:100%;min-width:0;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);outline:none}
+.chat-form button{border:0;border-radius:8px;background:var(--blue);color:white;padding:0 13px;font-weight:700}
 .task-card{padding:15px}
-.card-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.card-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .card-title h2{font-size:14px;margin:0}
-.tag{font-size:10px;color:var(--cyan);background:var(--panel2);border:1px solid var(--border);border-radius:5px;padding:3px 6px}
-.task-card p{font-size:12px;color:var(--text);margin:0 0 10px}
-.example{background:var(--editor-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font:11px/1.6 Consolas,monospace;color:var(--editor-text)}
-.task-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:9px}
-
+.tag{font-size:10px;color:var(--cyan);background:var(--panel2);border-radius:5px;padding:4px 7px}
+.task-card p{font-size:12px;color:var(--text);margin:0 0 12px}
+.example{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;font:12px/1.7 Consolas,monospace;color:var(--text)}
+.task-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:11px}
 .progress-card{padding:15px}
 .progress-top{display:flex;justify-content:space-between;align-items:center}
 .progress-top h2{font-size:14px;margin:0}
-.progress-num{font-size:16px;font-weight:800;color:var(--green)}
-.progress-track{height:6px;border-radius:10px;background:var(--panel2);overflow:hidden;margin:10px 0 6px;border:1px solid var(--border)}
-.progress-fill{height:100%;width:35%;background:linear-gradient(90deg,#2563eb,#0284c7);border-radius:10px}
+.progress-num{font-size:20px;font-weight:800;color:var(--green)}
+.progress-track{height:7px;border-radius:10px;background:var(--border);overflow:hidden;margin:12px 0 8px}
+.progress-fill{height:100%;width:35%;background:linear-gradient(90deg,#2c9e9a,#58ddb0);border-radius:10px}
 .progress-foot{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
-
-.footer{padding:8px 22px;border-top:1px solid var(--border);background:var(--panel);color:var(--muted);font-size:10px;display:flex;justify-content:space-between;gap:10px;flex-shrink:0}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);padding:11px 16px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--text);box-shadow:0 10px 35px rgba(0,0,0,0.15);display:none;z-index:10}
-
-@media(max-width:1100px){.layout{grid-template-columns:190px minmax(0,1fr)}.rightbar{grid-column:2;display:grid;grid-template-columns:1fr 1fr;height:auto}.rightbar .ai-card{grid-row:span 2}}
+.footer{padding:10px 22px;border-top:1px solid var(--border);color:var(--muted);font-size:10px;display:flex;justify-content:space-between;gap:10px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);padding:11px 16px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--text);box-shadow:0 10px 35px #0005;display:none;max-width:90vw;z-index:10}
+@media(max-width:1100px){.layout{grid-template-columns:190px minmax(0,1fr)}.rightbar{grid-column:2;display:grid;grid-template-columns:1fr 1fr}.rightbar .ai-card{grid-row:span 2}}
+@media(max-width:760px){.topbar{padding:0 12px}.top-actions .pill{display:none}.layout{display:flex;flex-direction:column;padding:12px}.sidebar .panel{display:flex;gap:4px;overflow:auto;padding:8px}.side-title,.side-note{display:none}.nav{white-space:nowrap;padding:8px}.mainhead{flex-direction:column}.rightbar{display:flex}.bottom-grid{grid-template-columns:1fr}.editor-panel{min-height:380px}.footer{flex-direction:column}}
 </style>
 </head>
-<body data-theme="light">
+<body>
 <div class="app">
   <header class="topbar">
     <div class="brand"><div class="logo">&lt;/&gt;</div><div>コードラボ<small>プログラミング学習 AI誤り分析アシスタント</small></div></div>
     <div class="top-actions">
-      <a href="index.html" class="pill" style="text-decoration:none;">📄 仕様書へ戻る</a>
-      <button class="pill" id="themeToggleBtn" style="cursor:pointer;">🌙 ダークモードにする</button>
-      <span class="pill online">● ローカルAI稼働中</span>
-      <span class="avatar" title="ユーザー">学</span>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">仕様書</a>
+        <a href="diagram.html" class="nav-link">画面遷移図</a>
+        <a href="activity.html" class="nav-link">アクティビティ図</a>
+      </div>
+      <button class="btn" id="themeToggleBtn" style="font-weight:bold;">☀️ / 🌙 テーマ切替</button>
+      <span class="pill">🐍 Python のみ</span>
+      <span class="pill online">● ローカルモード</span>
+      <span class="avatar">学</span>
     </div>
   </header>
 
   <div class="layout">
-    <!-- 左サイドバー -->
     <aside class="sidebar">
       <div class="panel">
         <div class="side-title">LEARNING</div>
         <div class="nav active" data-nav="エディタ"><span class="ico">⌨</span>コードエディタ</div>
-        <div class="nav" data-nav="課題演習"><span class="ico">▣</span>課題演習モード</div>
+        <div class="nav" data-nav="課題演習"><span class="ico">▣</span>課題演習</div>
         <div class="nav" data-nav="関数・構文辞書"><span class="ico">⌕</span>関数・構文辞書</div>
         <div class="side-title" style="margin-top:22px">MY RECORDS</div>
-        <div class="nav" data-nav="成長カルテ"><span class="ico">▥</span>成長カルテ (同期)</div>
+        <div class="nav" data-nav="成長カルテ"><span class="ico">▥</span>成長カルテ</div>
         <div class="nav" data-nav="エラー履歴"><span class="ico">↺</span>エラー履歴</div>
         <div class="nav" data-nav="アチーブメント"><span class="ico">✧</span>アチーブメント</div>
-        <div class="side-note"><strong>✦ Pythonで学ぼう！</strong>ローカルAIがあなたのコードをその場で分析し、やさしくサポートします。</div>
+        <div class="side-note"><strong>✦ 学習を続けよう！</strong>エラーは上達のチャンス。AIと一緒に、少しずつ理解していこう。</div>
       </div>
     </aside>
 
-    <!-- 中央ワークスペース -->
     <main class="workspace">
       <div class="mainhead">
-        <div><h1>コードエディタ</h1><div class="sub">Pythonコードを書いて実行、ローカルAIによる誤り分析と採点を受けよう。</div></div>
-        <div class="mode-switch" aria-label="学習モード">
-          <button class="active" data-mode="自由創作">自由創作モード</button>
-          <button data-mode="課題演習">課題演習モード</button>
-        </div>
+        <div><h1>コードエディタ</h1><div class="sub">自分で書いて、実行して、エラーの理由を学ぼう。</div></div>
+        <div class="mode-switch" aria-label="学習モード"><button class="active" data-mode="自由創作">自由創作</button><button data-mode="課題演習">課題演習</button></div>
       </div>
 
       <section class="panel editor-panel">
         <div class="panel-head">
-          <div class="file-label"><span class="py-icon">Py</span><strong>main.py</strong><span class="status">Python 3.14</span></div>
-          <div class="tools">
-            <button class="btn" id="resetBtn">初期コード</button>
-            <button class="btn" id="formatBtn">✨ 整形</button>
-            <button class="btn btn-run" id="runBtn">▶ 実行する</button>
-          </div>
+          <div class="file-label"><span class="py-icon">Py</span><strong>main.py</strong><span class="status">Python 3</span></div>
+          <div class="tools"><button class="btn" id="resetBtn">初期コード</button><button class="btn btn-run" id="runBtn">▶ 実行</button></div>
         </div>
         <div class="editor-wrap">
           <div class="line-numbers" id="lineNumbers">1
@@ -194,103 +152,54 @@ h1{font-size:21px;margin:0 0 4px}
 3
 4
 5</div>
-          <textarea id="code" spellcheck="false" aria-label="Pythonコードエディタ"># 課題: 年齢(10歳)を表示するプログラムを作ろう！
-age = 10 + 5
-print("ねんれいは " + str(age) + "さいです")</textarea>
+          <textarea id="code" spellcheck="false" aria-label="Pythonコードエディタ"># はじめてのPython
+name = "せんせい"
+print("こんにちは、" + name + "！")
+
+for i in range(3):
+    print("学習中", i + 1)</textarea>
         </div>
-        <div class="editor-footer">
-          <span id="editorStatus">準備完了 (オフライン対応)</span>
-          <span>UTF-8 | Python ランタイム</span>
-        </div>
+        <div class="editor-footer"><span id="editorStatus">準備完了</span><span>UTF-8 | Python</span></div>
       </section>
 
-      <!-- 下部グリッド (実行結果 & エラー分析) -->
       <div class="bottom-grid">
         <section class="panel output-panel">
-          <div class="small-head">
-            <span>▹ 実行コンソール</span>
-            <span class="status" id="runStatus">未実行</span>
-          </div>
-          <div class="output-body" id="output">「▶ 実行する」を押すと、ローカル環境でコードが実行されます。</div>
+          <div class="small-head"><span>▹ 実行結果</span><span class="status" id="runStatus">未実行</span></div>
+          <div class="output-body" id="output">ここにプログラムの実行結果が表示されます。</div>
         </section>
         <section class="panel hint-panel">
-          <div class="small-head">
-            <span>✦ ローカルAI 分析・差分ヒント</span>
-            <span class="status">合格点: 80点</span>
-          </div>
-          <div class="hint-body" id="hint">
-            <strong>実行後にAI分析が表示されます。</strong><br>期待される出力との差分や、初心者向けの優しいエラー解説をここに表示します。
-          </div>
+          <div class="small-head"><span>✦ エラー分析</span><span class="status">学習サポート</span></div>
+          <div class="hint-body" id="hint"><strong>実行すると、ここにヒントが表示されます。</strong><br>エラーが出た場合も、原因と直し方をわかりやすく確認できます。</div>
         </section>
       </div>
     </main>
 
-    <!-- 右サイドバー -->
     <aside class="rightbar">
       <section class="panel ai-card">
-        <div class="ai-head">
-          <div class="ai-mark">✦</div>
-          <div><h2>AI学習アシスタント</h2><div class="sub">ローカルAIによるリアルタイム対話</div></div>
-        </div>
-        <div class="ai-message" id="chatMessages">
-          <strong>こんにちは！</strong><br>今日のお題は「ねんれいは 10さいです」と表示することだよ。困ったら気軽に聞いてね！
-        </div>
-        <div class="quick-prompts">
-          <button data-prompt="このエラーの意味を教えて">エラーの意味を教えて</button>
-          <button data-prompt="採点のポイントは？">採点ポイント</button>
-          <button data-prompt="ヒントをください">ヒントをちょうだい</button>
-        </div>
-        <form class="chat-form" id="chatForm">
-          <input id="chatInput" placeholder="AIに質問する..." aria-label="AIへの質問">
-          <button type="submit">送信</button>
-        </form>
+        <div class="ai-head"><div class="ai-mark">✦</div><div><h2>AI学習アシスタント</h2><div class="sub">初心者向けに、やさしくサポート</div></div></div>
+        <div class="ai-message" id="chatMessages"><strong>こんにちは！</strong><br>コードで困ったところはある？「この行の意味を教えて」など、気軽に聞いてね。<br><br><span style="color:var(--muted)">※ AI接続前の画面プレビューです。</span></div>
+        <div class="quick-prompts"><button data-prompt="このコードを説明して">コードを説明して</button><button data-prompt="エラーの直し方を教えて">エラーを直したい</button><button data-prompt="次に練習する課題を教えて">次の課題</button></div>
+        <form class="chat-form" id="chatForm"><input id="chatInput" placeholder="質問を入力..." aria-label="AIへの質問"><button type="submit">送信</button></form>
       </section>
 
       <section class="panel task-card">
-        <div class="card-title">
-          <h2>今日の課題演習</h2>
-          <span class="tag">自動採点付き</span>
-        </div>
-        <p id="taskText">年齢（10歳）を正しく計算して表示するプログラムを作ろう。</p>
-        <div class="example">目標出力：ねんれいは 10さいです</div>
-        <div class="task-meta"><span>配点：100点満点</span><span>合格：80点以上</span></div>
+        <div class="card-title"><h2>今日のミニ課題</h2><span class="tag">初級</span></div>
+        <p id="taskText">変数 <code>fruit</code> に好きな果物を入れて、画面に表示してみよう。</p>
+        <div class="example">fruit = "りんご"<br>print(fruit)</div>
+        <div class="task-meta"><span>目安：3分</span><span>合格ライン：80点</span></div>
       </section>
 
       <section class="panel progress-card">
-        <div class="progress-top">
-          <h2>クラウド学習履歴</h2>
-          <span class="progress-num">同期済 ☁️</span>
-        </div>
+        <div class="progress-top"><h2>学習の進み具合</h2><span class="progress-num">35%</span></div>
         <div class="progress-track"><div class="progress-fill"></div></div>
-        <div class="progress-foot"><span>完了した課題</span><span>5 / 10 問クリア</span></div>
+        <div class="progress-foot"><span>今週の目標</span><span>3 / 8 課題</span></div>
       </section>
     </aside>
   </div>
-
-  <footer class="footer">
-    <span>コードラボ (Python特化版) · Tauri v2 / React / Rust</span>
-    <span>最終更新: 2026年10月13日 11:05 · ライト／ダークモード切替対応</span>
-  </footer>
+  <footer class="footer"><span>コードラボ | Python学習環境</span><span>オフライン対応を想定したUI試作 · 実行・AI・同期はバックエンド接続前</span></footer>
 </div>
-
 <div class="toast" id="toast" role="status"></div>
-
 <script>
-// ダークモード / ライトモード切替
-const themeBtn = document.getElementById('themeToggleBtn');
-themeBtn.addEventListener('click', () => {
-  const body = document.body;
-  if(body.getAttribute('data-theme') === 'light'){
-    body.setAttribute('data-theme', 'dark');
-    themeBtn.textContent = '☀️ ライトモードにする';
-    notify('ダークモードに切り替えました');
-  } else {
-    body.setAttribute('data-theme', 'light');
-    themeBtn.textContent = '🌙 ダークモードにする';
-    notify('ライトモードに切り替えました');
-  }
-});
-
 const code = document.getElementById('code');
 const output = document.getElementById('output');
 const hint = document.getElementById('hint');
@@ -298,104 +207,76 @@ const lineNumbers = document.getElementById('lineNumbers');
 const toast = document.getElementById('toast');
 const initialCode = code.value;
 
+// テーマ切り替え機能
+const themeToggleBtn = document.getElementById('themeToggleBtn');
+themeToggleBtn.addEventListener('click', () => {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  if (currentTheme === 'light') {
+    document.documentElement.removeAttribute('data-theme');
+    notify('ダークモードに切り替えました');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    notify('ライトモードに切り替えました');
+  }
+});
+
 function updateLines(){
   const n = Math.max(1, code.value.split('\n').length);
   lineNumbers.textContent = Array.from({length:n},(_,i)=>i+1).join('\n');
 }
-
 function notify(message){
-  toast.textContent = message; 
-  toast.style.display = 'block';
-  clearTimeout(notify.timer); 
-  notify.timer = setTimeout(() => toast.style.display = 'none', 2600);
+  toast.textContent=message; toast.style.display='block';
+  clearTimeout(notify.timer); notify.timer=setTimeout(()=>toast.style.display='none',2600);
 }
-
-code.addEventListener('input', updateLines);
-code.addEventListener('scroll', () => { lineNumbers.scrollTop = code.scrollTop; });
-code.addEventListener('keydown', e => {
-  if(e.key === 'Tab'){
+code.addEventListener('input',updateLines);
+code.addEventListener('scroll',()=>{lineNumbers.scrollTop=code.scrollTop});
+code.addEventListener('keydown',e=>{
+  if(e.key==='Tab'){
     e.preventDefault();
-    const start = code.selectionStart, end = code.selectionEnd;
-    code.setRangeText('    ', start, end, 'end');
-    updateLines();
+    const start=code.selectionStart,end=code.selectionEnd;
+    code.setRangeText('    ',start,end,'end');updateLines();
   }
-  if((e.ctrlKey || e.metaKey) && e.key === 'Enter'){
-    e.preventDefault();
-    document.getElementById('runBtn').click();
-  }
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();document.getElementById('runBtn').click();}
 });
-
-document.getElementById('resetBtn').addEventListener('click', () => {
-  code.value = initialCode;
-  updateLines();
-  output.textContent = 'コードを初期状態に戻しました。';
-  hint.innerHTML = '<strong>準備できました。</strong><br>「実行する」を押すと、結果を確認できます。';
-  notify('初期コードに戻しました');
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  code.value=initialCode;updateLines();output.textContent='コードを初期状態に戻しました。';hint.innerHTML='<strong>準備できました。</strong><br>「実行」を押すと、結果を確認できます。';notify('初期コードに戻しました');
 });
-
-document.getElementById('formatBtn').addEventListener('click', () => {
-  code.value = code.value.trim();
-  updateLines();
-  notify('✨ コードを整形しました');
+document.getElementById('runBtn').addEventListener('click',()=>{
+  document.getElementById('runStatus').textContent='実行接続待ち';
+  document.getElementById('editorStatus').textContent='プレビュー画面';
+  output.innerHTML='<span class="success">画面プレビューのため、Pythonコードはまだ実行していません。</span>\n\nTauri + Rust の実行バックエンド接続後、ここに実際の標準出力・エラーが表示されます。';
+  hint.innerHTML='<strong>次の実装ステップ</strong><br>1. Rust側でPython実行プロセスを起動<br>2. 実行時間・出力サイズを制限<br>3. 標準出力とエラーをこの画面に返す<br><br>入力されたコードは、このHTMLだけでは実行されません。';
+  notify('画面プレビュー：Python実行機能は未接続です');
 });
-
-document.getElementById('runBtn').addEventListener('click', () => {
-  document.getElementById('runStatus').textContent = '実行中...';
-  document.getElementById('editorStatus').textContent = 'ローカルランタイム稼働中';
-  
-  setTimeout(() => {
-    document.getElementById('runStatus').textContent = '判定完了';
-    output.innerHTML = `
-      <div class="error">現在の出力: ねんれいは 15さいです</div>
-      <div style="margin-top:6px; color:var(--muted)">実行時間: 0.04秒 (タイムアウト監視OK)</div>
-    `;
-    hint.innerHTML = `
-      <strong>🤔 期待した結果と少しちがうよ (論理エラー / 85点)</strong><br>
-      <div style="margin-top:6px; background:var(--panel); border:1px solid var(--border); padding:8px; border-radius:6px;">
-        <div>【目標の答え】 <span style="color:var(--green)">ねんれいは 10さいです</span></div>
-        <div>【今の出力】 <span style="color:var(--red)">ねんれいは 15さいです</span></div>
-      </div>
-      <div style="margin-top:6px;">AIヒント: <code>10 + 5</code> になっています。お題の「10歳」になるように数値を直してみよう！</div>
-    `;
-    document.getElementById('chatMessages').innerHTML = `
-      <strong>ローカルAI：</strong><br>
-      惜しい！表示結果が「15歳」になっているよ。1行目の足し算の部分を確認してみてね。
-    `;
-    notify('実行＆AI分析が完了しました (クラウド履歴同期)');
-  }, 400);
-});
-
-document.querySelectorAll('[data-mode]').forEach(btn => btn.addEventListener('click', () => {
-  document.querySelectorAll('[data-mode]').forEach(b => b.classList.toggle('active', b === btn));
-  if(btn.dataset.mode === '課題演習'){
-    notify('課題演習モードに切り替えました（自動採点・期待値チェック有効）');
-  } else {
-    notify('自由創作モードに切り替えました（サンドボックス）');
+document.querySelectorAll('[data-mode]').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b===btn));
+  if(btn.dataset.mode==='課題演習'){
+    document.getElementById('taskText').innerHTML='課題モード：変数 <code>fruit</code> に好きな果物を入れて、画面に表示してみよう。';
+    notify('課題演習モードを選択しました');
+  }else{
+    document.getElementById('taskText').innerHTML='変数 <code>fruit</code> に好きな果物を入れて、画面に表示してみよう。';
+    notify('自由創作モードを選択しました');
   }
 }));
-
-document.querySelectorAll('[data-nav]').forEach(item => item.addEventListener('click', () => {
-  document.querySelectorAll('[data-nav]').forEach(n => n.classList.toggle('active', n === item));
-  notify(item.dataset.nav + '画面に切り替えました');
+document.querySelectorAll('[data-nav]').forEach(item=>item.addEventListener('click',()=>{
+  document.querySelectorAll('[data-nav]').forEach(n=>n.classList.toggle('active',n===item));
+  if(item.dataset.nav!=='エディタ') notify(item.dataset.nav+'画面は今後実装する予定です');
 }));
-
-document.querySelectorAll('[data-prompt]').forEach(btn => btn.addEventListener('click', () => {
-  document.getElementById('chatInput').value = btn.dataset.prompt;
+document.querySelectorAll('[data-prompt]').forEach(btn=>btn.addEventListener('click',()=>{
+  document.getElementById('chatInput').value=btn.dataset.prompt;
   document.getElementById('chatInput').focus();
 }));
-
-document.getElementById('chatForm').addEventListener('submit', e => {
+document.getElementById('chatForm').addEventListener('submit',e=>{
   e.preventDefault();
-  const input = document.getElementById('chatInput');
-  const question = input.value.trim();
-  if(!question) return;
-  
-  const chatMsgs = document.getElementById('chatMessages');
-  chatMsgs.innerHTML = `<strong>あなた：</strong><br>${question}<br><br><strong>ローカルAI：</strong><br>質問ありがとう！エディタのコードを解析してサポートするね。`;
-  input.value = '';
+  const input=document.getElementById('chatInput');
+  const question=input.value.trim();
+  if(!question){notify('質問を入力してください');return;}
+  const safe=question.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  document.getElementById('chatMessages').innerHTML='<strong>あなた：</strong><br>'+safe+'<br><br><strong>AIアシスタント：</strong><br>AI接続前のプレビューです。実装後は、コード・実行結果・エラー情報をもとに回答します。';
+  input.value='';
 });
-
 updateLines();
 </script>
 </body>
 </html>
+```[cite: 6]
