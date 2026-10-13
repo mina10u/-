@@ -185,7 +185,7 @@
         <div>
             <h1>プログラミング学習 AI誤り分析アシスタント 仕様書</h1>
             <div class="meta-info">
-                <span class="updated-date">最終更新日時: 2026年10月13日 13:40</span>
+                <span class="updated-date">最終更新日時: 2026年10月13日 13:49</span>
                 <span>アーキテクチャ: Tauri v2 (Desktop App)</span>
                 <span>対象OS: Windows 10/11</span>
                 <span>チーム規模: 6名</span>
@@ -201,10 +201,10 @@
     <!-- 1. 概要・目標 -->
     <section>
         <h2>1. アプリ概要・目的</h2>
-        <p>小学生高学年から大人までのプログラミング初心者が、自分で一からコードを書きながらエラーや疑問を直感的に解消できるデスクトップアプリケーション。<strong>「自由創作」と「一から書く課題演習」の2モードを用意し、ローカルAIによるエラー・論理分析、クラウドによる学習履歴同期で楽しく学習をサポート</strong>します[cite: 3]。初期リリースではPythonに特化して完成度を高め、将来的な複数言語展開に備えます[cite: 2]。また、AIが簡単に答えを教えず自力で考える力を育てる「段階式ヒント」や、他言語との違いに気づける学習支援を取り入れています。</p>
+        <p>小学生高学年から大人までのプログラミング初心者が、自分で一からコードを書きながらエラーや疑問を直感的に解消できるデスクトップアプリケーション。<strong>「自由創作」と「一から書く課題演習」の2モードを用意し、ローカルAIによるエラー・論理分析、クラウドによる学習履歴同期で楽しく学習をサポート</strong>します。初期リリースではPythonに特化して完成度を高め、将来的な複数言語展開に備えます[cite: 2]。また、自力で考える力を育てる「ステップアップ式ヒント」、既習言語（Java/JS等）との対比サポート、および環境構築不要のPython同梱と自動AIダウンロードを備えています。</p>
         <ul>
-            <li><strong>ターゲット層:</strong> 小学生高学年、中高生、大学・専門学校生、社会人のプログラミング初学者[cite: 3]</li>
-            <li><strong>コア体験:</strong> Python同梱による環境構築不要の実行、ローカルAIモデルの自動ダウンロード、段階式ヒント（修正例は希望時のみ）、他言語（Java/JS等）との比較サポート、クラウド同期型の成長カルテ、AIによる課題採点（80点以上合格）の統合学習体験[cite: 2, 3]</li>
+            <li><strong>ターゲット層:</strong> 小学生高学年、中高生、大学・専門学校生、社会人のプログラミング初学者</li>
+            <li><strong>コア体験:</strong> 同梱Pythonによる安全なローカル実行、自動ダウンロード型ローカルAI、ステップアップ式ヒント（修正例は希望時のみ）、既習言語（Java等）対比サポート、クラウド同期型の成長カルテ、2段階式の課題採点（80点以上合格）の統合学習体験[cite: 2]</li>
         </ul>
     </section>
 
@@ -222,23 +222,23 @@
             <tbody>
                 <tr>
                     <td><strong>デスクトップアプリ層 (画面)</strong></td>
-                    <td>コードエディタ、実行結果コンソール、AIチャット、辞書、学習履歴画面のUI提供[cite: 2, 3]。</td>
-                    <td>Tauri v2 (React / TypeScript)[cite: 2, 3]</td>
+                    <td>コードエディタ、実行結果コンソール、AIチャット、辞書、学習履歴画面のUI提供[cite: 2]。</td>
+                    <td>Tauri v2 (React / TypeScript)[cite: 2]</td>
                 </tr>
                 <tr>
                     <td><strong>ローカル実行環境 (内部処理)</strong></td>
-                    <td>同梱Pythonによるコード実行、実行結果の取得、タイムアウト・プロセス管理[cite: 2]。</td>
-                    <td>Rust バックエンド / Pythonランタイム[cite: 2, 3]</td>
+                    <td>同梱Python（標準ライブラリ内包）によるコード実行、タイムアウト・プロセス管理[cite: 2]。</td>
+                    <td>Rust バックエンド / Pythonランタイム[cite: 2]</td>
                 </tr>
                 <tr>
                     <td><strong>ローカルAI層</strong></td>
-                    <td>自動ダウンロード対応モデルによるエラー解説、段階式ヒント、他言語対比サポート、チャット（PC内で完結）[cite: 2, 3]。</td>
-                    <td>ローカルAIモデル (Rust連携)[cite: 2, 3]</td>
+                    <td>自動ダウンロード対応モデルによるエラー解説、ステップアップ式ヒント、他言語対比、チャット（PC内で完結）[cite: 2]。</td>
+                    <td>ローカルAIモデル (Rust連携)[cite: 2]</td>
                 </tr>
                 <tr>
                     <td><strong>クラウドサーバー層</strong></td>
-                    <td>ユーザー認証、学習履歴、進捗、アチーブメントの永続保存・同期[cite: 2, 3]。</td>
-                    <td>Web API / データベース[cite: 2, 3]</td>
+                    <td>ユーザー認証、学習履歴、進捗、アチーブメントの永続保存・同期[cite: 2]。</td>
+                    <td>Web API / データベース[cite: 2]</td>
                 </tr>
             </tbody>
         </table>
@@ -260,28 +260,28 @@
             <tbody>
                 <tr>
                     <td><strong>1. フリープレイ・サンドボックスモード</strong></td>
-                    <td>お題や正解がない完全自由な環境。同梱Pythonでコードを自由に記述・実行・保存[cite: 2, 3]。</td>
-                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span>[cite: 3]</td>
+                    <td>お題や正解がない完全自由な環境。同梱Pythonでコードを自由に記述・実行・ファイル保存[cite: 2]。</td>
+                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-backend">Rust</span></td>
                 </tr>
                 <tr>
                     <td><strong>2. 一から書く課題演習モード</strong></td>
-                    <td>課題文を読み、白紙からPythonコードを作成し、機械的検証とAI評価を組み合わせた自動採点を受けられる機能[cite: 2, 3]。</td>
-                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-ai">ローカルAI</span>[cite: 3]</td>
+                    <td>課題文を読み、白紙からPythonコードを作成。①機械的検証 ➔ ②合格者のみAI評価の2段階で自動採点[cite: 2]。</td>
+                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-ai">ローカルAI</span></td>
                 </tr>
                 <tr>
                     <td><strong>3. コード整形 ＆ スニペット挿入</strong></td>
-                    <td>ワンタップでインデント等を自動整列するフォーマッタ機能、および基本構文の型挿入ボタン[cite: 3]。</td>
-                    <td><span class="badge badge-frontend">フロント</span>[cite: 3]</td>
+                    <td>ワンタップでインデント等を自動整列するフォーマッタ機能、および基本構文の型挿入ボタン。</td>
+                    <td><span class="badge badge-frontend">フロント</span></td>
                 </tr>
                 <tr>
-                    <td><strong>4. やさしい出力コンソール ＆ 段階式ヒント</strong></td>
-                    <td>実行結果を表示。AIが答えを直ぐに教えず、①問題説明 ➔ ②確認箇所 ➔ ③修正方向 ➔ ④希望時の修正例の順に段階的支援。他言語（Java/JS等）の書き方との違いにも言及[cite: 2, 3]。</td>
-                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-ai">ローカルAI</span>[cite: 3]</td>
+                    <td><strong>4. やさしい出力コンソール ＆ ステップアップ式ヒント</strong></td>
+                    <td>実行結果を表示。AIが答えを直ぐに教えず、①問題理解 ➔ ②注目箇所 ➔ ③修正方向 ➔ ④希望時の修正例の段階的開閉式UI。他言語（Java/JS等）との違いにも言及[cite: 2]。</td>
+                    <td><span class="badge badge-frontend">フロント</span> / <span class="badge badge-ai">ローカルAI</span></td>
                 </tr>
                 <tr>
-                    <td><strong>5. ふりがな付き関数・構文辞書 (他言語対比対応)</strong></td>
-                    <td>基本関数の解説に加え、JavaやJavaScriptなど他言語を知る初学者に向けて「Pythonでの書き方の違い」を対比表示可能（履歴・お気に入り対応）[cite: 3]。</td>
-                    <td><span class="badge badge-frontend">フロント</span>[cite: 3]</td>
+                    <td><strong>5. 既習言語対比付き関数・構文辞書</strong></td>
+                    <td>基本関数の解説に加え、JavaやJavaScriptなど既習の言語を知る初学者に向けて「Pythonとの書き方の違い」を対比表示（設定や履歴連動）。</td>
+                    <td><span class="badge badge-frontend">フロント</span></td>
                 </tr>
             </tbody>
         </table>
@@ -298,23 +298,23 @@
             <tbody>
                 <tr>
                     <td><strong>6. エラー履歴・成長カルテ (クラウド同期)</strong></td>
-                    <td>過去のエラー、AIのヒント、修正ログを蓄積し、ゲスト利用およびクラウド経由でのマルチデバイス同期に対応[cite: 2, 3]。</td>
-                    <td><span class="badge badge-backend">サーバー/DB</span> / <span class="badge badge-frontend">フロント</span>[cite: 3]</td>
+                    <td>過去のエラー、AIのヒント、修正ログを蓄積し、ゲスト利用およびクラウド経由でのマルチデバイス同期に対応[cite: 2]。</td>
+                    <td><span class="badge badge-backend">サーバー/DB</span> / <span class="badge badge-frontend">フロント</span></td>
                 </tr>
                 <tr>
                     <td><strong>7. アチーブメント（実績・バッジ）獲得機能</strong></td>
-                    <td>課題達成・学習継続・エラー解決に応じてバッジや称号を獲得しクラウド保存する機能[cite: 2, 3]。</td>
-                    <td><span class="badge badge-backend">サーバー/DB</span>[cite: 3]</td>
+                    <td>課題達成・学習継続・エラー解決に応じてバッジや称号を獲得しクラウド保存する機能[cite: 2]。</td>
+                    <td><span class="badge badge-backend">サーバー/DB</span></td>
                 </tr>
                 <tr>
-                    <td><strong>8. やさしさ切り替え（モード設定）</strong></td>
-                    <td>「こども（ふりがなあり・やさしい言葉）」/「大人（標準表記）」のUI表現切り替えスイッチ[cite: 3]。</td>
-                    <td><span class="badge badge-frontend">フロント</span>[cite: 3]</td>
+                    <td><strong>8. バックグラウンド言語選択（学習者プロファイル）</strong></td>
+                    <td>初回起動時や設定で「これまでに触れた言語（Java, JS等）」を選択でき、ヒントや辞書の対比説明を最適化。</td>
+                    <td><span class="badge badge-frontend">フロント</span></td>
                 </tr>
                 <tr>
                     <td><strong>9. AIモデル自動ダウンロード ＆ チャット</strong></td>
-                    <td>初回起動時にAIモデルの有無を確認して自動ダウンロード（進捗・再試行対応）。オフラインでも対話・採点（80点以上合格）が可能[cite: 2, 3]。</td>
-                    <td><span class="badge badge-ai">ローカルAI</span>[cite: 3]</td>
+                    <td>初回起動時に容量表示付きでAIモデルを自動ダウンロード（進捗・再試行・Wi-Fi推奨案内）。オフラインでの対話・採点に対応[cite: 2]。</td>
+                    <td><span class="badge badge-ai">ローカルAI</span></td>
                 </tr>
             </tbody>
         </table>
@@ -322,48 +322,43 @@
 
     <!-- 4. 追加詳細仕様 -->
     <section>
-        <h2>4. 追加詳細仕様（Python同梱・AI自動ダウンロード・段階式ヒント・他言語対比）</h2>
+        <h2>4. 追加詳細仕様（Python同梱・自動DL・ステップアップ式ヒント・2段階採点）</h2>
 
-        <h3>① Pythonランタイムの同梱</h3>
+        <h3>① Pythonランタイムの同梱仕様</h3>
         <ul>
-            <li><strong>同梱方針:</strong> 配布版には動作確認済みのPython実行環境を同梱し、ユーザーによる個別インストールを不要にする。バージョン差をなくし、Rust側でプロセス管理・タイムアウト（最大制限時間）や出力制限を行う[cite: 2]。将来の言語追加に備え実行処理層は分離。</li>
+            <li><strong>同梱範囲:</strong> 配布版には標準ライブラリ（`math`, `random`, `datetime` 等）を内包したPythonランタイムを同梱し、個別インストールを不要にする。Rust側でプロセス管理、タイムアウト（最大3秒等）、出力サイズ制限を行う[cite: 2]。将来の多言語化に備えて実行処理層は分離設計。</li>
         </ul>
 
-        <h3>② ローカルAIモデルの自動ダウンロード仕様</h3>
+        <h3>② ローカルAIモデルの自動ダウンロードとUX</h3>
         <ul>
-            <li><strong>初期導入フロー:</strong> 初回起動時にAIモデルの有無を判定し、未導入なら容量表示付きの自動ダウンロードを開始する（進捗表示、キャンセル、再試行に対応）。</li>
-            <li><strong>フォールバック:</strong> ダウンロード中や失敗時でも、エディタ・Python実行・基本的なエラー表示・コードのオートセーブは利用可能にする。モデル導入完了後にAI機能を有効化。</li>
+            <li><strong>導入フロー:</strong> 初回起動時にAIモデルの有無を確認し、未導入なら容量表示付きの自動ダウンロードを開始する（進捗バー、キャンセル、再試行、Wi-Fi環境推奨アナウンスを用意）。</li>
+            <li><strong>フォールバック:</strong> ダウンロード中や失敗時でも、エディタ・Python実行・自動オートセーブ・基本エラー表示は利用可能。ダウンロード完了後にAI機能を自動有効化。</li>
         </ul>
 
-        ### ③ 段階式ヒント＆他言語比較サポート仕様</h3>
+        <h3>③ ステップアップ式ヒント＆他言語比較サポート仕様</h3>
         <ul>
-            <li><strong>支援ステップ:</strong> AIは即座に正解コードを出さず、以下の段階で自力解決を促す。
+            <li><strong>段階式UI:</strong> AIヒントは一度に答えを出さず、アコーディオン（開閉式）や「次のヒントへ」ボタンによる4ステップで自力解決を促す。
                 <ol>
-                    <li><strong>問題の理解:</strong> 入力値と実際の出力を比べる案内[cite: 2]。</li>
-                    <li><strong>注目箇所の提示:</strong> 処理や変数の変化を確認する箇所を示す[cite: 2]。</li>
-                    <li><strong>修正方針の提案:</strong> 条件式やロジックの見直し方向を示す[cite: 2]。</li>
-                    <li><strong>修正例の提示:</strong> 学習者が「修正例を見る」ボタンを押した場合のみ、コード例と変更理由を表示する[cite: 2]。</li>
+                    <li><strong>ステップ1（問題の理解）:</strong> 入力値と実際の出力を比べる案内[cite: 2]。</li>
+                    <li><strong>ステップ2（注目箇所の提示）:</strong> 処理や変数の変化を確認する箇所を示す[cite: 2]。</li>
+                    <li><strong>ステップ3（修正方針の提案）:</strong> 条件式やロジックの見直し方向を示す[cite: 2]。</li>
+                    <li><strong>修正例の表示:</strong> 学習者が「修正例を見る」ボタンを押したときのみ、コード例と変更理由を表示[cite: 2]。</li>
                 </ol>
             </li>
-            <li><strong>他言語（Java/JS等）との対比サポート:</strong> 初学者が他の言語の構文（例: 末尾のセミコロン `;` や `System.out.println` 等）と混同した際のエラーに対し、AIヒントや辞書項目で「Javaではこうだけど、Pythonではこう書くよ」という対比情報を提示し、理解をスムーズにする。</li>
+            <li><strong>既習言語の対比サポート:</strong> ユーザー設定の「既習言語プロファイル（Java/JS等）」に基づき、「Javaではこうだけど、Pythonではセミコロン不要でこう書くよ」といったピンポイントな比較解説をAIや辞書で提供。</li>
         </ul>
 
-        ### ④ 課題データの管理とプライバシー
+        <h3>④ 課題データの管理とオートセーブ・ファイル管理</h3>
         <ul>
-            <li><strong>課題データ:</strong> オフライン動作のため基本課題をアプリ内に同梱し、将来的にクラウド配信で追加できる拡張性を持たせる。</li>
-            <li><strong>コード保存ポリシー:</strong> コード全文の無制限なクラウド保存を避け、メタデータ（スコア、エラー種類、解決フラグ）や要約・ハッシュに留めることでプライバシーに配慮[cite: 2]。</li>
+            <li><strong>課題データ:</strong> オフライン動作のため基本課題をアプリ内にJSON同梱。将来のクラウド配信拡張に対応。</li>
+            <li><strong>オートセーブとファイル管理:</strong> エディタの入力内容は数秒おきにTauriのローカル設定に自動一時保存（オートセーブ）され、異常終了時も復元可能。任意の「名前をつけて保存」機能とは明確に棲み分ける。</li>
         </ul>
 
-        ### ⑤ AIによる課題採点の仕様と例外ルール
+        <h3>⑤ 2段階式課題採点の仕様とプライバシー</h3>
         <ul>
-            <li><strong>採点配点（合計100点満点・80点以上合格）[cite: 2]:</strong>
-                <ul>
-                    <li>要件達成度: 50点（指定された処理を満たしているか）[cite: 2]</li>
-                    <li>実行結果: 30点（テスト入力に対する出力が期待値と合うか）[cite: 2]</li>
-                    <li>コードの妥当性: 20点（ローカルAIによるコードの適切さ評価。模範解答と異なっていても正しく動作すれば合格）[cite: 2]</li>
-                </ul>
-            </li>
-            <li><strong>例外ルール:</strong> 構文エラー時は合格としない。必須テスト失敗時は点数に反映。AI応答失敗時は再試行（仮の合格点としない）。</li>
+            <li><strong>2段階判定フロー:</strong> ①まず機械的なテストケース（出力の一致・タイムアウト等）で高速に合否を判定し、クリアしたコードのみに②ローカルAIによるコードの妥当性評価（20点分）を行うことでサーバー・PC負荷を軽減。</li>
+            <li><strong>採点配点（合計100点満点・80点以上合格）[cite: 2]:</strong> 要件達成度（50点）＋ 実行結果（30点）＋ コード妥当性（20点、模範解答と違っても動作すれば合格）[cite: 2]。例外ルール（構文エラー時は不合格、AI応答失敗時は再試行等）を適用。</li>
+            <li><strong>プライバシー配慮:</strong> コード全文の無制限なクラウド保存を避け、メタデータ（スコア、エラー種別、解決フラグ）および要約・ハッシュ値のみを同期[cite: 2]。</li>
         </ul>
 
         <h3>⑥ オフライン・ログイン仕様</h3>
@@ -400,12 +395,12 @@
         <h2>5. 開発の順番と6名チーム分担案</h2>
         <h3>更新後の開発優先順位</h3>
         <ol>
-            <li><strong>基盤・実行環境:</strong> Tauri、React、Rustの連携と、同梱Pythonによる実行・停止・出力表示の完成[cite: 2]。</li>
+            <li><strong>基盤・実行環境:</strong> Tauri、React、Rustの連携と、同梱Pythonによる安全な実行・停止・出力表示の完成[cite: 2]。</li>
             <li><strong>安全性・保存:</strong> 実行制限、エディタのコード自動保存（オートセーブ）、異常終了からの復元[cite: 2]。</li>
-            <li><strong>課題と採点:</strong> 課題データ、テストケース、80点以上の合格判定ロジック[cite: 2]。</li>
-            <li><strong>ローカルAI:</strong> モデルの自動ダウンロード、動作確認、段階式ヒント（他言語比較含む）、希望時の修正例表示[cite: 2]。</li>
+            <li><strong>課題と2段階採点:</strong> 課題データ、テストケース、機械的検証とAI評価の組み合わせによる80点以上合格判定[cite: 2]。</li>
+            <li><strong>ローカルAI:</strong> モデルの自動ダウンロード（進捗・UX）、ステップアップ式ヒント、他言語比較サポート[cite: 2]。</li>
             <li><strong>ゲスト・アカウント・同期:</strong> 端末内履歴保存、ログイン、クラウド同期[cite: 2]。</li>
-            <li><strong>仕上げ:</strong> 辞書（他言語対比ルビ付き）、ふりがな、アチーブメント、インストーラー作成、総合テスト[cite: 2]。</li>
+            <li><strong>仕上げ:</strong> 辞書（他言語対比対応）、ふりがな、アチーブメント、インストーラー作成、総合テスト[cite: 2]。</li>
         </ol>
 
         <h3>6名チームの担当分け</h3>
@@ -419,7 +414,7 @@
             <tbody>
                 <tr>
                     <td><strong>1. 画面担当</strong></td>
-                    <td>エディタ、コンソール、段階式ヒント・他言語対比UI、画面遷移[cite: 2]。</td>
+                    <td>エディタ、コンソール、ステップアップ式ヒントUI、言語選択設定、画面遷移[cite: 2]。</td>
                 </tr>
                 <tr>
                     <td><strong>2. 実行担当</strong></td>
@@ -427,11 +422,11 @@
                 </tr>
                 <tr>
                     <td><strong>3. AI担当</strong></td>
-                    <td>AIモデル自動ダウンロード機能、推論処理、段階式ヒントのプロンプト設計[cite: 2]。</td>
+                    <td>AIモデル自動ダウンロード機能、推論処理、段階式ヒントプロンプト設計[cite: 2]。</td>
                 </tr>
                 <tr>
                     <td><strong>4. 課題担当</strong></td>
-                    <td>課題データ構成、テストケース、採点ロジックの構築[cite: 2]。</td>
+                    <td>課題データ構成、テストケース、2段階採点ロジックの構築[cite: 2]。</td>
                 </tr>
                 <tr>
                     <td><strong>5. サーバー担当</strong></td>
@@ -453,7 +448,7 @@
         <pre><code>{
   "errorLogId": "err_log_20261013_001",
   "userId": "usr_987654321",
-  "timestamp": "2026-10-13 13:40:00",
+  "timestamp": "2026-10-13 13:49:00",
   "language": "python",
   "errorType": "LogicError", // "SyntaxError" または "LogicError"
   "expectedOutput": "ねんれいは 10さいです",
@@ -482,10 +477,10 @@
     <section>
         <h2>7. 画面レイアウト構成案</h2>
         <ul>
-            <li><strong>ヘッダー:</strong> ライト／ダークモード切替 ＆ 認証・接続ステータス表示[cite: 3]</li>
-            <li><strong>左エリア:</strong> 課題バナー ＆ フリーエディタ（コード整形、スニペット挿入、オートセーブ） ＆ 出力コンソール[cite: 3]</li>
-            <li><strong>右上エリア:</strong> AI学習アシスタント（段階式ヒント・他言語対比・希望時の修正例表示対応）[cite: 3]</li>
-            <li><strong>右下エリア:</strong> 他言語対比可能なふりがな付き関数・構文辞書 ＆ クラウド学習履歴進捗[cite: 3]</li>
+            <li><strong>ヘッダー:</strong> ライト／ダークモード切替 ＆ 認証・接続ステータス表示 ＆ 既習言語設定アイコン</li>
+            <li><strong>左エリア:</strong> 課題バナー ＆ フリーエディタ（コード整形、スニペット挿入、オートセーブ） ＆ 出力コンソール</li>
+            <li><strong>右上エリア:</strong> AI学習アシスタント（ステップアップ式ヒント・他言語対比・希望時の修正例表示対応）</li>
+            <li><strong>右下エリア:</strong> 他言語対比可能なふりがな付き関数・構文辞書 ＆ クラウド学習履歴進捗</li>
         </ul>
     </section>
 </div>
