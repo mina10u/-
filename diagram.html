@@ -1,71 +1,91 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>コードラボ｜画面遷移図</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
 <style>
-:root{--bg:#0f172a;--card:#1e293b;--text:#f8fafc;--sub:#cbd5e1;--line:#475569;--accent:#38bdf8;--blue:#2563eb;--amber:#fbbf24;--green:#86efac}
-*{box-sizing:border-box}body{margin:0;padding:28px;background:var(--bg);color:var(--text);font:15px/1.75 system-ui,sans-serif}
-.container{max-width:1120px;margin:auto}
-header{border-bottom:2px solid var(--line);padding-bottom:18px;margin-bottom:24px}
-h1{color:var(--accent);margin:0 0 8px}
-section{background:var(--card);border:1px solid #334155;border-radius:12px;padding:24px;margin:18px 0}
-h2{color:var(--accent);border-left:5px solid var(--accent);padding-left:10px;margin-top:0}
-.flow-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:16px}
-.flow-card{background:#0b1220;border:1px solid var(--line);border-radius:8px;padding:16px}
-.flow-card h3{color:#bae6fd;margin-top:0}
-.badge{display:inline-block;padding:2px 8px;border-radius:4px;background:var(--blue);color:white;font-size:0.8rem;margin-bottom:8px}
-.btn{display:inline-block;margin-top:10px;color:var(--accent);text-decoration:none;font-weight:700}
+:root{--bg:#0b1120;--panel:#111b2e;--border:#2b3b55;--text:#e8eef8;--muted:#9aaac0;--blue:#60a5fa;--cyan:#67e8f9;--green:#6ee7b7;--yellow:#fcd34d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,sans-serif;line-height:1.55}
+header{padding:20px clamp(16px,4vw,52px);border-bottom:1px solid var(--border);background:linear-gradient(115deg,#111d34,#0b1120)}
+.nav-bar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.nav-link{background:#1e293b;color:#38bdf8;border:1px solid var(--border);padding:6px 12px;border-radius:6px;text-decoration:none;font-size:0.85rem;font-weight:bold}
+.nav-link.active{background:#2563eb;color:white;border-color:#2563eb}
+.nav-link:hover{background:#334155}
+.eyebrow{color:var(--cyan);font-size:12px;letter-spacing:.16em;font-weight:700}h1{font-size:clamp(22px,3vw,32px);margin:5px 0}
+main{max-width:1440px;margin:auto;padding:28px clamp(12px,3vw,36px) 60px}section{margin:0 0 38px}.section-title{font-size:22px;margin:0 0 5px}.section-sub{color:var(--muted);margin:0 0 18px;font-size:14px}
+.diagram-card{background:#101a2c;border:1px solid var(--border);border-radius:16px;padding:24px;overflow:auto;text-align:center}
+.mermaid {
+  display: inline-block;
+  max-width: 100%;
+}
+.mermaid svg {
+  height: auto !important;
+  max-height: 75vh;
+}
+.note{color:var(--muted);font-size:13px;margin-top:12px}
 </style>
 </head>
 <body>
-<div class="container">
 <header>
-  <h1>コードラボ 画面遷移図</h1>
-  <p class="sub">アプリ起動から各モード、設定、AI管理までの遷移構造</p>
+ <div class="nav-bar">
+   <a href="index.html" class="nav-link">仕様書</a>
+   <a href="diagram.html" class="nav-link active">画面遷移図</a>
+   <a href="activity.html" class="nav-link">アクティビティ図</a>
+   <a href="mockup.html" class="nav-link">モック画面</a>
+ </div>
+ <div class="eyebrow">CODE LAB / DESIGN DOCUMENT</div>
+ <h1>画面遷移図</h1>
 </header>
-
+<main>
 <section>
-  <h2>1. 起動・初期セットアップフロー</h2>
-  <div class="flow-grid">
-    <div class="flow-card">
-      <span class="badge">起動画面</span>
-      <h3>スプラッシュ / 初期判定</h3>
-      <p>アプリ起動時、ローカルAIモデルの有無を判定する。</p>
-      <ul>
-        <li><b>未導入かつオンライン：</b>AIモデル自動ダウンロード画面へ</li>
-        <li><b>未導入かつオフライン：</b>警告表示後、AIなしでメインへ</li>
-        <li><b>導入済み：</b>直接メイン画面へ</li>
-      </ul>
-    </div>
-    <div class="flow-card">
-      <span class="badge">セットアップ</span>
-      <h3>AIモデル自動ダウンロード</h3>
-      <p>進捗バー、容量表示、キャンセル、再試行機能を提供。完了またはスキップでメイン画面へ移行。</p>
-    </div>
-  </div>
+ <h2 class="section-title">アプリ全体・画面遷移フロー</h2>
+ <p class="section-sub">起動から学習、採点、履歴・設定への移動を表します。</p>
+ <div class="diagram-card">
+ <pre class="mermaid">
+flowchart TD
+    A([アプリ起動]) --> B{初期化成功?}
+    B -- いいえ --> B1[起動エラー・復旧案内]
+    B1 --> B2[再試行 / 設定確認]
+    B2 --> B
+    B -- はい --> C[ホーム・モード選択]
+    C --> D[自由創作モード]
+    C --> E[課題一覧]
+    E --> F[課題演習・コードエディタ]
+    D --> G[コードエディタ]
+    F --> G
+    G --> H[実行結果・コンソール]
+    H --> I{課題演習?}
+    I -- はい --> J[テスト・採点結果]
+    I -- いいえ --> G
+    J --> K[AIエラー分析・段階的ヒント]
+    K --> G
+    J --> L[学習履歴]
+    G --> M[辞書・構文比較]
+    M --> G
+    C --> N[学習履歴・実績]
+    L --> N
+    C --> O[設定・AIモデル管理]
+    O --> C
+    C --> P{ログイン状態}
+    P -- ゲスト --> Q[ログイン / アカウント作成]
+    Q --> R[ローカル記録の統合確認]
+    R --> S[クラウド同期]
+    S --> C
+    classDef main fill:#15345a,stroke:#60a5fa,color:#eff6ff
+    classDef support fill:#182b40,stroke:#67e8f9,color:#ecfeff
+    classDef state fill:#342b17,stroke:#fcd34d,color:#fef3c7
+    class C,D,E,F,G,H,J,K,L,M,N,O main
+    class Q,R,S support
+    class B,B1,B2,P state
+ </pre>
+ <p class="note">補足：自由創作では実行結果を確認してエディタへ戻ります。課題演習ではテスト採点を経由し、結果とヒントを確認して修正できます。</p>
+ </div>
 </section>
-
-<section>
-  <h2>2. メインワークスペースと主要画面</h2>
-  <div class="flow-grid">
-    <div class="flow-card">
-      <span class="badge">メイン</span>
-      <h3>コーディング・学習画面</h3>
-      <p>ヘッダーから各種設定・状態を確認し、「自由創作モード」または「課題演習モード」を選択して作業する。</p>
-    </div>
-    <div class="flow-card">
-      <span class="badge">設定・アカウント</span>
-      <h3>既習言語設定 / ログイン・同期</h3>
-      <p>既習言語（Java/JS等）の選択や、ゲストからログインへの移行（ローカル記録のクラウド統合確認）を行う。</p>
-    </div>
-    <div class="flow-card">
-      <span class="badge">補助パネル</span>
-      <h3>辞書・構文比較・学習履歴</h3>
-      <p>ふりがな付き辞書、既習言語との対比表示、過去のエラー履歴やアチーブメント（バッジ）を確認する。</p>
-    </div>
-  </div>
-</section>
-</div>
+</main>
+<script>
+mermaid.initialize({startOnLoad:true,theme:'dark',securityLevel:'loose',flowchart:{htmlLabels:true,useMaxWidth:true,curve:'linear',nodeSpacing:25,rankSpacing:30}});
+</script>
 </body>
 </html>
