@@ -5,114 +5,151 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>コードラボ | プログラミング学習 AI誤り分析アシスタント</title>
 <style>
-:root{
-  --bg:#0b1120;--panel:#111b2e;--panel2:#162238;--border:#293750;
-  --text:#e8eef8;--muted:#91a1bb;--blue:#4f8cff;--cyan:#54d6e8;
-  --green:#49d6a0;--orange:#ffbd69;--red:#ff7185;
+/* デフォルト：親しみやすい明るいライトモード */
+:root {
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --panel2: #f1f5f9;
+  --border: #cbd5e1;
+  --text: #1e293b;
+  --muted: #64748b;
+  --blue: #2563eb;
+  --cyan: #0284c7;
+  --green: #16a34a;
+  --orange: #d97706;
+  --red: #dc2626;
+  --editor-bg: #ffffff;
+  --editor-text: #0f172a;
+  --line-num-bg: #f8fafc;
+  --line-num-text: #94a3b8;
+  --code-border: #e2e8f0;
 }
+
+/* ダークモード設定 */
+[data-theme="dark"] {
+  --bg: #0b1120;
+  --panel: #111b2e;
+  --panel2: #162238;
+  --border: #293750;
+  --text: #e8eef8;
+  --muted: #91a1bb;
+  --blue: #4f8cff;
+  --cyan: #54d6e8;
+  --green: #49d6a0;
+  --orange: #ffbd69;
+  --red: #ff7185;
+  --editor-bg: #0c1423;
+  --editor-text: #dbeafe;
+  --line-num-bg: #0c1423;
+  --line-num-text: #53637c;
+  --code-border: #1d2b40;
+}
+
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 "Segoe UI",Meiryo,sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 "Segoe UI",Meiryo,sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;transition:background 0.3s, color 0.3s;}
 button,textarea,input{font:inherit}
 button{cursor:pointer}
+
 .app{height:100vh;display:flex;flex-direction:column}
-.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:#0e1728;gap:18px;flex-shrink:0}
+.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:var(--panel);gap:18px;flex-shrink:0;transition:background 0.3s, border-color 0.3s;}
 .brand{display:flex;align-items:center;gap:12px;font-weight:750;font-size:17px;white-space:nowrap}
 .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3986ff,#48d7d0);display:grid;place-items:center;color:#061323;font-weight:900;font-size:19px}
 .brand small{display:block;color:var(--muted);font-size:11px;font-weight:500;letter-spacing:.04em}
 .top-actions{display:flex;align-items:center;gap:10px}
-.pill{border:1px solid var(--border);border-radius:999px;padding:6px 11px;color:var(--muted);font-size:12px}
+.pill{border:1px solid var(--border);border-radius:999px;padding:6px 11px;color:var(--muted);font-size:12px;background:var(--panel2)}
 .pill.online{color:var(--green);border-color:#245847}
-.avatar{width:32px;height:32px;border-radius:50%;background:#263a59;display:grid;place-items:center;font-weight:700}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--panel2);border:1px solid var(--border);display:grid;place-items:center;font-weight:700}
 
 .layout{display:grid;grid-template-columns:220px minmax(380px,1fr) minmax(290px,340px);gap:16px;padding:18px;flex:1;min-height:0;overflow:hidden}
 .sidebar,.workspace,.rightbar{min-width:0;display:flex;flex-direction:column;height:100%;overflow:hidden}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:background 0.3s, border-color 0.3s;}
 .sidebar .panel{padding:16px;overflow-y:auto}
 .side-title{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.12em;margin:8px 8px 10px}
-.nav{display:flex;align-items:center;gap:10px;padding:10px 11px;margin:3px 0;border-radius:9px;color:#b8c5d9;cursor:pointer}
-.nav.active{background:#1c3559;color:#fff;border:1px solid #2e5284}
+.nav{display:flex;align-items:center;gap:10px;padding:10px 11px;margin:3px 0;border-radius:9px;color:var(--text);cursor:pointer;opacity:0.8}
+.nav:hover{opacity:1;background:var(--panel2)}
+.nav.active{background:var(--blue);color:#fff;font-weight:600;opacity:1}
 .nav .ico{width:19px;text-align:center;font-size:16px}
-.side-note{margin-top:18px;padding:13px;background:#13263a;border:1px solid #23445e;border-radius:10px;color:#b5d7e8;font-size:12px}
+.side-note{margin-top:18px;padding:13px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:12px}
 .side-note strong{display:block;color:var(--cyan);margin-bottom:4px}
 
 .workspace{overflow-y:auto;padding-right:4px}
 .mainhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:3px 2px 14px;flex-shrink:0}
 h1{font-size:21px;margin:0 0 4px}
 .sub{color:var(--muted);font-size:12px}
-.mode-switch{display:flex;padding:4px;border-radius:10px;border:1px solid var(--border);background:#0d1626;white-space:nowrap}
+.mode-switch{display:flex;padding:4px;border-radius:10px;border:1px solid var(--border);background:var(--panel2);white-space:nowrap}
 .mode-switch button{background:transparent;color:var(--muted);border:0;border-radius:7px;padding:7px 10px;font-size:12px}
-.mode-switch button.active{background:#254777;color:#fff}
+.mode-switch button.active{background:var(--blue);color:#fff;font-weight:600}
 
 .editor-panel{display:flex;flex-direction:column;flex:1;min-height:300px}
-.panel-head{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;border-bottom:1px solid var(--border);background:#131f33;flex-shrink:0}
+.panel-head{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;border-bottom:1px solid var(--border);background:var(--panel2);flex-shrink:0}
 .panel-head strong{font-size:13px}
-.file-label{display:flex;align-items:center;gap:8px;color:#bdcbe0;font-size:12px}
+.file-label{display:flex;align-items:center;gap:8px;color:var(--text);font-size:12px}
 .py-icon{display:inline-grid;place-items:center;width:20px;height:20px;background:#f1c75b;color:#18233a;border-radius:5px;font-size:11px;font-weight:900}
 .tools{display:flex;gap:7px}
-.btn{border:1px solid var(--border);background:#1a2940;color:#dce7f8;border-radius:8px;padding:7px 11px;font-size:12px}
-.btn:hover{filter:brightness(1.15)}
-.btn-run{background:#1d9c75;border-color:#1d9c75;color:#041a15;font-weight:800}
+.btn{border:1px solid var(--border);background:var(--panel);color:var(--text);border-radius:8px;padding:7px 11px;font-size:12px}
+.btn:hover{filter:brightness(0.95)}
+.btn-run{background:var(--green);border-color:var(--green);color:#ffffff;font-weight:800}
 
-.editor-wrap{display:grid;grid-template-columns:42px minmax(0,1fr);flex:1;min-height:200px;background:#0c1423;overflow:hidden}
-.line-numbers{padding:17px 10px 17px 0;text-align:right;color:#53637c;white-space:pre;user-select:none;font:13px/1.8 Consolas,monospace;border-right:1px solid #1d2b40}
-#code{resize:none;width:100%;height:100%;background:transparent;border:0;outline:none;color:#dbeafe;padding:17px 16px;font:13px/1.8 Consolas,"Cascadia Code",monospace;tab-size:4;white-space:pre;overflow:auto}
-.editor-footer{display:flex;justify-content:space-between;gap:10px;padding:8px 14px;border-top:1px solid var(--border);color:var(--muted);font-size:11px;flex-shrink:0}
+.editor-wrap{display:grid;grid-template-columns:42px minmax(0,1fr);flex:1;min-height:200px;background:var(--editor-bg);overflow:hidden;border-bottom:1px solid var(--code-border)}
+.line-numbers{padding:17px 10px 17px 0;text-align:right;color:var(--line-num-text);white-space:pre;user-select:none;font:13px/1.8 Consolas,monospace;background:var(--line-num-bg);border-right:1px solid var(--code-border)}
+#code{resize:none;width:100%;height:100%;background:transparent;border:0;outline:none;color:var(--editor-text);padding:17px 16px;font:13px/1.8 Consolas,"Cascadia Code",monospace;tab-size:4;white-space:pre;overflow:auto}
+.editor-footer{display:flex;justify-content:space-between;gap:10px;padding:8px 14px;background:var(--panel);color:var(--muted);font-size:11px;flex-shrink:0}
 
 .bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;flex-shrink:0}
 .output-panel,.hint-panel{min-height:160px}
-.small-head{padding:11px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:12px;background:#131f33}
-.status{font-size:10px;padding:3px 7px;border-radius:999px;background:#20314a;color:#a9bad3}
-.output-body{padding:12px 14px;color:#b8c8dc;font:12px/1.8 Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:140px;overflow-y:auto}
+.small-head{padding:11px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:12px;background:var(--panel2)}
+.status{font-size:10px;padding:3px 7px;border-radius:999px;background:var(--panel);border:1px solid var(--border);color:var(--muted)}
+.output-body{padding:12px 14px;color:var(--text);font:12px/1.8 Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:140px;overflow-y:auto;background:var(--editor-bg)}
 .output-body .success{color:var(--green)}
 .output-body .error{color:var(--red)}
-.hint-body{padding:12px 14px;color:#b9c8dc;font-size:12px;max-height:140px;overflow-y:auto}
+.hint-body{padding:12px 14px;color:var(--text);font-size:12px;max-height:140px;overflow-y:auto}
 .hint-body strong{color:var(--cyan)}
 
 .rightbar{display:flex;flex-direction:column;gap:14px;overflow-y:auto}
 .ai-head{display:flex;align-items:center;gap:9px}
-.ai-mark{width:29px;height:29px;border-radius:9px;background:#183b52;color:var(--cyan);display:grid;place-items:center;font-weight:900}
+.ai-mark{width:29px;height:29px;border-radius:9px;background:var(--panel2);color:var(--cyan);display:grid;place-items:center;font-weight:900;border:1px solid var(--border)}
 .ai-card{padding:15px}
 .ai-card h2{font-size:14px;margin:0}
 .ai-card .sub{margin-top:3px}
-.ai-message{margin:12px 0 10px;background:#15263b;border:1px solid #253b56;border-radius:11px;padding:12px;color:#cbd8e9;font-size:12px;max-height:110px;overflow-y:auto}
-.ai-message strong{color:#fff}
+.ai-message{margin:12px 0 10px;background:var(--panel2);border:1px solid var(--border);border-radius:11px;padding:12px;color:var(--text);font-size:12px;max-height:110px;overflow-y:auto}
+.ai-message strong{color:var(--text)}
 .quick-prompts{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 10px}
-.quick-prompts button{background:#142239;border:1px solid #2b3c56;color:#b9cce5;border-radius:999px;padding:5px 8px;font-size:11px}
+.quick-prompts button{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:999px;padding:5px 8px;font-size:11px}
 .chat-form{display:flex;gap:7px}
-.chat-form input{width:100%;min-width:0;background:#0d1727;border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);outline:none;font-size:12px}
+.chat-form input{width:100%;min-width:0;background:var(--editor-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);outline:none;font-size:12px}
 .chat-form button{border:0;border-radius:8px;background:var(--blue);color:white;padding:0 12px;font-weight:700;font-size:12px}
 
 .task-card{padding:15px}
 .card-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .card-title h2{font-size:14px;margin:0}
-.tag{font-size:10px;color:#a8d8ff;background:#173451;border-radius:5px;padding:3px 6px}
-.task-card p{font-size:12px;color:#b9c8dc;margin:0 0 10px}
-.example{background:#0d1727;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font:11px/1.6 Consolas,monospace;color:#dce7f8}
+.tag{font-size:10px;color:var(--cyan);background:var(--panel2);border:1px solid var(--border);border-radius:5px;padding:3px 6px}
+.task-card p{font-size:12px;color:var(--text);margin:0 0 10px}
+.example{background:var(--editor-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font:11px/1.6 Consolas,monospace;color:var(--editor-text)}
 .task-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:9px}
 
 .progress-card{padding:15px}
 .progress-top{display:flex;justify-content:space-between;align-items:center}
 .progress-top h2{font-size:14px;margin:0}
-.progress-num{font-size:18px;font-weight:800;color:var(--green)}
-.progress-track{height:6px;border-radius:10px;background:#26344a;overflow:hidden;margin:10px 0 6px}
-.progress-fill{height:100%;width:35%;background:linear-gradient(90deg,#2c9e9a,#58ddb0);border-radius:10px}
+.progress-num{font-size:16px;font-weight:800;color:var(--green)}
+.progress-track{height:6px;border-radius:10px;background:var(--panel2);overflow:hidden;margin:10px 0 6px;border:1px solid var(--border)}
+.progress-fill{height:100%;width:35%;background:linear-gradient(90deg,#2563eb,#0284c7);border-radius:10px}
 .progress-foot{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
 
-.footer{padding:8px 22px;border-top:1px solid var(--border);color:#687992;font-size:10px;display:flex;justify-content:space-between;gap:10px;flex-shrink:0}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);padding:11px 16px;background:#21334c;border:1px solid #3a5578;border-radius:10px;color:#e9f2ff;box-shadow:0 10px 35px #0005;display:none;z-index:10}
+.footer{padding:8px 22px;border-top:1px solid var(--border);background:var(--panel);color:var(--muted);font-size:10px;display:flex;justify-content:space-between;gap:10px;flex-shrink:0}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);padding:11px 16px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--text);box-shadow:0 10px 35px rgba(0,0,0,0.15);display:none;z-index:10}
 
 @media(max-width:1100px){.layout{grid-template-columns:190px minmax(0,1fr)}.rightbar{grid-column:2;display:grid;grid-template-columns:1fr 1fr;height:auto}.rightbar .ai-card{grid-row:span 2}}
 </style>
 </head>
-<body>
+<body data-theme="light">
 <div class="app">
   <header class="topbar">
     <div class="brand"><div class="logo">&lt;/&gt;</div><div>コードラボ<small>プログラミング学習 AI誤り分析アシスタント</small></div></div>
     <div class="top-actions">
       <a href="index.html" class="pill" style="text-decoration:none;">📄 仕様書へ戻る</a>
-      <span class="pill">🐍 Python 特化</span>
+      <button class="pill" id="themeToggleBtn" style="cursor:pointer;">🌙 ダークモードにする</button>
       <span class="pill online">● ローカルAI稼働中</span>
-      <span class="avatar" title="ゲスト・ログイン切替">学</span>
+      <span class="avatar" title="ユーザー">学</span>
     </div>
   </header>
 
@@ -232,13 +269,28 @@ print("ねんれいは " + str(age) + "さいです")</textarea>
 
   <footer class="footer">
     <span>コードラボ (Python特化版) · Tauri v2 / React / Rust</span>
-    <span>最終更新: 2026年10月13日 10:55 · クラウド同期・ローカルAI対応</span>
+    <span>最終更新: 2026年10月13日 11:05 · ライト／ダークモード切替対応</span>
   </footer>
 </div>
 
 <div class="toast" id="toast" role="status"></div>
 
 <script>
+// ダークモード / ライトモード切替
+const themeBtn = document.getElementById('themeToggleBtn');
+themeBtn.addEventListener('click', () => {
+  const body = document.body;
+  if(body.getAttribute('data-theme') === 'light'){
+    body.setAttribute('data-theme', 'dark');
+    themeBtn.textContent = '☀️ ライトモードにする';
+    notify('ダークモードに切り替えました');
+  } else {
+    body.setAttribute('data-theme', 'light');
+    themeBtn.textContent = '🌙 ダークモードにする';
+    notify('ライトモードに切り替えました');
+  }
+});
+
 const code = document.getElementById('code');
 const output = document.getElementById('output');
 const hint = document.getElementById('hint');
@@ -291,7 +343,6 @@ document.getElementById('runBtn').addEventListener('click', () => {
   document.getElementById('runStatus').textContent = '実行中...';
   document.getElementById('editorStatus').textContent = 'ローカルランタイム稼働中';
   
-  // シミュレーション実行結果
   setTimeout(() => {
     document.getElementById('runStatus').textContent = '判定完了';
     output.innerHTML = `
@@ -300,7 +351,7 @@ document.getElementById('runBtn').addEventListener('click', () => {
     `;
     hint.innerHTML = `
       <strong>🤔 期待した結果と少しちがうよ (論理エラー / 85点)</strong><br>
-      <div style="margin-top:6px; background:#0d1727; padding:8px; border-radius:6px;">
+      <div style="margin-top:6px; background:var(--panel); border:1px solid var(--border); padding:8px; border-radius:6px;">
         <div>【目標の答え】 <span style="color:var(--green)">ねんれいは 10さいです</span></div>
         <div>【今の出力】 <span style="color:var(--red)">ねんれいは 15さいです</span></div>
       </div>
