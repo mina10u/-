@@ -3,195 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>アクティビティ図 - AI誤り分析＆クラウド同期フロー</title>
-<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-<script>
-mermaid.initialize({
-  startOnLoad: true,
-  theme: "dark",
-  themeVariables: {
-    background: "#0b1120",
-    primaryColor: "#1e293b",
-    primaryTextColor: "#f8fafc",
-    primaryBorderColor: "#38bdf8",
-    lineColor: "#94a3b8",
-    secondaryColor: "#172554",
-    tertiaryColor: "#172033",
-    fontFamily: "sans-serif",
-    fontSize: "12px"
-  },
-  flowchart: {
-    useMaxWidth: true,
-    htmlLabels: true,
-    curve: "linear",
-    nodeSpacing: 20,
-    rankSpacing: 28,
-    padding: 8
-  }
-});
-</script>
+<title>コードラボ｜アクティビティ図</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
 <style>
-:root {
-  --bg: #0b1120;
-  --panel: #1e293b;
-  --border: #334155;
-  --accent: #38bdf8;
-  --text: #f8fafc;
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  height: 100vh;
-  background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-header {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 10px 22px;
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
-}
-h1 { margin: 0; color: var(--accent); font-size: 1.1rem; }
-.back-link {
-  color: var(--text);
-  text-decoration: none;
-  border: 1px solid #2563eb;
-  background: #1e3a8a;
-  padding: 6px 12px;
-  border-radius: 7px;
-  font-size: .8rem;
-  white-space: nowrap;
-}
-.back-link:hover { background: #2563eb; }
-.intro {
-  flex-shrink: 0;
-  max-width: 1500px;
-  margin: 0 auto;
-  padding: 8px 22px 0;
-  color: #cbd5e1;
-  font-size: .85rem;
-  line-height: 1.4;
-}
-.legend {
-  flex-shrink: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 16px;
-  padding: 6px 22px 0;
-  max-width: 1500px;
-  margin: 0 auto;
-  color: #cbd5e1;
-  font-size: .8rem;
-}
-.legend span { display: inline-flex; align-items: center; gap: 6px; }
-.swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
-
-.viewport {
-  flex: 1;
-  width: 100%;
-  margin: 0 auto;
-  padding: 8px 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
+:root{--bg:#0b1120;--panel:#111b2e;--border:#2b3b55;--text:#e8eef8;--muted:#9aaac0;--blue:#60a5fa;--cyan:#67e8f9;--green:#6ee7b7;--yellow:#fcd34d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,sans-serif;line-height:1.55}
+header{padding:20px clamp(16px,4vw,52px);border-bottom:1px solid var(--border);background:linear-gradient(115deg,#111d34,#0b1120)}
+.nav-bar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.nav-link{background:#1e293b;color:#38bdf8;border:1px solid var(--border);padding:6px 12px;border-radius:6px;text-decoration:none;font-size:0.85rem;font-weight:bold}
+.nav-link.active{background:#2563eb;color:white;border-color:#2563eb}
+.nav-link:hover{background:#334155}
+.eyebrow{color:var(--cyan);font-size:12px;letter-spacing:.16em;font-weight:700}h1{font-size:clamp(22px,3vw,32px);margin:5px 0}
+main{max-width:1440px;margin:auto;padding:28px clamp(12px,3vw,36px) 60px}section{margin:0 0 38px}.section-title{font-size:22px;margin:0 0 5px}.section-sub{color:var(--muted);margin:0 0 18px;font-size:14px}
+.diagram-card{background:#101a2c;border:1px solid var(--border);border-radius:16px;padding:24px;overflow:auto;text-align:center}
 .mermaid {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: inline-block;
+  max-width: 100%;
 }
 .mermaid svg {
-  width: 100% !important;
-  height: 100% !important;
-  max-width: 100% !important;
-  max-height: 100% !important;
+  height: auto !important;
+  max-height: 80vh;
 }
-.note {
-  flex-shrink: 0;
-  max-width: 1500px;
-  margin: 0 auto 12px;
-  padding: 0 22px;
-  color: #94a3b8;
-  font-size: .78rem;
-  line-height: 1.4;
-}
-@media (max-width: 700px) {
-  header { align-items: flex-start; padding: 10px; }
-  h1 { font-size: 0.95rem; }
-  .intro, .legend { padding-left: 10px; padding-right: 10px; }
-  .viewport { padding: 4px; }
-  .note { padding: 0 10px; }
-}
+.note{color:var(--muted);font-size:13px;margin-top:12px}
 </style>
 </head>
 <body>
 <header>
-  <h1>アクティビティ図（ローカル実行・AI分析・クラウド同期フロー）</h1>
-  <a class="back-link" href="index.html">← 仕様書トップに戻る</a>
+ <div class="nav-bar">
+   <a href="index.html" class="nav-link">仕様書</a>
+   <a href="diagram.html" class="nav-link">画面遷移図</a>
+   <a href="activity.html" class="nav-link active">アクティビティ図</a>
+   <a href="mockup.html" class="nav-link">モック画面</a>
+ </div>
+ <div class="eyebrow">CODE LAB / DESIGN DOCUMENT</div>
+ <h1>アクティビティ図</h1>
 </header>
-<p class="intro">複数言語（Python/JS）のコード入力からローカルランタイムでの実行、ローカルAIによるエラー・論理分析、クラウドへの学習履歴同期までの処理手順を表しています。</p>
-<div class="legend">
-  <span><i class="swatch" style="background:#14532d"></i>開始 / 達成・終了</span>
-  <span><i class="swatch" style="background:#1e293b; border: 1px solid #38bdf8;"></i>ユーザー操作・実行</span>
-  <span><i class="swatch" style="background:#1d4ed8"></i>システム判定</span>
-  <span><i class="swatch" style="background:#7f1d1d"></i>エラー・差分対応</span>
-  <span><i class="swatch" style="background:#0e7490"></i>クラウド同期</span>
-</div>
-<main class="viewport">
-<div class="mermaid">
-flowchart TB
-    Start(["● 開始"]) --> SelectLang["言語選択 (Python / JS) & コード入力"]
-    SelectLang --> ClickRun["「▶ うごかす！」を押下"]
-    
-    ClickRun --> CheckSyntax{"Rust: 構文・ランタイム判定"}
-    
-    %% 文法エラー
-    CheckSyntax -- "文法エラー" --> ParseErr["ローカルAI: やさしいエラー解説を生成"]
-    ParseErr --> SaveLocal1["ローカルにエラーログを保存"]
-    SaveLocal1 --> SyncCloud1["クラウドサーバーへ非同期送信"]
-    SyncCloud1 --> SelectLang
-
-    %% 構文正常
-    CheckSyntax -- "構文正常" --> RunCode["選択言語の実行環境でコード実行"]
-    RunCode --> CheckLogic{"判定：期待値と一致？"}
-
-    %% 論理エラー (期待と違う)
-    CheckLogic -- "期待と違う" --> GenDiff["ローカルAI: 差分(Diff)解説を生成"]
-    GenDiff --> SaveLocal2["ローカルに修正ログを保存"]
-    SaveLocal2 --> SyncCloud2["クラウドサーバーへログ同期"]
-    SyncCloud2 --> SelectLang
-
-    %% 完全成功 (AI採点クリア)
-    CheckLogic -- "一致 (大成功！)" --> AiScore["ローカルAI: 採点＆評価 (100点満点)"]
-    AiScore --> SaveSuccess["学習達成データを保存"]
-    SaveSuccess --> SyncCloud3["クラウドへアチーブメント・進捗を同期"]
-    SyncCloud3 --> End(["◉ 達成・終了"])
-
-    %% スタイル定義
-    classDef startEnd fill:#14532d,stroke:#4ade80,color:#f8fafc,stroke-width:2px;
-    classDef action fill:#1e293b,stroke:#38bdf8,color:#f8fafc,stroke-width:1.5px;
-    classDef decision fill:#1d4ed8,stroke:#60a5fa,color:#ffffff,stroke-width:1.5px;
-    classDef error fill:#7f1d1d,stroke:#f87171,color:#ffffff,stroke-width:1.5px;
-    classDef cloud fill:#0e7490,stroke:#22d3ee,color:#ffffff,stroke-width:1.5px;
-
-    class Start,End,SaveSuccess startEnd;
-    class SelectLang,ClickRun,RunCode,AiScore action;
-    class CheckSyntax,CheckLogic decision;
-    class ParseErr,GenDiff error;
-    class SaveLocal1,SaveLocal2,SyncCloud1,SyncCloud2,SyncCloud3 cloud;
-</div>
+<main>
+<section>
+ <h2 class="section-title">実行・採点・AIフォールバックフロー</h2>
+ <p class="section-sub">課題演習でコードを編集し、保存・実行・テスト・採点・AI支援を行う代表的な流れです。</p>
+ <div class="diagram-card">
+ <pre class="mermaid">
+flowchart TD
+    Start([開始]) --> Select[課題を選択]
+    Select --> Edit[コードを編集]
+    Edit --> AutoSave[端末内へ自動保存]
+    AutoSave --> Choice{操作を選択}
+    Choice -- 実行 --> Validate[実行要求を検証]
+    Validate --> Sandbox[隔離環境でPython実行]
+    Sandbox --> Limit{制限超過?}
+    Limit -- はい --> Stop[関連プロセスを停止]
+    Stop --> ErrorResult[タイムアウト / 実行エラー表示]
+    Limit -- いいえ --> Output[標準出力・標準エラー表示]
+    ErrorResult --> AskAI
+    Output --> Tests{課題演習?}
+    Tests -- いいえ --> Choice
+    Tests -- はい --> RunTests[テストケースを実行]
+    RunTests --> Calc[配点に基づき採点]
+    Calc --> AIState{AI評価が必要?}
+    AIState -- いいえ --> Result[採点結果を表示]
+    AIState -- はい --> AIReady{AI利用可能?}
+    AIReady -- はい --> Analyze[エラー・コードを分析]
+    AIReady -- いいえ --> Incomplete[AI評価未完了を表示]
+    Analyze --> Result
+    Incomplete --> Result
+    Result --> AskAI[ヒントを確認]
+    AskAI --> Fix{コードを修正する?}
+    Fix -- はい --> Edit
+    Fix -- いいえ --> SaveRecord[学習記録をローカル保存]
+    SaveRecord --> Login{ログイン済み・通信可能?}
+    Login -- はい --> Sync[クラウドへ同期]
+    Login -- いいえ --> Queue[同期待ちキューへ保持]
+    Sync --> End([終了 / 次の課題へ])
+    Queue --> End
+    Choice -- 保存のみ --> AutoSave
+    classDef action fill:#15345a,stroke:#60a5fa,color:#eff6ff
+    classDef decision fill:#342b17,stroke:#fcd34d,color:#fef3c7
+    classDef result fill:#12352f,stroke:#34d399,color:#d1fae5
+    class Edit,AutoSave,Validate,Sandbox,Stop,Output,RunTests,Calc,Analyze,Incomplete,AskAI,SaveRecord,Sync,Queue action
+    class Choice,Limit,Tests,AIState,AIReady,Fix,Login decision
+    class Result,ErrorResult result
+ </pre>
+ <p class="note">AIが使えない場合も、コード編集・実行・機械的テスト・ローカル保存は継続します。AI評価を必須とする採点は未完了として扱い、合格にはしません。</p>
+ </div>
+</section>
 </main>
-<p class="note">補足：AI解析はすべてユーザーのPC内（ローカルAI）で行われ、データの永続化やマルチデバイス同期のみクラウドサーバーを介して行われるハイブリッド構成です。</p>
+<script>
+mermaid.initialize({startOnLoad:true,theme:'dark',securityLevel:'loose',flowchart:{htmlLabels:true,useMaxWidth:true,curve:'linear',nodeSpacing:25,rankSpacing:30}});
+</script>
 </body>
 </html>
