@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>画面モックアップ(仮) - プログラミング学習 AI誤り分析アシスタント</title>
+    <title>画面モックアップ - プログラミング学習 AI誤り分析アシスタント</title>
     <style>
         :root {
             --bg-dark: #0f172a;
@@ -14,7 +14,6 @@
             --primary: #2563eb;
             --accent: #38bdf8;
             --border: #334155;
-            --resizer-bg: #1e293b;
             --resizer-hover: #38bdf8;
         }
 
@@ -74,7 +73,7 @@
             gap: 0.8rem;
         }
 
-        .toggle-btn, .nav-btn {
+        .select-lang, .toggle-btn, .nav-btn {
             background-color: var(--panel-bg);
             color: var(--text-main);
             border: 1px solid var(--border);
@@ -85,15 +84,27 @@
             display: flex;
             align-items: center;
             gap: 0.4rem;
-            transition: all 0.2s;
         }
 
-        .toggle-btn:hover, .nav-btn:hover {
+        .select-lang:hover, .toggle-btn:hover, .nav-btn:hover {
             border-color: var(--accent);
             color: var(--accent);
         }
 
-        /* リサイズ可能なメインコンテナ */
+        .nav-btn {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+        }
+
+        .nav-btn:hover {
+            background-color: #1d4ed8;
+            color: white;
+        }
+
+        /* メインワークスペース */
         main.workspace {
             flex: 1;
             display: flex;
@@ -103,7 +114,6 @@
             height: calc(100vh - 55px);
         }
 
-        /* 左右カラム */
         .left-column, .right-column {
             display: flex;
             flex-direction: column;
@@ -113,7 +123,7 @@
         }
 
         .left-column { flex: 1; }
-        .right-column { width: 400px; min-width: 280px; }
+        .right-column { width: 420px; min-width: 280px; }
 
         /* リサイザー (ドラッグバー) */
         .resizer-v {
@@ -144,7 +154,7 @@
             background-color: var(--resizer-hover);
         }
 
-        /* パネル構造 */
+        /* パネル */
         .panel {
             background-color: var(--card-bg);
             border: 1px solid var(--border);
@@ -205,7 +215,7 @@
 
         .tool-btn:hover { background: rgba(255, 255, 255, 0.15); }
 
-        /* エディタ領域 */
+        /* エディタ */
         .editor-container { flex: 1; }
 
         textarea.code-editor {
@@ -286,7 +296,7 @@
         .diff-val.expected { color: #4ade80; font-weight: bold; }
         .diff-val.actual { color: #f87171; font-weight: bold; }
 
-        /* 右パネル (AI & 辞書) */
+        /* 右パネル */
         .ai-panel { flex: 1; }
         .dict-panel { height: 240px; }
 
@@ -368,85 +378,75 @@
 </head>
 <body>
 
-    <!-- ヘッダー -->
     <header>
         <div class="header-title">
             <h1>AI誤り分析アシスタント</h1>
-            <span class="mode-badge" id="modeBadge">子ども向け表示 (ルビあり)</span>
+            <span class="mode-badge" id="modeBadge">子ども向け表示</span>
         </div>
         <div class="header-controls">
+            <select class="select-lang" id="langSelect" onchange="changeLanguage()">
+                <option value="python">🐍 Python</option>
+                <option value="javascript">🌐 JavaScript</option>
+            </select>
             <button class="toggle-btn" onclick="toggleAudienceMode()">
-                <span id="toggleText">👨‍💼 大人向け表示に切替</span>
+                <span id="toggleText">👨‍💼 大人向け</span>
             </button>
             <a href="index.html" class="nav-btn">← 仕様書へ戻る</a>
         </div>
     </header>
 
-    <!-- リサイズ可能なメインエリア -->
     <main class="workspace" id="workspace">
-        <!-- 左カラム：エディタ & コンソール -->
         <div class="left-column" id="leftColumn">
-            <!-- 課題バナー -->
             <div class="task-banner">
-                <div><span class="task-title">🎯 今日のお題:</span> 年齢（10歳）を表示するコードを書こう！</div>
-                <div>期待される出力: <span class="task-target">ねんれいは 10さいです</span></div>
+                <div><span class="task-title">🎯 課題:</span> 年齢（10歳）を表示するコードを書こう！</div>
+                <div>目標値: <span class="task-target">ねんれいは 10さいです</span></div>
             </div>
 
-            <!-- コードエディタ -->
             <div class="panel editor-container" id="editorPanel">
                 <div class="panel-header">
-                    <span>📝 コードエディタ (Python)</span>
+                    <span id="editorTitle">📝 コードエディタ (Python)</span>
                     <div style="display: flex; gap: 0.4rem;">
                         <button class="tool-btn" onclick="formatCode()">✨ 整形</button>
-                        <button class="tool-btn" onclick="insertSnippet('if')">＋ if文</button>
-                        <button class="tool-btn" onclick="insertSnippet('print')">＋ print</button>
+                        <button class="tool-btn" onclick="insertSnippet()">＋ スニペット</button>
                     </div>
                 </div>
-                <textarea id="codeEditor" class="code-editor" spellcheck="false"># 年齢(10歳)を表示するプログラムを作ろう！
-age = 10 + 5
+                <textarea id="codeEditor" class="code-editor" spellcheck="false">age = 10 + 5
 print("ねんれいは " + str(age) + "さいです")</textarea>
             </div>
 
-            <!-- アクションバー -->
             <div class="action-bar">
                 <div class="test-pattern">
-                    <span>💡 実行パターン:</span>
-                    <label><input type="radio" name="testPattern" value="logic" checked> 期待と違う (論理エラー)</label>
+                    <span>💡 テスト判定:</span>
+                    <label><input type="radio" name="testPattern" value="logic" checked> 期待と違う</label>
                     <label><input type="radio" name="testPattern" value="syntax"> 文法エラー</label>
                     <label><input type="radio" name="testPattern" value="success"> 大成功</label>
                 </div>
                 <button class="run-btn" onclick="runCode()">▶ うごかす！</button>
             </div>
 
-            <!-- 横方向リサイザー (エディタ ⇄ コンソール) -->
             <div class="resizer-h" id="resizerLeft"></div>
 
-            <!-- 出力コンソール -->
             <div class="panel console-container" id="consolePanel">
                 <div class="panel-header">
-                    <span>💻 しゅつりょく結果 (コンソール)</span>
-                    <span style="font-size: 0.75rem; color: var(--accent);">[目標: ねんれいは 10さいです]</span>
+                    <span>💻 実行コンソール (ローカル環境)</span>
+                    <span style="font-size: 0.75rem; color: var(--accent);">[クラウド同期: 接続中 🟢]</span>
                 </div>
                 <div id="consoleOutput" class="console-body">
-                    <div class="console-msg warning">「▶ うごかす！」ボタンを押すと、実行結果が表示されます。</div>
+                    <div class="console-msg warning">「▶ うごかす！」ボタンを押すと、ローカルランタイムで実行されます。</div>
                 </div>
             </div>
         </div>
 
-        <!-- 縦方向リサイザー (左 ⇄ 右) -->
         <div class="resizer-v" id="resizerMain"></div>
 
-        <!-- 右カラム：AIチャット & 辞書 -->
         <div class="right-column" id="rightColumn">
-            <!-- AIチャット -->
             <div class="panel ai-panel" id="aiPanel">
                 <div class="panel-header">
-                    <span>🤖 AIロボ アシスタント</span>
+                    <span>🤖 ローカルAI アシスタント</span>
                 </div>
                 <div id="chatMessages" class="chat-messages">
                     <div class="chat-bubble ai">
-                        こんにちは！今日のお題は「ねんれいは 10さいです」と表示することだよ。<br>
-                        「▶ うごかす！」を押して試してみてね！
+                        こんにちは！コードを書いて「▶ うごかす！」を押してね。ローカルAIがエラーや採点をサポートします！
                     </div>
                 </div>
                 <div class="chat-input-area">
@@ -455,32 +455,20 @@ print("ねんれいは " + str(age) + "さいです")</textarea>
                 </div>
             </div>
 
-            <!-- 横方向リサイザー (AI ⇄ 辞書) -->
             <div class="resizer-h" id="resizerRight"></div>
 
-            <!-- 辞書パネル -->
             <div class="panel dict-panel" id="dictPanel">
                 <div class="panel-header">
-                    <span>📖 ふりがな付き 関数・構文辞書</span>
+                    <span>📖 ふりがな付き関数・構文辞書</span>
                 </div>
                 <div class="dict-search">
-                    <input type="text" class="dict-input" placeholder="調べたい言葉を入力 (例: print, str)...">
+                    <input type="text" class="dict-input" placeholder="用語を検索 (例: print, console)...">
                 </div>
-                <div class="dict-list">
+                <div class="dict-list" id="dictList">
                     <div class="dict-item">
-                        <div class="dict-title">
-                            <span>print (プリント)</span>
-                            <span style="color: #22c55e;">★ お気に入り</span>
-                        </div>
+                        <div class="dict-title"><span>print (プリント)</span></div>
                         <div class="ruby">【画面（がめん）に もじを出（だ）す】</div>
-                        <div class="dict-desc">カッコの中に入れた文字や数字を画面に表示します。</div>
-                    </div>
-                    <div class="dict-item">
-                        <div class="dict-title">
-                            <span>str (ストリング)</span>
-                        </div>
-                        <div class="ruby">【数字（すうじ）を もじに変（か）える】</div>
-                        <div class="dict-desc">数字を文字の仲間に変えて、他の文字とくっつけられるようにします。</div>
+                        <div class="dict-desc">カッコ内に入れた値を画面に出力します。</div>
                     </div>
                 </div>
             </div>
@@ -488,40 +476,67 @@ print("ねんれいは " + str(age) + "さいです")</textarea>
     </main>
 
     <script>
-        // モード切り替え
         let isKidMode = true;
         function toggleAudienceMode() {
             isKidMode = !isKidMode;
-            document.getElementById('modeBadge').textContent = isKidMode ? "子ども向け表示 (ルビあり)" : "大人向け表示 (標準表記)";
-            document.getElementById('toggleText').textContent = isKidMode ? "👨‍💼 大人向け表示に切替" : "👶 子ども向け表示に切替";
+            document.getElementById('modeBadge').textContent = isKidMode ? "子ども向け表示" : "大人向け表示";
+            document.getElementById('toggleText').textContent = isKidMode ? "👨‍💼 大人向け" : "👶 子ども向け";
         }
 
-        // コード実行 ＆ 判定
+        function changeLanguage() {
+            const lang = document.getElementById('langSelect').value;
+            const editor = document.getElementById('codeEditor');
+            const title = document.getElementById('editorTitle');
+            const dictList = document.getElementById('dictList');
+
+            if (lang === 'javascript') {
+                title.textContent = "📝 コードエディタ (JavaScript)";
+                editor.value = "let age = 10 + 5;\nconsole.log('ねんれいは ' + age + 'さいです');";
+                dictList.innerHTML = `
+                    <div class="dict-item">
+                        <div class="dict-title"><span>console.log (コンソールログ)</span></div>
+                        <div class="ruby">【結果（けっか）を表示（ひょうじ）する】</div>
+                        <div class="dict-desc">ブラウザやコンソールに出力します。</div>
+                    </div>
+                `;
+            } else {
+                title.textContent = "📝 コードエディタ (Python)";
+                editor.value = "age = 10 + 5\nprint(\"ねんれいは \" + str(age) + \"さいです\")";
+                dictList.innerHTML = `
+                    <div class="dict-item">
+                        <div class="dict-title"><span>print (プリント)</span></div>
+                        <div class="ruby">【画面（がめん）に もじを出（だ）す】</div>
+                        <div class="dict-desc">カッコ内に入れた値を画面に出力します。</div>
+                    </div>
+                `;
+            }
+        }
+
         function runCode() {
             const pattern = document.querySelector('input[name="testPattern"]:checked').value;
             const consoleOut = document.getElementById('consoleOutput');
 
             if (pattern === 'logic') {
                 consoleOut.innerHTML = `
-                    <div class="console-msg warning"><strong>🤔 期待した結果と少しちがうみたい！</strong></div>
+                    <div class="console-msg warning"><strong>🤔 期待した結果と違います (論理エラー)</strong></div>
                     <div class="diff-box">
-                        <div class="diff-line"><span class="diff-label">【目標の答え】</span><span class="diff-val expected">ねんれいは 10さいです</span></div>
-                        <div class="diff-line"><span class="diff-label">【今のしゅつりょく】</span><span class="diff-val actual">ねんれいは 15さいです</span></div>
+                        <div class="diff-line"><span class="diff-label">【目標値】</span><span class="diff-val expected">ねんれいは 10さいです</span></div>
+                        <div class="diff-line"><span class="diff-label">【実際の出力】</span><span class="diff-val actual">ねんれいは 15さいです</span></div>
                     </div>
                 `;
-                appendAiMessage(`🤖 <strong>AIロボ:</strong><br>表示結果が「15歳」になっているよ！エディタの <code>10 + 5</code> の部分を見直してみよう！`);
+                appendAiMessage(`🤖 <strong>ローカルAI:</strong> 実行結果が「15歳」になっています。<code>10 + 5</code> の計算ロジックを見直してみましょう！`);
             } else if (pattern === 'syntax') {
                 consoleOut.innerHTML = `
-                    <div class="console-msg error"><strong>⚠️ つなぎ方の間違いが見つかったよ！</strong></div>
-                    <div style="color: #fca5a5; font-size: 0.8rem; margin-top: 0.4rem;">TypeError: can only concatenate str (not "int") to str</div>
+                    <div class="console-msg error"><strong>⚠️ 文法エラー (SyntaxError)</strong></div>
+                    <div style="color: #fca5a5; font-size: 0.8rem; margin-top: 0.4rem;">TypeError: unsupported operand type(s)</div>
                 `;
-                appendAiMessage(`🤖 <strong>AIロボ:</strong><br>数字の <code>age</code> を <code>str(age)</code> に包んであげよう！`);
+                appendAiMessage(`🤖 <strong>ローカルAI:</strong> 文字列と数値の結合方法に誤りがあります。型変換を確認してください。`);
             } else {
                 consoleOut.innerHTML = `
-                    <div class="console-msg success"><strong>🎉 ねんれいは 10さいです</strong></div>
-                    <div class="console-msg success" style="margin-top: 0.4rem;">大成功！お題通りの期待値が出力されました！</div>
+                    <div class="console-msg success"><strong>🎉 判定: 合格 (スコア: 100/100)</strong></div>
+                    <div class="console-msg success" style="margin-top: 0.4rem;">AI採点クリア！学習履歴をクラウドサーバーに同期しました ☁️</div>
                 `;
-                appendAiMessage(`🤖 <strong>AIロボ:</strong><br><strong>パーフェクト！✨</strong> 目標通りの結果が出せたね！`);
+                appendAiMessage(`🤖 <strong>ローカルAI:</strong> パーフェクトです！課題クリアのバッジがクラウドに保存されました！✨`);
             }
         }
 
@@ -534,109 +549,57 @@ print("ねんれいは " + str(age) + "さいです")</textarea>
             chatMsgs.scrollTop = chatMsgs.scrollHeight;
         }
 
-        function formatCode() {
-            document.getElementById('codeEditor').value = document.getElementById('codeEditor').value.trim();
-        }
-
-        function insertSnippet(type) {
-            const editor = document.getElementById('codeEditor');
-            if (type === 'if') editor.value += "\nif age == 10:\n    print('10さいです')";
-            else if (type === 'print') editor.value += "\nprint('こんにちは')";
-        }
-
+        function formatCode() { document.getElementById('codeEditor').value = document.getElementById('codeEditor').value.trim(); }
+        function insertSnippet() { document.getElementById('codeEditor').value += "\n# スニペット追加"; }
         function sendMessage() {
             const input = document.getElementById('chatInput');
             if (!input.value.trim()) return;
             const chatMsgs = document.getElementById('chatMessages');
-            const userBubble = document.createElement('div');
-            userBubble.className = 'chat-bubble';
-            userBubble.style.alignSelf = 'flex-end';
-            userBubble.style.backgroundColor = '#2563eb';
-            userBubble.textContent = input.value;
-            chatMsgs.appendChild(userBubble);
+            chatMsgs.innerHTML += `<div class="chat-bubble" style="align-self:flex-end; background:#2563eb;">${input.value}</div>`;
             input.value = '';
         }
-
         function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
 
-        /* --- マウスドラッグによる画面サイズ調整 (リサイズ機能) --- */
-
-        // 1. 左右カラムの縦方向リサイズ
+        // リサイズ実装
         const resizerMain = document.getElementById('resizerMain');
         const rightColumn = document.getElementById('rightColumn');
-
         resizerMain.addEventListener('mousedown', (e) => {
             e.preventDefault();
             resizerMain.classList.add('dragging');
-            
             const onMouseMove = (e) => {
-                const workspaceWidth = document.getElementById('workspace').clientWidth;
-                const newRightWidth = workspaceWidth - e.clientX;
-                if (newRightWidth > 260 && newRightWidth < workspaceWidth - 300) {
-                    rightColumn.style.width = `${newRightWidth}px`;
-                }
+                const newWidth = document.getElementById('workspace').clientWidth - e.clientX;
+                if (newWidth > 260 && newWidth < document.getElementById('workspace').clientWidth - 300) rightColumn.style.width = `${newWidth}px`;
             };
-
-            const onMouseUp = () => {
-                resizerMain.classList.remove('dragging');
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-            };
-
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
+            const onMouseUp = () => { resizerMain.classList.remove('dragging'); document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('mouseup', onMouseUp); };
+            document.addEventListener('mousemove', onMouseMove); document.addEventListener('mouseup', onMouseUp);
         });
 
-        // 2. 左カラム (エディタ ⇄ コンソール) の横方向リサイズ
         const resizerLeft = document.getElementById('resizerLeft');
         const consolePanel = document.getElementById('consolePanel');
-
         resizerLeft.addEventListener('mousedown', (e) => {
             e.preventDefault();
             resizerLeft.classList.add('dragging');
-
             const onMouseMove = (e) => {
-                const leftColumnRect = document.getElementById('leftColumn').getBoundingClientRect();
-                const newConsoleHeight = leftColumnRect.bottom - e.clientY;
-                if (newConsoleHeight > 100 && newConsoleHeight < leftColumnRect.height - 180) {
-                    consolePanel.style.height = `${newConsoleHeight}px`;
-                }
+                const leftRect = document.getElementById('leftColumn').getBoundingClientRect();
+                const newHeight = leftRect.bottom - e.clientY;
+                if (newHeight > 100 && newHeight < leftRect.height - 180) consolePanel.style.height = `${newHeight}px`;
             };
-
-            const onMouseUp = () => {
-                resizerLeft.classList.remove('dragging');
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-            };
-
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
+            const onMouseUp = () => { resizerLeft.classList.remove('dragging'); document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('mouseup', onMouseUp); };
+            document.addEventListener('mousemove', onMouseMove); document.addEventListener('mouseup', onMouseUp);
         });
 
-        // 3. 右カラム (AIチャット ⇄ 辞書) の横方向リサイズ
         const resizerRight = document.getElementById('resizerRight');
         const dictPanel = document.getElementById('dictPanel');
-
         resizerRight.addEventListener('mousedown', (e) => {
             e.preventDefault();
             resizerRight.classList.add('dragging');
-
             const onMouseMove = (e) => {
-                const rightColumnRect = rightColumn.getBoundingClientRect();
-                const newDictHeight = rightColumnRect.bottom - e.clientY;
-                if (newDictHeight > 100 && newDictHeight < rightColumnRect.height - 150) {
-                    dictPanel.style.height = `${newDictHeight}px`;
-                }
+                const rightRect = rightColumn.getBoundingClientRect();
+                const newHeight = rightRect.bottom - e.clientY;
+                if (newHeight > 100 && newHeight < rightRect.height - 150) dictPanel.style.height = `${newHeight}px`;
             };
-
-            const onMouseUp = () => {
-                resizerRight.classList.remove('dragging');
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-            };
-
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
+            const onMouseUp = () => { resizerRight.classList.remove('dragging'); document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('mouseup', onMouseUp); };
+            document.addEventListener('mousemove', onMouseMove); document.addEventListener('mouseup', onMouseUp);
         });
     </script>
 </body>
