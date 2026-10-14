@@ -3,58 +3,96 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>コードラボ｜プログラミング学習 AI誤り分析アシスタント 仕様書（改訂版）</title>
+<title>コードラボ｜プログラミング学習 AI誤り分析アシスタント 仕様書（改訂・ブラッシュアップ版）</title>
 <style>
 :root {
   --bg: #0f172a;
   --card: #1e293b;
+  --card-alt: #162032;
   --text: #f8fafc;
   --sub: #cbd5e1;
-  --line: #475569;
+  --muted: #94a3b8;
+  --line: #334155;
+  --line-strong: #475569;
   --accent: #38bdf8;
   --blue: #2563eb;
   --amber: #fbbf24;
   --green: #86efac;
   --red: #fca5a5;
+  --purple: #c4b5fd;
 }
 * { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
   margin: 0;
   padding: 28px;
   background: var(--bg);
   color: var(--text);
-  font: 15px/1.75 system-ui, -apple-system, "Segoe UI", sans-serif;
+  font: 15px/1.75 system-ui, -apple-system, "Segoe UI", Meiryo, sans-serif;
 }
-.container { max-width: 1120px; margin: auto; }
+.container { max-width: 1140px; margin: auto; }
 header {
-  border-bottom: 2px solid var(--line);
+  border-bottom: 2px solid var(--line-strong);
   padding: 0 0 22px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 .nav-bar {
   display: flex;
   gap: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
 }
 .nav-link {
-  background: #1e293b;
+  background: var(--card);
   color: var(--accent);
-  border: 1px solid var(--line);
-  padding: 6px 12px;
-  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  padding: 7px 14px;
+  border-radius: 8px;
   text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: bold;
+  font-size: 0.86rem;
+  font-weight: 700;
+  transition: all 0.15s ease;
 }
 .nav-link.active {
   background: var(--blue);
-  color: white;
+  color: #ffffff;
   border-color: var(--blue);
 }
 .nav-link:hover { background: #334155; }
+
+.toc-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  background: var(--card-alt);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+}
+.toc-bar span {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-weight: 700;
+  margin-right: 6px;
+  align-self: center;
+}
+.toc-bar a {
+  color: #bae6fd;
+  text-decoration: none;
+  font-size: 0.82rem;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: #1e293b;
+  border: 1px solid #2dd4bf33;
+}
+.toc-bar a:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
 h1 {
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-size: clamp(1.65rem, 3vw, 2.25rem);
   line-height: 1.35;
   color: var(--accent);
   margin: 0 0 12px;
@@ -64,105 +102,214 @@ h2 {
   border-left: 5px solid var(--accent);
   padding-left: 12px;
   margin: 0 0 18px;
+  color: #f1f5f9;
 }
-h3 { font-size: 1.08rem; color: #bae6fd; margin: 24px 0 10px; }
+h3 {
+  font-size: 1.08rem;
+  color: #bae6fd;
+  margin: 24px 0 10px;
+}
 p { margin: 8px 0 14px; }
-.meta { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--sub); font-size: .9rem; }
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  color: var(--sub);
+  font-size: 0.9rem;
+}
 .updated { color: var(--amber); font-weight: 700; }
 section {
   background: var(--card);
-  border: 1px solid #334155;
+  border: 1px solid var(--line);
   border-radius: 12px;
   padding: 24px;
   margin: 18px 0;
   overflow: hidden;
+  scroll-margin-top: 20px;
 }
-table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: .93rem; }
-th, td { padding: 11px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
-th { background: #172554; color: #e0f2fe; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0 20px;
+  font-size: 0.93rem;
+}
+th, td {
+  padding: 11px 12px;
+  border: 1px solid var(--line-strong);
+  text-align: left;
+  vertical-align: top;
+}
+th { background: #172554; color: #e0f2fe; font-weight: 700; }
+tr:nth-child(even) td { background: #1a2436; }
 ul, ol { padding-left: 1.5rem; }
-li { margin: 5px 0; }
-.note { border-left: 4px solid var(--amber); padding: 10px 14px; background: #332b1c; border-radius: 4px; }
-pre { background: #0b1220; border: 1px solid #334155; border-radius: 8px; padding: 16px; overflow: auto; color: #e2e8f0; font-size: .88rem; }
+li { margin: 6px 0; }
+.note {
+  border-left: 4px solid var(--amber);
+  padding: 12px 16px;
+  background: #332b1c;
+  border-radius: 6px;
+  margin: 14px 0;
+}
+.good {
+  border-left: 4px solid #22c55e;
+  padding: 12px 16px;
+  background: #123026;
+  border-radius: 6px;
+  margin: 14px 0;
+}
+.badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.badge-req { background: #1e3a8a; color: #bfdbfe; border: 1px solid #3b82f6; }
+.badge-plan { background: #3b2f13; color: #fde68a; border: 1px solid #f59e0b; }
+.badge-ext { background: #2e1065; color: #ddd6fe; border: 1px solid #8b5cf6; }
+pre {
+  background: #0b1220;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  overflow: auto;
+  color: #e2e8f0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
 code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
-.small { font-size: .88rem; color: var(--sub); }
-@media(max-width: 720px) { body { padding: 12px; } section { padding: 16px; } }
+.small { font-size: 0.88rem; color: var(--sub); }
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin: 14px 0;
+}
+.sub-card {
+  background: var(--card-alt);
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  padding: 16px;
+}
+.sub-card h4 {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: 1rem;
+}
+@media(max-width: 720px) {
+  body { padding: 12px; }
+  section { padding: 16px; }
+  table { display: block; overflow-x: auto; white-space: normal; }
+}
 </style>
 </head>
 <body>
 <div class="container">
+
 <header>
   <div class="nav-bar">
-    <a href="index.html" class="nav-link active">仕様書</a>
-    <a href="diagram.html" class="nav-link">画面遷移図</a>
-    <a href="activity.html" class="nav-link">アクティビティ図</a>
-    <a href="mockup.html" class="nav-link">モック画面</a>
+    <a href="index.html" class="nav-link active">📄 仕様書</a>
+    <a href="diagram.html" class="nav-link">🔀 画面遷移図</a>
+    <a href="activity.html" class="nav-link">⚡ アクティビティ図</a>
+    <a href="mockup.html" class="nav-link">🖥️ モック画面</a>
   </div>
   <h1>コードラボ<br>プログラミング学習 AI誤り分析アシスタント 仕様書</h1>
   <div class="meta">
-    <span class="updated">改訂日時：2026年10月13日 14:45</span>
+    <span class="updated">改訂日時：2026年10月14日 19:40</span>
     <span>アーキテクチャ：Tauri v2</span>
     <span>画面：React / TypeScript</span>
     <span>バックエンド：Rust</span>
-    <span>対象：Windows 10 / 11</span>
+    <span>対象OS：Windows 10 / 11</span>
     <span>開発チーム：6名</span>
   </div>
-  <p class="small">本書は、既存仕様書と今回の修正案を統合した改訂版。実装方針として決定した事項と、実装着手前に選定が必要な事項を区別する。</p>
+  <p class="small">本書は、既存仕様と追加検討事項（配布容量設計・マルチ言語AIモデル特性・自作シナリオ拡張等）を統合した改訂版である。実装方針として決定した事項と、実装着手前に確定すべき事項を明確に区別する。</p>
 </header>
 
-<section>
+<nav class="toc-bar" aria-label="目次">
+  <span>目次：</span>
+  <a href="#sec1">1. 概要</a>
+  <a href="#sec2">2. システム構成・容量</a>
+  <a href="#sec3">3. 機能要件</a>
+  <a href="#sec4">4. 課題採点仕様</a>
+  <a href="#sec5">5. 実行安全性・制限</a>
+  <a href="#sec6">6. AIモデル・動作</a>
+  <a href="#sec7">7. 保存・同期</a>
+  <a href="#sec8">8. 構文比較</a>
+  <a href="#sec9">9. データ仕様(JSON)</a>
+  <a href="#sec10">10. 画面・状態表示</a>
+  <a href="#sec11">11. 受け入れ基準</a>
+  <a href="#sec12">12. 優先順位・未決定事項</a>
+  <a href="#sec13">13. 発展的機能</a>
+</nav>
+
+<section id="sec1">
   <h2>1. アプリ概要・目的</h2>
-  <p>小学生高学年から大人までのプログラミング初学者が、コードを自分で書き、実行結果やエラーを確認しながら学習できるデスクトップアプリケーションを提供する。学習モードは「自由創作」と「課題演習」の2種類とし、ローカルAIによるエラー分析・段階的ヒント、課題テストによる採点、辞書・他言語構文比較、学習記録の同期を備える。</p>
+  <p>小学生高学年から大人までのプログラミング初学者が、コードを自分で書き、実行結果やエラーを確認しながら自律的に学習できるデスクトップアプリケーションを提供する。学習モードは「自由創作」と「課題演習」の2種類を基本とし、ローカルAIによるエラー分析・段階的ヒント、自動テストによる2段階採点、ふりがな対応の辞書・他言語構文比較、学習記録のクラウド同期を備える。</p>
   <ul>
-    <li><b>初期対応言語：</b>Python（実行対象）。Java / JavaScript は構文比較・説明の対象とし、初期版では実行環境を提供しない[cite: 3]。</li>
-    <li><b>保存方針：</b>編集コードは端末内、学習記録はログイン時にクラウドへ保存・同期する[cite: 3]。</li>
-    <li><b>AI方針：</b>原則ローカルAIを利用する。AIが利用できなくても、編集・実行・テスト・保存を継続できる[cite: 3]。</li>
-    <li><b>合格基準：</b>採点が完了し、合計80点以上、かつ構文エラー・実行時エラー・タイムアウトがないこと[cite: 3]。</li>
+    <li><b>初期対応言語：</b>Python（実行対象）。Java / JavaScript は構文比較・解説の対象とし、初期版では実行環境を提供しない。</li>
+    <li><b>保存方針：</b>編集中のコード本文は端末内（ローカル）に自動保存し、学習記録（メタデータ）はログイン時にクラウドへ保存・同期する。</li>
+    <li><b>AI方針：</b>原則として端末内のローカルAIを利用する。AIが未導入または利用不可の状態でも、コード編集・実行・機械的テスト・ローカル保存を停止せず継続できる。</li>
+    <li><b>合格基準：</b>採点が完了し、合計80点以上、かつ構文エラー・実行時エラー・タイムアウトがないこと。</li>
   </ul>
 </section>
 
-<section>
-  <h2>2. システム構成</h2>
+<section id="sec2">
+  <h2>2. システム構成・配布容量設計</h2>
   <table>
     <thead>
       <tr>
         <th>構成要素</th>
         <th>責務</th>
         <th>技術・方針</th>
+        <th>想定サイズ目安</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td>デスクトップUI</td>
-        <td>コード編集、課題表示、コンソール、AIアシスタント、辞書、履歴、設定を提供する[cite: 3]。</td>
-        <td>Tauri v2 / React / TypeScript[cite: 3]</td>
+        <td>コード編集、課題表示、コンソール、AIアシスタント、辞書、履歴、テーマ切替等の設定を提供する。</td>
+        <td>Tauri v2 / React / TypeScript</td>
+        <td rowspan="2">約 20MB 〜 50MB<br><span class="small">（OS標準WebViewを利用し軽量化）</span></td>
       </tr>
       <tr>
         <td>アプリバックエンド</td>
-        <td>実行要求の検証、Pythonプロセス管理、タイムアウト・停止、ローカル保存、AIランタイム連携を行う[cite: 3]。</td>
-        <td>Rust[cite: 3]</td>
+        <td>実行要求の検証、Pythonプロセス管理、タイムアウト・強制停止、ローカル保存、AIランタイム連携を行う。</td>
+        <td>Rust</td>
       </tr>
       <tr>
         <td>Python実行環境</td>
-        <td>ユーザーコードと課題テストを実行する[cite: 3]。</td>
-        <td>配布物に同梱したPythonランタイム。ユーザー側の環境構築を不要にする[cite: 3]。</td>
+        <td>ユーザーコードと課題テストケースを実行する。</td>
+        <td>配布物に同梱した埋め込み用Pythonランタイム。ユーザー側の環境構築を不要にする。</td>
+        <td>約 30MB 〜 60MB</td>
       </tr>
       <tr>
         <td>ローカルAI</td>
-        <td>エラー説明、段階的ヒント、コード妥当性評価、構文比較の補助を行う[cite: 3]。</td>
-        <td>モデルを初回起動時などにダウンロード。モデル名・容量は選定事項[cite: 3]。</td>
+        <td>エラー説明、段階的ヒント、コード妥当性評価、構文比較の補助を行う。</td>
+        <td>初回起動時などにオンデマンドでダウンロード。1つの小型コードモデルで複数言語の知識をカバーする。</td>
+        <td>約 1.0GB 〜 3.0GB<br><span class="small">（1.5B〜3B量子化モデル想定）</span></td>
       </tr>
       <tr>
         <td>クラウドAPI / DB</td>
-        <td>認証、学習記録、課題結果、実績の保存と同期を行う[cite: 3]。</td>
-        <td>HTTPS API / データベース。コード全文は原則送信しない[cite: 3]。</td>
+        <td>認証、学習記録、課題結果、実績（バッジ）の保存と同期を行う。</td>
+        <td>HTTPS API / データベース。プライバシー保護のためユーザーコード全文は原則送信しない。</td>
+        <td>（サーバー側管理）</td>
       </tr>
     </tbody>
   </table>
-  <p class="note"><b>セキュリティ前提：</b>Pythonコードは任意の処理を実行し得るため、単にタイムアウトを設けるだけでは安全性を保証できない。OSレベルの隔離・権限制限を含む実行方式を採用し、リリース前に脅威分析と安全性テストを行う[cite: 3]。</p>
+
+  <div class="grid-2">
+    <div class="sub-card">
+      <h4>📦 インストーラーの軽量化方針（2段階配布）</h4>
+      <p class="small">大容量のAIモデルをインストーラー本体から分離することで、初期インストーラーのファイルサイズを <b>約50MB〜100MB</b> に抑える。配布・インストールの敷居を下げ、AIモデルは初回起動時またはバックグラウンドで進捗表示付きで取得する。</p>
+    </div>
+    <div class="sub-card">
+      <h4>🛡️ セキュリティ前提（サンドボックス）</h4>
+      <p class="small">Pythonコードは任意の処理を実行し得るため、単なるタイムアウトだけでは安全性を保証できない。OSレベルの隔離・権限制限を含む実行方式を採用し、リリース前に脅威分析と安全性検証テストを実施する。</p>
+    </div>
+  </div>
 </section>
 
-<section>
+<section id="sec3">
   <h2>3. 機能要件</h2>
   <table>
     <thead>
@@ -170,151 +317,173 @@ code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
         <th>ID</th>
         <th>機能</th>
         <th>要件</th>
-        <th>初期版</th>
+        <th>初期版区分</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td>F-01</td><td>自由創作モード[cite: 3]</td><td>白紙のエディタでPythonコードを作成・実行できる。実行結果とエラーをコンソールに表示する[cite: 3]。</td><td>必須[cite: 3]</td></tr>
-      <tr><td>F-02</td><td>課題演習モード[cite: 3]</td><td>課題文・入力条件・期待結果を表示し、ユーザーが一からコードを記述してテストを実行できる[cite: 3]。</td><td>必須[cite: 3]</td></tr>
-      <tr><td>F-03</td><td>テスト・採点[cite: 3]</td><td>テストケース単位で成功・失敗を表示し、部分点と改善ヒントを提示する[cite: 3]。</td><td>必須[cite: 3]</td></tr>
-      <tr><td>F-04</td><td>AIエラー分析[cite: 3]</td><td>エラーや出力の差異を初学者向けに説明する。答えを最初から提示せず、段階的ヒントを優先する[cite: 3]。</td><td>必須[cite: 3]</td></tr>
-      <tr><td>F-05</td><td>コード自動保存[cite: 3]</td><td>編集内容を端末内へ自動保存し、アプリ再起動後に復元できる[cite: 3]。</td><td>必須[cite: 3]</td></tr>
-      <tr><td>F-06</td><td>学習履歴同期[cite: 3]</td><td>ログインユーザーの課題結果、得点、エラー種別、解決状況、学習日時、実績をクラウドに保存する[cite: 3]。</td><td>必須[cite: 3]</td></tr>
-      <tr><td>F-07</td><td>辞書・構文比較[cite: 3]</td><td>Pythonの基本構文・関数を説明し、設定された既習言語との対応例を並べて表示する[cite: 3]。</td><td>必須[cite: 3]</td></tr>
-      <tr><td>F-08</td><td>AIモデル管理[cite: 3]</td><td>ダウンロード容量・進捗・失敗理由を表示し、再試行できる。AIが使えなくても基本学習を継続する[cite: 3]。</td><td>必須[cite: 3]</td></tr>
-      <tr><td>F-09</td><td>コード補助[cite: 3]</td><td>インデント整形、基本構文のスニペット挿入を提供する[cite: 3]。</td><td>必須[cite: 3]</td></tr>
-      <tr><td>F-10</td><td>実績・バッジ[cite: 3]</td><td>課題達成や継続学習などに応じて実績を付与し、履歴とともに保存する[cite: 3]。</td><td>必須予定[cite: 3]</td></tr>
-      <tr><td>F-11</td><td>既習言語設定[cite: 3]</td><td>Java / JavaScript など、比較表示したい言語を設定できる[cite: 3]。</td><td>必須[cite: 3]</td></tr>
+      <tr><td>F-01</td><td>自由創作モード</td><td>白紙のエディタでPythonコードを作成・実行できる。実行結果とエラーをコンソールに表示する。</td><td><span class="badge badge-req">必須</span></td></tr>
+      <tr><td>F-02</td><td>課題演習モード</td><td>課題文・入力条件・期待結果を表示し、ユーザーが一からコードを記述してテストを実行できる。</td><td><span class="badge badge-req">必須</span></td></tr>
+      <tr><td>F-03</td><td>テスト・採点</td><td>テストケース単位で成功・失敗を表示し、部分点と改善ヒントを提示する（2段階採点）。</td><td><span class="badge badge-req">必須</span></td></tr>
+      <tr><td>F-04</td><td>AIエラー分析</td><td>エラーや出力の差異を初学者向けに説明する。答えを最初から提示せず、段階的ヒントを優先する。</td><td><span class="badge badge-req">必須</span></td></tr>
+      <tr><td>F-05</td><td>コード自動保存</td><td>編集内容を端末内へ自動保存し、アプリ再起動後に復元できる。</td><td><span class="badge badge-req">必須</span></td></tr>
+      <tr><td>F-06</td><td>学習履歴同期</td><td>ログインユーザーの課題結果、得点、エラー種別、解決状況、学習日時、実績をクラウドに保存する。</td><td><span class="badge badge-req">必須</span></td></tr>
+      <tr><td>F-07</td><td>辞書・構文比較</td><td>Pythonの基本構文・関数を説明し、設定された既習言語との対応例を並べて表示する。</td><td><span class="badge badge-req">必須</span></td></tr>
+      <tr><td>F-08</td><td>AIモデル管理</td><td>ダウンロード容量・進捗・失敗理由を表示し、再試行できる。AIが使えなくても基本学習を継続する。</td><td><span class="badge badge-req">必須</span></td></tr>
+      <tr><td>F-09</td><td>コード補助・テーマ</td><td>インデント整形、基本構文のスニペット挿入、および画面のダーク／ライトテーマ切替を提供する。</td><td><span class="badge badge-req">必須</span></td></tr>
+      <tr><td>F-10</td><td>実績・バッジ</td><td>課題達成や継続学習などに応じて実績を付与し、履歴とともに保存する。</td><td><span class="badge badge-plan">必須予定</span></td></tr>
+      <tr><td>F-11</td><td>既習言語設定</td><td>Java / JavaScript など、構文比較で並べて表示したい言語を設定できる。</td><td><span class="badge badge-req">必須</span></td></tr>
+      <tr><td>F-12</td><td>自作シナリオ作成</td><td>自由創作時に独自のお題とテストケースを定義し、自分で解いてクリア判定できるカスタム課題機能。</td><td><span class="badge badge-ext">発展（将来検討）</span></td></tr>
     </tbody>
   </table>
 </section>
 
-<section>
-  <h2>4. 課題採点仕様</h2>
-  <h3>4.1 配点</h3>
+<section id="sec4">
+  <h2>4. 課題採点仕様（2段階採点方式）</h2>
+  <h3>4.1 配点構成</h3>
   <table>
     <thead>
       <tr>
+        <th>段階</th>
         <th>評価項目</th>
         <th>配点</th>
         <th>評価方法</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td>要件達成度[cite: 3]</td><td>50点[cite: 3]</td><td>課題の要求事項を満たしているかを評価する。チェック項目ごとの配点は課題定義に保持する[cite: 3]。</td></tr>
-      <tr><td>実行結果[cite: 3]</td><td>30点[cite: 3]</td><td>自動テストケースの成功数・重要度に応じて算出する[cite: 3]。</td></tr>
-      <tr><td>コード妥当性[cite: 2]</td><td>20点[cite: 3]</td><td>読みやすさ、適切な構造、課題に対する妥当性を評価する。AI評価を使う場合は理由を記録する[cite: 3]。</td></tr>
-      <tr><th>合計[cite: 3]</th><th>100点[cite: 3]</th><th>各項目の点数を合算する[cite: 3]。</th></tr>
+      <tr>
+        <td rowspan="2">第1段階<br><span class="small">（機械的検証）</span></td>
+        <td>要件達成度</td>
+        <td>50点</td>
+        <td>課題の要求事項（指定した変数・構文の使用、基本出力条件など）を満たしているかを評価する。チェック項目ごとの配点は課題定義に保持する。</td>
+      </tr>
+      <tr>
+        <td>実行結果</td>
+        <td>30点</td>
+        <td>自動テストケースの成功数・重要度に応じて算出する。テストケースの個別配点合計が必ず30点になるよう検証する。</td>
+      </tr>
+      <tr>
+        <td>第2段階<br><span class="small">（AI評価）</span></td>
+        <td>コード妥当性</td>
+        <td>20点</td>
+        <td>読みやすさ、適切な構造、課題に対するロジックの妥当性を評価する。ハードコーディング（丸暗記出力）の検知や改善理由の記録を行う。</td>
+      </tr>
+      <tr>
+        <th colspan="2">合計</th>
+        <th>100点</th>
+        <th>各項目の点数を合算する。テスト配点が未設定の課題は採点を開始できない。</th>
+      </tr>
     </tbody>
   </table>
-  <p>テストケースの個別配点は課題データに明示し、実行結果30点の合計が必ず30点になるよう検証する。テストケースの配点が未設定の課題は採点を開始できない[cite: 3]。</p>
-  
-  <h3>4.2 合否・部分点</h3>
+
+  <h3>4.2 合否判定・部分点・フォールバック規則</h3>
   <ul>
-    <li>合計点は0～100の整数とする。各評価項目の点数はそれぞれの配点を超えない[cite: 3]。</li>
-    <li>採点完了かつ80点以上で、構文エラー・実行時エラー・タイムアウトがない場合のみ合格とする[cite: 3]。</li>
-    <li>テストが一部失敗した場合は成功テスト分の点数を付与し、失敗したケースと期待値・実際値（機密情報を含まない範囲）を表示する[cite: 3]。</li>
-    <li>構文エラー・実行時エラー・タイムアウト時は合格不可。採点できる項目のみ部分点を表示し、評価できない項目は0点と断定せず「未評価」として区別する[cite: 3]。</li>
-    <li>AI評価に失敗した場合、AI評価を必要とする採点は「採点未完了」とする。暫定点を合格点として扱わず、再試行またはAIなしで利用可能なテスト結果のみ確認できるようにする[cite: 3]。</li>
-    <li>合否は保存された点数だけでなく、採点状態と実行状態から決定する。UI側の表示値のみで合否を判定しない[cite: 3]。</li>
+    <li>合計点は 0〜100 の整数とし、各評価項目の点数はそれぞれの配点上限を超えない。</li>
+    <li><b>合格条件：</b>「採点完了（<code>evaluationStatus: "completed"</code>）」かつ「合計80点以上」、かつ「構文エラー・実行時エラー・タイムアウトがない」場合のみ合格（<code>isPassed: true</code>）とする。</li>
+    <li><b>部分点：</b>テストが一部失敗した場合は成功テスト分の点数を付与し、失敗したケースの期待値と実際値（機密情報を含まない範囲）を表示する。</li>
+    <li><b>エラー発生時：</b>構文エラー・実行時エラー・タイムアウト時は合格不可。機械的に採点できる項目のみ部分点を表示し、評価できない項目は0点と断定せず「未評価」として区別する。</li>
+    <li><b>AI評価失敗時：</b>ローカルAIが未導入または推論失敗した場合、AI評価を必要とする採点は「採点未完了（<code>incomplete</code>）」とする。暫定点を合格点として扱わず、再試行または第1段階（機械的テスト結果）のみ確認できるようにする。</li>
+    <li><b>判定の信頼性：</b>合否は保存された点数だけでなく、採点状態と実行状態からバックエンド側で決定する。UI側の表示値のみで合否を判定しない。</li>
   </ul>
-  
-  <h3>4.3 ヒント</h3>
+
+  <h3>4.3 段階的ヒント（ステップアップ方式）</h3>
   <ol>
-    <li>第1段階：どの条件・処理を見直すべきかを示す[cite: 3]。</li>
-    <li>第2段階：関連する構文や考え方を説明する[cite: 3]。</li>
-    <li>第3段階：必要な場合に限り、短いコード例や修正例を示す[cite: 3]。</li>
+    <li><b>第1段階（箇所の特定）：</b>どの条件・処理・行付近を見直すべきか、注目ポイントを示す。</li>
+    <li><b>第2段階（概念・構文の解説）：</b>関連するPythonの構文や処理の考え方を、既習言語との違いも交えて分かりやすく説明する。</li>
+    <li><b>第3段階（修正方針・具体例）：</b>ユーザーがさらに助けを求めた場合に限り、短いコード例や具体的な修正方針を示す（最初から答え全文は提示しない）。</li>
   </ol>
 </section>
 
-<section>
+<section id="sec5">
   <h2>5. Python実行の安全性・制限</h2>
-  <p>以下は初期実装の基準値案であり、対象PCでの負荷試験とセキュリティ検証後に確定する[cite: 3]。</p>
+  <p>以下は初期実装の基準値案であり、対象PC（Windows 10/11）での負荷試験とセキュリティ検証後に最終確定する。</p>
   <table>
     <thead>
       <tr>
-        <th>項目</th>
+        <th>制限項目</th>
         <th>初期基準案</th>
-        <th>動作</th>
+        <th>制御・動作仕様</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td>実行時間[cite: 3]</td><td>通常実行・各テスト：最大5秒[cite: 3]</td><td>超過したら実行プロセスとその子プロセスを停止し、タイムアウトとして記録する[cite: 3]。</td></tr>
-      <tr><td>出力サイズ[cite: 3]</td><td>標準出力・標準エラー合計1 MiB[cite: 3]</td><td>上限到達時は出力を打ち切り、上限到達のメッセージを表示する[cite: 3]。</td></tr>
-      <tr><td>ファイルアクセス[cite: 3]</td><td>専用の一時作業ディレクトリ内に限定する方針[cite: 3]</td><td>アプリ設定、ユーザーファイル、認証情報、他のアプリのデータへアクセスできないようOS権限・隔離方式を設計する[cite: 3]。</td></tr>
-      <tr><td>ネットワーク[cite: 3]</td><td>ユーザーコードからの外部通信は初期版では禁止する方針[cite: 3]</td><td>OSレベルの制御で実現可能性を検証する。Pythonコード内の機能制限だけを安全対策としない[cite: 3]。</td></tr>
-      <tr><td>プロセス・リソース[cite: 3]</td><td>メモリ上限、CPU負荷、子プロセス起動を制限[cite: 3]</td><td>具体値と実装方式は対象OS上で検証して決定する[cite: 3]。</td></tr>
-      <tr><td>停止操作[cite: 3]</td><td>実行中に停止ボタンを提供[cite: 3]</td><td>親プロセスだけでなく関連する子プロセスも停止し、UIの操作を復帰させる[cite: 3]。</td></tr>
+      <tr><td>実行時間</td><td>通常実行・各テスト：最大 5秒</td><td>超過時はRustバックエンドから実行プロセスおよび全子プロセス（プロセスツリー）を強制停止し、タイムアウトとして記録する。</td></tr>
+      <tr><td>出力サイズ</td><td>標準出力・標準エラー合計 1 MiB</td><td>上限到達時はストリーム読み取りを打ち切り、プロセスを停止した上で上限到達メッセージを表示する。</td></tr>
+      <tr><td>ファイルアクセス</td><td>専用の一時作業ディレクトリ内に限定</td><td>アプリ設定、ユーザーの個人ファイル、認証情報、他アプリのデータへアクセスできないようOS権限・作業ディレクトリ隔離を設計する。</td></tr>
+      <tr><td>ネットワーク</td><td>外部通信は初期版では原則禁止</td><td>OSレベルの制御またはサンドボックス機構で実現可能性を検証する。Pythonコード内のモジュール制限（import制限）だけを安全対策としない。</td></tr>
+      <tr><td>プロセス・リソース</td><td>メモリ上限・CPU負荷・子プロセス制限</td><td>Windows Job Objects 等のOS機構を用い、メモリ上限やフォークボム（無限プロセス生成）の防止を検証・実装する。</td></tr>
+      <tr><td>手動停止操作</td><td>実行中に「停止」ボタンを常時提供</td><td>親プロセスだけでなく関連する子プロセスも確実に停止し、エディタとUIの操作を即座に復帰させる。</td></tr>
     </tbody>
   </table>
-  <p class="note"><b>セキュリティ前提：</b>ユーザーコード実行は信頼できないコードの実行に該当する。適切な隔離を実現できない場合は、任意コード実行機能をそのまま公開しない。セキュリティレビューをリリース判定条件とする[cite: 3]。</p>
+  <p class="note"><b>リリース判定条件：</b>ユーザーコード実行は「信頼できないコードの実行」に該当する。適切な隔離を実現できない場合は任意コード実行機能をそのまま公開せず、セキュリティレビューと検証テスト（AC-10）の通過をリリース必須条件とする。</p>
 </section>
 
-<section>
+<section id="sec6">
   <h2>6. AIモデル・利用不可時の動作</h2>
   <table>
     <thead>
       <tr>
         <th>状態</th>
-        <th>表示・動作</th>
+        <th>画面表示・アプリケーション動作</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td>モデル未導入・オンライン[cite: 3]</td><td>ダウンロード容量と進捗を表示して取得する。キャンセルと再試行を可能にする[cite: 3]。</td></tr>
-      <tr><td>モデル未導入・オフライン[cite: 3]</td><td>ダウンロード待ちであることを明示する。AI機能は無効化するが、編集・Python実行・機械的テスト・ローカル保存は継続する[cite: 3]。</td></tr>
-      <tr><td>モデル導入済み・オフライン[cite: 3]</td><td>ローカルランタイムが正常に動作する限り、ローカルAIを利用可能とする。クラウド同期は保留する[cite: 3]。</td></tr>
-      <tr><td>ダウンロード・読み込み失敗[cite: 3]</td><td>原因の概要、再試行、設定画面への導線を表示する。部分ダウンロードの再開可否はモデル配布方式に応じて実装する[cite: 3]。</td></tr>
-      <tr><td>AI応答タイムアウト・異常終了[cite: 3]</td><td>AIの結果を未完了として扱い、再試行を案内する。AIに依存しない機能を停止しない[cite: 3]。</td></tr>
+      <tr><td>モデル未導入・オンライン</td><td>ダウンロード容量と進捗バーを表示して取得する。キャンセルおよび中断からの再試行を可能にする。</td></tr>
+      <tr><td>モデル未導入・オフライン</td><td>「AIモデル未導入（ダウンロード待ち）」であることを明示する。AI機能は無効化するが、コード編集・Python実行・機械的テスト・ローカル保存は通常どおり継続する。</td></tr>
+      <tr><td>モデル導入済み・オフライン</td><td>ローカルランタイムが正常に動作する限り、オフラインでもローカルAIによるエラー分析・ヒント生成を利用可能とする。クラウド同期は保留キューへ積む。</td></tr>
+      <tr><td>ダウンロード・読み込み失敗</td><td>原因の概要（容量不足・通信切断・ハッシュ不一致等）、再試行ボタン、設定画面への導線を表示する。</td></tr>
+      <tr><td>AI応答タイムアウト・異常終了</td><td>AIの結果を「未完了」として扱い、再試行を案内する。AIに依存しない基本機能は一切停止しない。</td></tr>
     </tbody>
   </table>
-  <p>AIモデルの名称、配布元、容量、必要メモリ、ライセンス、ハッシュ検証、ダウンロード再開方式はリリース前に選定する。モデルの取得元とファイル整合性を検証し、取得したモデルの改ざんを検知できるようにする[cite: 3]。</p>
+  <div class="good">
+    <b>💡 AIモデルのマルチ言語対応特性について：</b><br>
+    本アプリで採用するローカルAIモデル（Qwen2.5-Coder / DeepSeek-Coder / Phi 等の1.5B〜3Bクラス量子化モデルを想定）は、単一のモデルファイル内にPythonだけでなくJava、JavaScript、C系言語など主要言語の構文・知識を網羅している。そのため、<b>構文比較の対象言語を追加する際にも別のAIモデルを追加ダウンロードする必要はなく</b>、初期導入した1つのAIモデルとアプリ内の固定辞書データの組み合わせでシームレスに対応できる。
+  </div>
+  <p class="small">※ AIモデルの具体的な名称、配布元URL、ファイル容量、必要メモリ、ライセンス、SHA-256ハッシュ検証方式、レジューム（再開）方式はリリース前に確定し、モデルの改ざん検知を実装する。</p>
 </section>
 
-<section>
+<section id="sec7">
   <h2>7. コード保存・学習記録・同期</h2>
-  <h3>7.1 保存対象</h3>
+  <h3>7.1 保存対象の切り分け</h3>
   <ul>
-    <li><b>端末内：</b>コード本文、編集中の状態、ローカル設定。ユーザーが作成したコードは原則クラウドへ送信しない[cite: 3]。</li>
-    <li><b>クラウド：</b>ログインユーザーID、課題ID、得点、合否、テスト結果の要約、エラー種別、解決状況、学習日時、実績、同期用ID[cite: 3]。</li>
-    <li><b>コードハッシュ：</b>必要性がある場合に限り、コード本文を復元できないハッシュ値を記録する。ハッシュだけでも他情報との組み合わせに注意する[cite: 3]。</li>
+    <li><b>端末内（ローカル保存）：</b>作成中のコード本文、エディタ状態、テーマや既習言語などのローカル設定、自作シナリオデータ。ユーザーが記述したコード本文は原則クラウドへ送信しない。</li>
+    <li><b>クラウド（同期対象）：</b>ログインユーザーID、課題ID、得点、合否、テスト結果の要約、エラー種別、解決状況、学習日時、実績バッジ、同期管理用ID。</li>
+    <li><b>コードハッシュ：</b>同一コードでの再提出判定など必要性がある場合に限り、コード本文を復元できないSHA-256等のハッシュ値のみを記録する。</li>
   </ul>
-  
-  <h3>7.2 ゲストからログインへの移行</h3>
+
+  <h3>7.2 ゲスト利用からログインへの移行</h3>
   <ol>
-    <li>ゲスト中の学習記録は端末内に保持する[cite: 3]。</li>
-    <li>ログイン時に、ローカル記録とクラウド記録の件数・対象期間を表示して統合確認を行う[cite: 3]。</li>
-    <li>重複判定には一意の記録IDを用い、同じIDは二重登録しない[cite: 3]。</li>
-    <li>クラウド側とローカル側に異なる記録がある場合は、削除で上書きせず、記録ID単位でマージする[cite: 3]。</li>
+    <li>未ログイン（ゲスト）状態での学習記録はすべて端末内に保持する。</li>
+    <li>ログイン時に、ローカル記録とクラウド記録の件数・対象期間を提示して統合確認ダイアログを表示する。</li>
+    <li>重複判定には一意の記録ID（<code>recordId</code>）を用い、同一IDのレコードは二重登録しない。</li>
+    <li>クラウド側とローカル側に異なる記録がある場合は、削除で上書きせず記録ID単位でマージする。</li>
   </ol>
-  
-  <h3>7.3 同期状態</h3>
-  <ul>
-    <li><code>synced</code>：クラウドへの保存が確認できた[cite: 3]。</li>
-    <li><code>pending</code>：未送信または通信待ち[cite: 3]。</li>
-    <li><code>failed</code>：同期失敗。理由を記録し、再試行可能にする[cite: 3]。</li>
-  </ul>
-  <p>オフライン時はローカルキューに記録し、接続回復時に再送する。同期成功が確認される前にローカル記録を削除しない。学習記録の更新競合は記録ID単位でマージし、更新日時とバージョン番号を用いて競合を検知する[cite: 3]。</p>
-</section>
 
-<section>
-  <h2>8. 既習言語との構文比較</h2>
+  <h3>7.3 同期ステータス管理</h3>
   <ul>
-    <li>Pythonの変数、条件分岐、繰り返し、関数、リスト等について、Pythonと設定済み言語の例を並べて表示する[cite: 3]。</li>
-    <li>初期版の比較対象はJavaとJavaScriptを基本候補とする。ユーザー設定で選択できる言語だけを表示する[cite: 3]。</li>
-    <li>初期版では比較用コードの実行・コンパイルは行わず、学習用の静的な説明・例示を表示する[cite: 3]。</li>
-    <li>誤った構文例を避けるため、基本比較データはレビュー済みの固定データを優先する。AI生成の説明は補助として扱い、固定データと区別して表示する[cite: 3]。</li>
+    <li><code>synced</code>：クラウドへの保存・同期が完了し確認できた状態。</li>
+    <li><code>pending</code>：未送信またはオフラインによりローカル送信キューで通信回復を待っている状態。</li>
+    <li><code>failed</code>：同期失敗。失敗理由を記録し、UI上から手動または自動で再試行可能にする。</li>
   </ul>
 </section>
 
-<section>
-  <h2>9. データ仕様（JSON例）</h2>
-  <p>以下は構造例。コメントを含まない正規のJSONとして保存・送信する。日時はタイムゾーンを含むISO 8601形式とする[cite: 3]。</p>
-  
+<section id="sec8">
+  <h2>8. 既習言語との構文比較・辞書</h2>
+  <ul>
+    <li>Pythonの変数、条件分岐（if）、繰り返し（for/while）、関数（def）、リスト・辞書等の基本構文について、Pythonとユーザー設定済み既習言語のコードを並べて対比表示する。</li>
+    <li>初期版の比較対象言語は <b>Java</b> と <b>JavaScript</b> を基本候補とし、ヘッダーや設定で選択した言語に即座に切り替えられる。</li>
+    <li>初期版では比較用コードの実行・コンパイルは行わず、学習用の静的な解説・構文対比を表示する。</li>
+    <li>初学者に誤った構文例（ハルシネーション）を示さないよう、<b>基本比較データは人間がレビューした固定データを最優先で表示</b>する。ローカルAIによる解説は補足として扱い、固定データと明確に区別して表示する。</li>
+  </ul>
+</section>
+
+<section id="sec9">
+  <h2>9. データ仕様（JSONスキーマ例）</h2>
+  <p>以下はフロントエンド（TypeScript）・バックエンド（Rust）・クラウドAPI間でやり取りする正規JSONの構造例である。日時はすべてタイムゾーン付きのISO 8601形式とする。</p>
+
   <h3>9.1 学習記録・エラーログ</h3>
   <pre><code>{
   "recordId": "rec_01J9XYZ",
   "userId": "usr_12345",
-  "timestamp": "2026-10-13T14:15:00+09:00",
+  "timestamp": "2026-10-14T19:40:00+09:00",
   "language": "python",
   "errorType": "LogicError",
   "expectedOutput": "年齢は10歳です",
@@ -324,8 +493,8 @@ code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
   "isResolved": true,
   "syncStatus": "synced"
 }</code></pre>
-  <p><b>errorTypeの候補：</b><code>SyntaxError</code>、<code>RuntimeError</code>、<code>LogicError</code>、<code>Timeout</code>、<code>EnvironmentError</code>、<code>AIError</code>。UI表示用の日本語説明は内部コードと分離する[cite: 3]。</p>
-  
+  <p class="small"><b>errorTypeの定義値：</b><code>SyntaxError</code>、<code>RuntimeError</code>、<code>LogicError</code>、<code>Timeout</code>、<code>EnvironmentError</code>、<code>AIError</code>。UI表示用の日本語ラベルは内部コードと分離して管理する。</p>
+
   <h3>9.2 課題採点結果</h3>
   <pre><code>{
   "taskId": "task_python_001",
@@ -344,92 +513,127 @@ code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
     "total": 8
   },
   "feedback": "テスト結果を確認できました。コードの構造も見直してみましょう。",
-  "evaluatedAt": "2026-10-13T14:15:00+09:00"
+  "evaluatedAt": "2026-10-14T19:40:00+09:00"
 }</code></pre>
-  <p>例では45 + 30 + 10 = 85。<code>isPassed</code>は点数だけでなく、評価完了・実行状態・エラー有無・合格基準から導出する。未完了の場合は<code>evaluationStatus</code>を<code>incomplete</code>とし、合格判定を行わない[cite: 3]。</p>
+
+  <h3>9.3 課題定義・自作シナリオ共通データ構造（新規追加）</h3>
+  <p>公式の「課題演習」および発展機能の「自作シナリオ（カスタム課題）」を同一のテストエンジンで処理するための課題定義フォーマット例。</p>
+  <pre><code>{
+  "taskId": "task_python_001",
+  "isCustomScenario": false,
+  "title": "課題 01｜年齢を表示しよう",
+  "difficulty": "beginner",
+  "description": "変数 age に年齢を代入し、「年齢は10歳です」と表示してください。",
+  "initialCode": "# ここにコードを書いてみよう\n",
+  "requirements": [
+    { "reqId": "req_1", "description": "変数 age を定義していること", "points": 25 },
+    { "reqId": "req_2", "description": "print関数で出力していること", "points": 25 }
+  ],
+  "testCases": [
+    { "caseId": "tc_1", "input": "", "expectedOutput": "年齢は10歳です\n", "points": 30, "isHidden": false }
+  ],
+  "limits": {
+    "timeoutMs": 5000,
+    "maxOutputBytes": 1048576
+  }
+}</code></pre>
 </section>
 
-<section>
-  <h2>10. 画面レイアウト・状態表示</h2>
+<section id="sec10">
+  <h2>10. 画面レイアウト・状態表示・テーマ</h2>
   <ul>
-    <li><b>ヘッダー：</b>テーマ切替、ログイン状態、AI状態、同期状態、既習言語設定[cite: 3]。</li>
-    <li><b>左メイン：</b>課題文、コードエディタ、整形・スニペット操作、実行・停止、自動保存状態[cite: 3]。</li>
-    <li><b>下部または左下：</b>標準出力、標準エラー、テスト結果、採点結果[cite: 3]。</li>
-    <li><b>右パネル：</b>AIアシスタント、段階的ヒント、構文比較、辞書、学習履歴[cite: 3]。</li>
-    <li><b>狭い画面への対応：</b>右パネルは折りたたみ・サイズ変更を可能にし、エディタとコンソールの表示領域を確保する[cite: 3]。</li>
-    <li><b>状態表示：</b>「AI利用可能／準備中／利用不可」「同期済み／同期待ち／同期失敗」「保存済み／保存中／保存失敗」を明確に区別する[cite: 3]。</li>
+    <li><b>トップバー（ヘッダー）：</b>ダーク／ライト（黒・白）の背景テーマ切替、比較言語セレクター、AI稼働状態ピル、クラウド同期状態、ユーザーアイコンを配置する。</li>
+    <li><b>左ナビゲーション：</b>コードエディタ、課題演習、関数・構文辞書、成長カルテ、エラー履歴、アチーブメントへの切り替えを提供する。</li>
+    <li><b>中央メイン領域：</b>学習モード切替（自由創作／課題演習）、行番号付きPythonコードエディタ、実行・停止・初期コードリセット操作、自動保存ステータス、および下部に「実行結果コンソール」と「エラー分析サマリー」を配置する。</li>
+    <li><b>右サイドバー：</b>AI学習アシスタント（クイック質問ボタン・チャット入力・段階的ヒント）、現在のミニ課題カード、学習進捗バーを表示する。</li>
+    <li><b>レスポンシブ・狭い画面への対応：</b>ウィンドウ幅に応じてパネルの折り返しや折りたたみを可能とし、エディタとコンソールの視認領域を最優先で確保する。</li>
+    <li><b>状態の明示的区別：</b>「AI利用可能／準備中／利用不可」「同期済み／同期待ち／同期失敗」「保存済み／保存中／保存失敗」を色とアイコンで明確に区別する。</li>
   </ul>
 </section>
 
-<section>
+<section id="sec11">
   <h2>11. 受け入れ基準（テスト可能な完了条件）</h2>
   <table>
     <thead>
       <tr>
         <th>ID</th>
-        <th>対象</th>
-        <th>受け入れ条件</th>
+        <th>検証対象</th>
+        <th>受け入れ完了条件（Acceptance Criteria）</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td>AC-01[cite: 3]</td><td>Python実行[cite: 3]</td><td>正常なコードの出力を表示し、構文エラー・実行時エラーを区別して表示できる[cite: 3]。</td></tr>
-      <tr><td>AC-02[cite: 3]</td><td>停止・タイムアウト[cite: 3]</td><td>無限ループ等のテストコードを制限時間後に停止でき、関連プロセスが残らず、UIが操作可能に戻る[cite: 3]。</td></tr>
-      <tr><td>AC-03[cite: 3]</td><td>出力制限[cite: 3]</td><td>大量出力時に定義した上限で打ち切り、アプリが応答不能にならない[cite: 3]。</td></tr>
-      <tr><td>AC-04[cite: 3]</td><td>採点[cite: 3]</td><td>テストの成功・失敗と部分点が一致し、配点合計は100点、合格条件が仕様どおりに適用される[cite: 3]。</td></tr>
-      <tr><td>AC-05[cite: 3]</td><td>AI失敗[cite: 3]</td><td>AIモデル未導入・オフライン・読み込み失敗でも、編集・実行・テスト・ローカル保存を継続できる[cite: 3]。</td></tr>
-      <tr><td>AC-06[cite: 3]</td><td>ローカル保存[cite: 3]</td><td>編集後に自動保存され、アプリ再起動後に最後に保存された内容を復元できる[cite: 3]。</td></tr>
-      <tr><td>AC-07[cite: 3]</td><td>クラウド同期[cite: 3]</td><td>オフライン中の学習記録を接続回復後に再送し、重複登録せず、失敗状態をユーザーに表示する[cite: 3]。</td></tr>
-      <tr><td>AC-08[cite: 3]</td><td>ゲスト移行[cite: 3]</td><td>ログイン時にゲスト記録を統合でき、既存記録の重複や意図しない消失がない[cite: 3]。</td></tr>
-      <tr><td>AC-09[cite: 3]</td><td>構文比較[cite: 3]</td><td>Pythonと選択言語のレビュー済み比較例を表示し、比較対象言語のコードを実行しない[cite: 3]。</td></tr>
-      <tr><td>AC-10[cite: 3]</td><td>実行隔離[cite: 3]</td><td>設計した権限制限・ネットワーク制限・ファイルアクセス制限が検証用テストで機能する。検証未完了の場合はリリース不可[cite: 3]。</td></tr>
+      <tr><td>AC-01</td><td>Python実行</td><td>正常なコードの標準出力を表示し、構文エラー・実行時エラーを区別して表示できる。</td></tr>
+      <tr><td>AC-02</td><td>停止・タイムアウト</td><td>無限ループ等のテストコードを制限時間（5秒）後に自動停止でき、子プロセスが残らず、UIが即座に操作可能に戻る。</td></tr>
+      <tr><td>AC-03</td><td>出力制限</td><td>大量出力時に定義した上限（1 MiB）で打ち切り、アプリがフリーズ・応答不能にならない。</td></tr>
+      <tr><td>AC-04</td><td>採点ロジック</td><td>テストの成功・失敗と部分点が一致し、配点合計は100点、合格条件（採点完了・80点以上・エラーなし）が仕様どおり適用される。</td></tr>
+      <tr><td>AC-05</td><td>AIフォールバック</td><td>AIモデル未導入・オフライン・読み込み失敗でも、編集・Python実行・機械的テスト・ローカル保存をエラーなく継続できる。</td></tr>
+      <tr><td>AC-06</td><td>ローカル自動保存</td><td>編集後に端末内へ自動保存され、アプリ再起動後に最後に保存されたコード内容を正確に復元できる。</td></tr>
+      <tr><td>AC-07</td><td>クラウド同期</td><td>オフライン中の学習記録を接続回復後に再送し、重複登録せず、失敗時は状態をユーザーに表示して再試行できる。</td></tr>
+      <tr><td>AC-08</td><td>ゲスト移行</td><td>ログイン時にゲスト記録を統合確認でき、既存記録の重複登録や意図しない消失が発生しない。</td></tr>
+      <tr><td>AC-09</td><td>構文比較</td><td>Pythonと選択した既習言語のレビュー済み比較例を表示し、比較対象言語のコードを実行しない。</td></tr>
+      <tr><td>AC-10</td><td>実行隔離（必須ゲート）</td><td>設計した権限制限・ネットワーク制限・ファイルアクセス制限が検証用テストコードで確実に機能する。<b>検証未完了の場合はリリース不可。</b></td></tr>
     </tbody>
   </table>
 </section>
 
-<section>
-  <h2>12. 開発優先順位・未決定事項</h2>
-  <h3>12.1 優先順位</h3>
+<section id="sec12">
+  <h2>12. 開発優先順位・実装前確定事項</h2>
+  <h3>12.1 実装フェーズと優先順位</h3>
   <ol>
-    <li><b>優先度1：基盤と安全性</b> — Tauri構成、Python実行・停止、出力表示、ローカル自動保存、実行隔離の検証[cite: 3]。</li>
-    <li><b>優先度2：課題演習と採点</b> — 課題定義、テストケース、部分点、合否、ヒント表示[cite: 3]。</li>
-    <li><b>優先度3：AIと学習支援</b> — モデル取得、ローカルAI、利用不可時のフォールバック、辞書・構文比較[cite: 3]。</li>
-    <li><b>優先度4：アカウントと継続利用</b> — クラウド学習記録、ゲスト統合、同期競合処理、実績・バッジ[cite: 3]。</li>
+    <li><b>優先度1：コア基盤と安全性（最優先）</b> — Tauri v2構成、同梱Python実行・強制停止、出力制限、ローカル自動保存、OSレベルの実行隔離（サンドボックス）のPoC検証。</li>
+    <li><b>優先度2：課題演習と機械的採点</b> — 課題定義JSONの読み込み、テストケース実行エンジン、部分点算出、合否判定、段階的ヒントUI。</li>
+    <li><b>優先度3：ローカルAI連携と学習支援</b> — AIモデルのオンデマンド取得、ローカルAI推論連携、利用不可時のフォールバック、辞書・既習言語構文比較。</li>
+    <li><b>優先度4：アカウント連携と継続利用支援</b> — クラウド学習記録API、ゲスト記録統合、同期競合処理、実績・バッジシステム。</li>
   </ol>
-  <p>構文比較は初期版の機能範囲に含む。優先度3は実装順を示し、初期版から除外する意味ではない[cite: 3]。</p>
-  
-  <h3>12.2 実装前に確定する項目</h3>
+  <p class="small">※ 構文比較やテーマ切替は初期版の機能範囲に含む。優先度番号は安全な開発順序を示し、初期版から除外する意味ではない。</p>
+
+  <h3>12.2 実装着手前に確定する項目</h3>
   <table>
     <thead>
       <tr>
         <th>項目</th>
-        <th>確定が必要な内容</th>
-        <th>決定者・タイミング</th>
+        <th>確定が必要な具体内容</th>
+        <th>担当・確定タイミング</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td>採点詳細[cite: 3]</td><td>各課題のテスト配点、要件達成度のチェック項目、コード妥当性評価のルーブリック[cite: 3]</td><td>教材・採点担当／課題実装前[cite: 3]</td></tr>
-      <tr><td>実行隔離[cite: 3]</td><td>Windows上で利用する隔離方式、メモリ・CPU・プロセス上限、ファイル・ネットワーク制限[cite: 3]</td><td>バックエンド担当／実行機能実装前[cite: 3]</td></tr>
-      <tr><td>AIモデル[cite: 3]</td><td>モデル名、ライセンス、配布元、ファイル容量、必要メモリ、ハッシュ検証、再開方式[cite: 3]</td><td>AI担当／モデル連携前[cite: 3]</td></tr>
-      <tr><td>比較対象[cite: 3]</td><td>初期版の比較対象言語、比較する構文範囲、固定データのレビュー方法[cite: 3]</td><td>教材担当／辞書実装前[cite: 3]</td></tr>
-      <tr><td>同期競合[cite: 3]</td><td>更新日時・バージョン管理、複数端末更新時のマージ・競合表示ルール[cite: 3]</td><td>サーバー担当／同期実装前[cite: 3]</td></tr>
-      <tr><td>運用条件[cite: 3]</td><td>Windows 10/11のサポート範囲、必要メモリ・空き容量、クラウドAPIの運用・障害時方針[cite: 3]</td><td>チーム合意／リリース計画時[cite: 3]</td></tr>
+      <tr><td>採点詳細ルーブリック</td><td>各課題のテスト配点、要件達成度の静的/動的チェック方法、コード妥当性評価のプロンプトとルーブリック。</td><td>教材・採点担当 ／ 課題実装前</td></tr>
+      <tr><td>実行隔離方式</td><td>Windows上で利用する隔離方式（Job Objects / AppContainer等）、メモリ・CPU・プロセス上限、ファイル・通信制限の実装詳細。</td><td>バックエンド担当 ／ 実行機能実装前</td></tr>
+      <tr><td>ローカルAIモデル選定</td><td>採用モデル名、ライセンス、配布元、量子化形式、ファイル容量、必要メモリ、SHA-256検証、中断再開方式。</td><td>AI担当 ／ モデル連携前</td></tr>
+      <tr><td>比較対象データ整備</td><td>初期版の比較対象言語（Java/JS）、比較する構文範囲、固定データのレビュー体制。</td><td>教材担当 ／ 辞書実装前</td></tr>
+      <tr><td>同期競合ルール</td><td>更新日時・バージョン番号管理、複数端末更新時のマージ・競合表示ルール。</td><td>サーバー担当 ／ 同期実装前</td></tr>
+      <tr><td>動作環境・運用条件</td><td>Windows 10/11のサポート範囲、推奨/最低メモリ・空き容量、クラウドAPIの障害時方針。</td><td>チーム全員合意 ／ リリース計画時</td></tr>
     </tbody>
   </table>
-  <p class="note">この改訂版では、今回の修正案を反映して曖昧な動作を明文化した。数値のうち実行時間5秒・出力上限1 MiBは初期基準案であり、実装・負荷・安全性試験で最終確定する。その他の未決定項目は表に記載した担当・タイミングで確定する[cite: 3]。</p>
 </section>
 
-<section>
-  <h2>13. 発展的機能（将来検討・実装できれば）</h2>
-  <p><b>自作シナリオ・カスタム課題作成機能：</b></p>
-  <ul>
-    <li>ユーザー自身が自由創作モード等で「独自のお題（シナリオ）」と「判定用のテストケース（入力・期待値）」を定義・保存し、自分で作成した問題を自分で解いてテスト・自己採点できる仕組み。</li>
-    <li>本機能は必須要件（初期版）のスコープ外とし、基本機能・基盤が安定したあとの追加機能（Nice-to-have）として将来的に検討する。</li>
-  </ul>
+<section id="sec13">
+  <h2>13. 発展的機能・将来ロードマップ（Nice-to-have）</h2>
+  <p>以下の機能は初期版（必須スコープ）完了後、コア基盤が安定した段階で順次拡張を検討する項目である。</p>
+  <div class="grid-2">
+    <div class="sub-card">
+      <h4>🎯 13.1 自作シナリオ・カスタム課題作成機能</h4>
+      <ul>
+        <li>ユーザーが自由創作モード等で「自分だけのお題（シナリオ文・制約条件）」と「クリア判定用のテストケース（入力と期待出力のペア）」をGUIまたはJSON（9.3節の共通フォーマット）で作成・保存できる機能。</li>
+        <li>作成したシナリオは課題演習と同じテスト・採点エンジンおよび実行隔離（5秒制限・1MiB制限）を通して安全に実行・自己クリア判定できる。</li>
+        <li>ローカルAIに「こういう問題を作りたい」と伝えてテストケースの雛形を自動生成させる作成補助機能への発展も可能。</li>
+      </ul>
+    </div>
+    <div class="sub-card">
+      <h4>🔌 13.2 他言語の実行環境追加（プラグイン方式）</h4>
+      <ul>
+        <li>初期版ではPythonのみを実行対象とし、Java / JavaScript等は静的な構文比較および単一AIモデルによる解説で対応する。</li>
+        <li>将来、他言語の「コード実行」にも対応する場合は、AIモデルの再ダウンロードは不要とし、対象言語のランタイム・コンパイラのみをオプションとして追加ダウンロード（プラグイン導入）できるアーキテクチャとする。</li>
+      </ul>
+    </div>
+  </div>
 </section>
 
-<footer class="small" style="padding:10px 4px 30px">
-  文書名：コードラボ プログラミング学習 AI誤り分析アシスタント仕様書（改訂版）
+<footer class="small" style="padding:10px 4px 30px; border-top: 1px solid var(--line); margin-top: 28px;">
+  文書名：コードラボ プログラミング学習 AI誤り分析アシスタント 仕様書（改訂・ブラッシュアップ版）
 </footer>
+
 </div>
 </body>
 </html>
+```[cite: 3]
