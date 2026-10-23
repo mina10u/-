@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>コードラボ｜プログラミング学習 AI誤り分析アシスタント 画面ツリー図</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: "dark",
+  themeVariables: {
+    background: "#0f172a",
+    primaryColor: "#1e293b",
+    primaryTextColor: "#f8fafc",
+    primaryBorderColor: "#38bdf8",
+    lineColor: "#64748b",
+    fontFamily: "system-ui, -apple-system, 'Segoe UI', Meiryo, sans-serif",
+    fontSize: "12px"
+  },
+  flowchart: {
+    useMaxWidth: true,
+    htmlLabels: true,
+    curve: "linear",
+    nodeSpacing: 18,
+    rankSpacing: 40
+  }
+});
+</script>
+<style>
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --card-alt: #162032;
+  --text: #f8fafc;
+  --sub: #cbd5e1;
+  --muted: #94a3b8;
+  --line: #334155;
+  --line-strong: #475569;
+  --accent: #38bdf8;
+  --blue: #2563eb;
+  --amber: #fbbf24;
+  --green: #86efac;
+  --red: #fca5a5;
+  --purple: #c4b5fd;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  padding: 28px;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.75 system-ui, -apple-system, "Segoe UI", Meiryo, sans-serif;
+}
+.container { max-width: 1200px; margin: auto; }
+header {
+  border-bottom: 2px solid var(--line-strong);
+  padding: 0 0 22px;
+  margin-bottom: 24px;
+}
+.nav-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.nav-link {
+  background: var(--card);
+  color: var(--accent);
+  border: 1px solid var(--line-strong);
+  padding: 7px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+.nav-link.active {
+  background: var(--blue);
+  color: #ffffff;
+  border-color: var(--blue);
+}
+.nav-link:hover { background: #334155; }
+
+h1 {
+  font-size: clamp(1.65rem, 3vw, 2.25rem);
+  line-height: 1.35;
+  color: var(--accent);
+  margin: 0 0 12px;
+}
+h2 {
+  font-size: 1.35rem;
+  border-left: 5px solid var(--accent);
+  padding-left: 12px;
+  margin: 0 0 18px;
+  color: #f1f5f9;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  color: var(--sub);
+  font-size: 0.9rem;
+}
+.updated { color: var(--amber); font-weight: 700; }
+
+section {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+  margin: 18px 0;
+  overflow: hidden;
+}
+
+.mermaid-box {
+  background: #0b1220;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 24px 16px;
+  overflow: auto;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.mermaid {
+  display: inline-block;
+  min-width: 950px;
+  width: 100%;
+}
+
+.tree-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.tree-card {
+  background: var(--card-alt);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  padding: 16px;
+}
+.tree-card h3 {
+  color: var(--accent);
+  font-size: 1rem;
+  margin: 0 0 8px;
+}
+.tree-card ul {
+  padding-left: 20px;
+  font-size: 0.88rem;
+  color: var(--sub);
+  margin: 0;
+}
+
+footer {
+  padding: 10px 4px 30px;
+  border-top: 1px solid var(--line);
+  margin-top: 28px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+@media(max-width: 720px) {
+  body { padding: 12px; }
+  section { padding: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="nav-bar">
+    <a href="index.html" class="nav-link">📄 仕様書</a>
+    <a href="RDD.html" class="nav-link">📋 要件定義書</a>
+    <a href="diagram.html" class="nav-link">🔀 画面遷移図</a>
+    <a href="activity.html" class="nav-link">⚡ アクティビティ図</a>
+    <a href="er.html" class="nav-link">🗄️ ER図</a>
+    <a href="mockup.html" class="nav-link">🖥️ モック画面</a>
+    <a href="ui_layout.html" class="nav-link">📐 画面構成図</a>
+    <a href="sitemap.html" class="nav-link active">🌳 画面ツリー</a>
+    <a href="system_architecture.html" class="nav-link">🏗️ システム構成図</a>
+  </div>
+  <h1>コードラボ<br>画面構成ツリー図 (Sitemap & Component Tree)</h1>
+  <div class="meta">
+    <span class="updated">最終更新日時：2026年10月23日 14:20</span>
+    <span>アーキテクチャ：Tauri v2</span>
+    <span>画面：React / TypeScript</span>
+    <span>バックエンド：Rust</span>
+    <span>対象OS：Windows 10 / 11</span>
+  </div>
+</header>
+
+<section>
+  <h2>機能階層・画面構造ツリー図</h2>
+  <div class="mermaid-box">
+    <div class="mermaid">
+flowchart TB
+    TOP["🏠 TOP<br/>(メインワークスペース)"]
+
+    TOP --- M1["💻 コードエディタ"]
+    TOP --- M2["🎯 課題演習"]
+    TOP --- M3["📖 関数・構文辞書"]
+    TOP --- M4["📈 成長カルテ"]
+    TOP --- M5["🕒 エラー履歴"]
+    TOP --- M6["🏆 アチーブメント"]
+
+    subgraph G1 [" "]
+        direction TB
+        S1_1["・自由創作モード"]
+        S1_2["・複数ファイル管理<br/>(main.py / helper.py)"]
+        S1_3["・▶ 実行 / 停止ボタン"]
+        S1_4["・やさしい出力コンソール"]
+        S1_1 --- S1_2 --- S1_3 --- S1_4
+    end
+    M1 --> G1
+
+    subgraph G2 [" "]
+        direction TB
+        S2_1["・課題一覧"]
+        S2_2["・ミニ課題・お題バナー"]
+        S2_3["・テストケース・自動採点"]
+        S2_4["・ステップアップAIヒント"]
+        S2_5["・合格判定 / クリアバッジ"]
+        S2_1 --- S2_2 --- S2_3 --- S2_4 --- S2_5
+    end
+    M2 --> G2
+
+    subgraph G3 [" "]
+        direction TB
+        S3_1["・キーワード即時検索"]
+        S3_2["・ふりがな付き解説 (ルビ)"]
+        S3_3["・お気に入り登録"]
+        S3_4["・既習言語比較 (Java/JS)"]
+        S3_1 --- S3_2 --- S3_3 --- S3_4
+    end
+    M3 --> G3
+
+    subgraph G4 [" "]
+        direction TB
+        S4_1["・学習データの確認"]
+        S4_2["・進捗グラフ表示"]
+        S4_3["・目標達成状況"]
+        S4_4["・ログイン / クラウド同期"]
+        S4_1 --- S4_2 --- S4_3 --- S4_4
+    end
+    M4 --> G4
+
+    subgraph G5 [" "]
+        direction TB
+        S5_1["・過去のエラー一覧"]
+        S5_2["・AI原因解説アーカイブ"]
+        S5_3["・該当コード行ジャンプリンク"]
+        S5_4["・解決ステータス (未解決/解決済)"]
+        S5_1 --- S5_2 --- S5_3 --- S5_4
+    end
+    M5 --> G5
+
+    subgraph G6 [" "]
+        direction TB
+        S6_1["・獲得バッジ一覧"]
+        S6_2["・お祝い / 達成カード"]
+        S6_3["・トロフィー・実績画面"]
+        S6_1 --- S6_2 --- S6_3
+    end
+    M6 --> G6
+
+    classDef topStyle fill:#2563eb,stroke:#60a5fa,color:#ffffff,stroke-width:2px,font-weight:bold;
+    classDef menuStyle fill:#162032,stroke:#38bdf8,color:#f8fafc,stroke-width:2px,font-weight:bold;
+    classDef itemStyle fill:#1e293b,stroke:#475569,color:#cbd5e1,stroke-width:1px;
+
+    class TOP topStyle;
+    class M1,M2,M3,M4,M5,M6 menuStyle;
+    class S1_1,S1_2,S1_3,S1_4,S2_1,S2_2,S2_3,S2_4,S2_5,S3_1,S3_2,S3_3,S3_4,S4_1,S4_2,S4_3,S4_4,S5_1,S5_2,S5_3,S5_4,S6_1,S6_2,S6_3 itemStyle;
+    </div>
+  </div>
+
+  <h2>主要6大エリアの機能構成概要</h2>
+  <div class="tree-grid">
+    <div class="tree-card">
+      <h3>💻 1. コードエディタ</h3>
+      <ul>
+        <li>自由創作モード（白紙からの自由なコーディング）[cite: 3]</li>
+        <li>同一フォルダ内の複数ファイル管理・タブ切り替え[cite: 3, 7]</li>
+        <li>同梱Pythonの安全なローカル実行・強制停止[cite: 3]</li>
+      </ul>
+    </div>
+    <div class="tree-card">
+      <h3>🎯 2. 課題演習</h3>
+      <ul>
+        <li>今日のお題・期待される目標出力バナーの常時提示[cite: 3, 7]</li>
+        <li>2段階採点（80点合格基準）による自動判定[cite: 3]</li>
+        <li>3段階ステップアップAIヒントの提供[cite: 3]</li>
+      </ul>
+    </div>
+    <div class="tree-card">
+      <h3>📖 3. 関数・構文辞書</h3>
+      <ul>
+        <li>キーワードのリアルタイムインクリメンタル検索[cite: 7]</li>
+        <li>小学生でも読めるふりがな（ルビ）付き解説[cite: 7]</li>
+        <li>既習言語（Java / JavaScript）との構文対比表示[cite: 3, 7]</li>
+      </ul>
+    </div>
+    <div class="tree-card">
+      <h3>📈 4. 成長カルテ</h3>
+      <ul>
+        <li>学習時間、完了課題数、正答率のグラフ可視化[cite: 3, 5]</li>
+        <li>ゲスト利用時の端末内記録蓄積[cite: 3]</li>
+        <li>ログイン時の安全なクラウドDB同期[cite: 3, 5]</li>
+      </ul>
+    </div>
+    <div class="tree-card">
+      <h3>🕒 5. エラー履歴</h3>
+      <ul>
+        <li>発生した構文エラー・論理エラーの自動記録[cite: 3, 5]</li>
+        <li>AIによる原因解説ログの確認[cite: 3, 5]</li>
+        <li>エラー発生元ファイル・行へのワンクリックジャンプリンク[cite: 3, 7]</li>
+      </ul>
+    </div>
+    <div class="tree-card">
+      <h3>🏆 6. アチーブメント</h3>
+      <ul>
+        <li>課題クリア、継続学習日数に応じたバッジ獲得[cite: 3]</li>
+        <li>達成時のお祝いモーダル・アニメーション演出[cite: 3, 5]</li>
+        <li>実績データのローカル保持およびクラウド同期[cite: 3]</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  文書名：コードラボ プログラミング学習 AI誤り分析アシスタント 画面構成ツリー図 (sitemap.html)[cite: 3]
+</footer>
+
+</div>
+</body>
+</html>
