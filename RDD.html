@@ -1,418 +1,387 @@
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        background-color: var(--bg-dark);
-        color: var(--text-main);
-        margin: 0;
-        padding: 2.5rem 1.5rem;
-        line-height: 1.7;
-    }
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>コードラボ｜システム要件定義書 (RDD)</title>
+<style>
+  :root {
+    --bg-dark: #0f172a;
+    --card-bg: #1e293b;
+    --text-main: #f8fafc;
+    --text-sub: #94a3b8;
+    --accent: #38bdf8;
+    --primary: #2563eb;
+    --border: #334155;
+    --accent-green: #4ade80;
+    --accent-orange: #fbbf24;
+    --danger: #f87171;
+  }
 
-    .container {
-        max-width: 1040px;
-        margin: 0 auto;
-    }
+  * { box-sizing: border-box; }
 
-    header {
-        border-bottom: 2px solid var(--border);
-        padding-bottom: 1.5rem;
-        margin-bottom: 2.5rem;
-    }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    margin: 0;
+    padding: 2.5rem 1.5rem;
+    line-height: 1.75;
+  }
 
-    h1 {
-        color: var(--accent);
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-        font-weight: 700;
-    }
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
 
-    .meta-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-top: 1rem;
-        background: rgba(15, 23, 42, 0.6);
-        padding: 1rem;
-        border-radius: 8px;
-        border: 1px solid var(--border);
-        font-size: 0.9rem;
-        color: var(--text-sub);
-    }
+  /* ナビゲーションバー */
+  .nav-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
 
-    .meta-item strong {
-        color: var(--text-main);
-    }
+  .nav-link {
+    background: var(--card-bg);
+    color: var(--accent);
+    border: 1px solid var(--border);
+    padding: 7px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.86rem;
+    font-weight: 700;
+    transition: all 0.15s ease;
+  }
 
-    section {
-        background-color: var(--card-bg);
-        border-radius: 8px;
-        padding: 1.8rem;
-        margin-bottom: 2rem;
-        border: 1px solid var(--border);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-    }
+  .nav-link.active {
+    background: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+  }
 
-    h2 {
-        color: var(--accent);
-        font-size: 1.35rem;
-        border-bottom: 1px solid var(--border);
-        padding-bottom: 0.6rem;
-        margin-top: 0;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
+  .nav-link:hover {
+    background: #334155;
+  }
 
-    h3 {
-        color: var(--accent-green);
-        font-size: 1.15rem;
-        margin-top: 1.5rem;
-        margin-bottom: 0.6rem;
-    }
+  header {
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
 
-    p, li {
-        color: #cbd5e1;
-    }
+  h1 {
+    color: var(--accent);
+    font-size: 2rem;
+    margin: 0 0 0.8rem 0;
+    font-weight: 700;
+  }
 
-    ul, ol {
-        padding-left: 1.4rem;
-    }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+    background: rgba(15, 23, 42, 0.6);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-size: 0.9rem;
+    color: var(--text-sub);
+  }
 
-    li {
-        margin-bottom: 0.5rem;
-    }
+  .meta-item strong {
+    color: var(--text-main);
+  }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-        font-size: 0.95rem;
-    }
+  section {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 1.8rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+  }
 
-    th, td {
-        border: 1px solid var(--border);
-        padding: 0.85rem;
-        text-align: left;
-        vertical-align: top;
-    }
+  h2 {
+    color: var(--accent);
+    font-size: 1.35rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.6rem;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-    th {
-        background-color: var(--primary-light);
-        color: var(--accent);
-        font-weight: 600;
-    }
+  h3 {
+    color: var(--accent-green);
+    font-size: 1.15rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.6rem;
+  }
 
-    tr:nth-child(even) td {
-        background-color: rgba(15, 23, 42, 0.3);
-    }
+  p, li {
+    color: #cbd5e1;
+  }
 
-    .badge {
-        display: inline-block;
-        padding: 0.2rem 0.55rem;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        font-weight: 700;
-    }
+  ul, ol {
+    padding-left: 1.4rem;
+  }
 
-    .badge-req { background-color: #dc2626; color: white; }
-    .badge-opt { background-color: #4b5563; color: white; }
+  li {
+    margin-bottom: 0.5rem;
+  }
 
-    .callout {
-        border-left: 4px solid var(--accent-orange);
-        background: rgba(251, 191, 36, 0.1);
-        padding: 1rem;
-        margin: 1rem 0;
-        border-radius: 0 6px 6px 0;
-    }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
 
-    .callout p {
-        margin: 0;
-        color: #fef3c7;
-    }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 0.85rem;
+    text-align: left;
+    vertical-align: top;
+  }
 
-    code {
-        background-color: #0f172a;
-        padding: 0.2rem 0.45rem;
-        border-radius: 4px;
-        color: #f43f5e;
-        font-family: Consolas, Monaco, monospace;
-        font-size: 0.9em;
-    }
+  th {
+    background-color: #172554;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  tr:nth-child(even) td {
+    background-color: rgba(15, 23, 42, 0.3);
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .badge-req {
+    background-color: #dc2626;
+    color: white;
+  }
+
+  .callout {
+    border-left: 4px solid var(--accent-orange);
+    background: rgba(251, 191, 36, 0.1);
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .callout p {
+    margin: 0;
+    color: #fef3c7;
+  }
+
+  code {
+    background-color: #0f172a;
+    padding: 0.2rem 0.45rem;
+    border-radius: 4px;
+    color: #f43f5e;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 0.9em;
+  }
 </style>
+</head>
+<body>
 
+<div class="container">
 
-<!-- 1. プロジェクト概要・背景・目的 -->
-<section>
-    <h2>1. プロジェクト概要・目的</h2>
+  <!-- ナビゲーションバー -->
+  <div class="nav-bar">
+    <a href="index.html" class="nav-link">📄 仕様書</a>
+    <a href="RDD.html" class="nav-link active">📋 要件定義書</a>
+    <a href="diagram.html" class="nav-link">🔀 画面遷移図</a>
+    <a href="activity.html" class="nav-link">⚡ アクティビティ図</a>
+    <a href="mockup.html" class="nav-link">🖥️ モック画面</a>
+  </div>
+
+  <header>
+    <h1>システム要件定義書 (RDD)</h1>
+    <p style="color: var(--text-sub); margin: 0;">プログラミング学習 AI誤り分析アシスタント（CodeLab）</p>
+    <div class="meta-grid">
+      <div class="meta-item">システム種別: <strong>Windows デスクトップアプリ</strong></div>
+      <div class="meta-item">開発フレームワーク: <strong>Tauri v2 (Rust + React)</strong></div>
+      <div class="meta-item">作成日: <strong>2026年10月</strong></div>
+      <div class="meta-item">開発体制: <strong>チーム（6名）</strong></div>
+    </div>
+  </header>
+
+  <!-- 1. プロジェクト概要 -->
+  <section>
+    <h2>1. プロジェクト概要・背景・目的</h2>
     <h3>1.1 背景</h3>
-    <p>
-        プログラミング初学者（小学生高学年〜大人の未経験者）は、コード記述時の構文エラーや、期待した結果と異なる論理エラーに直面した際、難解なエラーメッセージや解決の糸口が掴めず、挫折しやすい課題を抱えている。
-    </p>
+    <p>プログラミング初学者（小学生高学年〜大人の未経験者）は、コード記述時の構文エラーや、期待した結果と異なる論理エラーに直面した際、難解な英語エラーメッセージや解決の糸口が掴めず、挫折しやすい課題を抱えている。</p>
 
     <h3>1.2 目的</h3>
-    <p>
-        白紙からコードを一から書き上げる実践的な学習習慣を定着させ、自律的にエラーを解決できる力を養う。
-        ローカルAIによる初学者向けの段階的ヒント提示、実行結果の差分解説、組み込み関数辞書、成長記録の蓄積により、挫折せず楽しく継続できるプログラミング学習環境を提供する。
-    </p>
+    <p>白紙からコードを一から書き上げる実践的な学習習慣を定着させ、自律的にエラーを解決できる力を養う。ローカルAIによる初学者向けの段階的ヒント提示、実行結果の差分解説、組み込み関数辞書、成長記録の蓄積により、挫折せず楽しく継続できるプログラミング学習環境を提供する。</p>
 
     <h3>1.3 想定利用者（ターゲット層）</h3>
     <ul>
-        <li><strong>主要ターゲット:</strong> 小学校高学年〜中高生、大学・専門学校の未経験生、社会人初学者</li>
-        <li><strong>利用シーン:</strong> 教育機関・学校のPC教室（ローカル環境）、自宅PCでの自習</li>
+      <li><strong>主要ターゲット：</strong> 小学校高学年〜中高生、大学・専門学校の未経験生、社会人初学者</li>
+      <li><strong>利用シーン：</strong> 教育機関・学校のPC教室（ローカル環境）、自宅PCでの自習</li>
     </ul>
-</section>
+  </section>
 
-<!-- 2. システム化方針・スコープ -->
-<section>
+  <!-- 2. システム化方針・スコープ -->
+  <section>
     <h2>2. システム化方針・スコープ</h2>
     <h3>2.1 言語スコープ</h3>
     <ul>
-        <li><strong>実行・採点対象言語:</strong> Python（Windows用 Embeddable Package をアプリに同梱し、利用者の環境構築を不要とする）</li>
-        <li><strong>比較表示対象言語:</strong> Java、JavaScript（構文や書き方の対比・辞書参照のみ提供し、初期版では実行環境は提供しない）</li>
+      <li><strong>実行・採点対象言語：</strong> Python（Windows用 Embeddable Package をアプリに同梱し、利用者の環境構築を不要とする）</li>
+      <li><strong>比較表示対象言語：</strong> Java、JavaScript（構文や書き方の対比・辞書参照のみ提供し、初期版では実行環境は提供しない）</li>
     </ul>
 
     <h3>2.2 AI・データ処理方針</h3>
     <ul>
-        <li><strong>ローカル推論完結:</strong> AI分析・ヒント生成はユーザー端末内（ローカル）で処理し、通信費の抑制およびオフライン学習を可能とする。</li>
-        <li><strong>データ保存のハイブリッド分離:</strong>
-            <ul>
-                <li><strong>端末内保存:</strong> ユーザーが入力したコード全文、一時編集内容、個人設定（プライバシー保護と即時オートセーブ）</li>
-                <li><strong>クラウド同期:</strong> ログイン時の学習履歴（合否、得点、エラー種別、達成日時、バッジ獲得状況）※コード本文は原則クラウドに送信しない</li>
-            </ul>
-        </li>
+      <li><strong>ローカル推論完結：</strong> AI分析・ヒント生成はユーザー端末内（ローカル）で処理し、通信費の抑制およびオフライン学習を可能とする。</li>
+      <li><strong>データ保存のハイブリッド分離：</strong>
+        <ul>
+          <li><strong>端末内保存：</strong> ユーザーが入力したコード全文、一時編集内容、個人設定（プライバシー保護と即時オートセーブ）</li>
+          <li><strong>クラウド同期：</strong> ログイン時の学習履歴（合否、得点、エラー種別、達成日時、バッジ獲得状況） ※コード本文は原則クラウドに送信しない</li>
+        </ul>
+      </li>
     </ul>
-</section>
+  </section>
 
-<!-- 3. 業務・利用フロー要件 -->
-<section>
-    <h2>3. 業務・利用フロー要件</h2>
-    <ol>
-        <li><strong>学習開始・モード選択:</strong> 利用者は「自由創作モード」または「課題演習モード」を選択して開始する。</li>
-        <li><strong>コード記述と自動保存:</strong> 白紙エディタにコードを記述する。編集中の内容はバックグラウンドで端末内に定期自動保存（オートセーブ）される。</li>
-        <li><strong>実行・自動検証:</strong>
-            <ul>
-                <li>自由創作時: 同梱Pythonで実行し、標準出力または標準エラーを表示する。</li>
-                <li>課題演習時: 自動テストケースを実行し、要件達成度と実行結果を機械的に検証・部分点付与する。</li>
-            </ul>
-        </li>
-        <li><strong>エラー解説・段階的AI支援:</strong>
-            <ul>
-                <li>構文エラー時は平易な日本語で原因を解説する。</li>
-                <li>論理エラー時は「期待する結果」と「実際の出力」の差分を明示する。</li>
-                <li>AIヒントは答えを即答せず、「着眼点」→「考え方」→「修正方針（希望時のみ修正例）」の段階式で提示する。</li>
-            </ul>
-        </li>
-        <li><strong>記録蓄積とクラウド同期:</strong> 採点結果や克服したエラーは端末内に記録され、ログイン時はBaaS（NoSQL）へ非同期で同期送信される。</li>
-    </ol>
-</section>
-
-<!-- 4. 機能要件一覧 -->
-<section>
-    <h2>4. 機能要件（Functional Requirements）</h2>
+  <!-- 3. 機能要件一覧 -->
+  <section>
+    <h2>3. 機能要件一覧 (FR: Functional Requirements)</h2>
     <table>
-        <thead>
-            <tr>
-                <th style="width: 12%;">要件ID</th>
-                <th style="width: 23%;">要件名</th>
-                <th style="width: 53%;">要件仕様・詳細</th>
-                <th style="width: 12%;">優先度</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>FR-01</strong></td>
-                <td>自由創作モード</td>
-                <td>白紙エディタでPythonコードを自由に記述・実行し、標準出力および標準エラーをコンソールに表示できること。ファイル保存にも対応すること。</td>
-                <td><span class="badge badge-req">必須</span></td>
-            </tr>
-            <tr>
-                <td><strong>FR-02</strong></td>
-                <td>課題演習モード</td>
-                <td>課題文、制約条件、期待出力を表示し、白紙からコードを作成してテスト実行・自動採点できること。</td>
-                <td><span class="badge badge-req">必須</span></td>
-            </tr>
-            <tr>
-                <td><strong>FR-03</strong></td>
-                <td>自動採点・部分点機能</td>
-                <td>100点満点（要件達成度50点 / 実行結果30点 / コード妥当性20点）で採点し、80点以上かつ無エラーで合格判定を行うこと。テスト失敗時でも部分点を付与すること。</td>
-                <td><span class="badge badge-req">必須</span></td>
-            </tr>
-            <tr>
-                <td><strong>FR-04</strong></td>
-                <td>段階的AIヒント</td>
-                <td>答えを即座に教えず、「着眼点」「考え方」「修正例（希望時）」のステップ式でヒントを提供すること。</td>
-                <td><span class="badge badge-req">必須</span></td>
-            </tr>
-            <tr>
-                <td><strong>FR-05</strong></td>
-                <td>ローカルAI推論基盤</td>
-                <td>端末内の軽量LLMを用いて推論を行い、外部APIなしで動作すること。モデル未導入時でもPython実行や通常エラー表示を妨げないこと。</td>
-                <td><span class="badge badge-req">必須</span></td>
-            </tr>
-            <tr>
-                <td><strong>FR-06</strong></td>
-                <td>コード自動保存</td>
-                <td>入力中のコードを定期的に端末内へ自動保存し、予期せぬアプリ終了時も再起動時に直前の状態を復元できること。</td>
-                <td><span class="badge badge-req">必須</span></td>
-            </tr>
-            <tr>
-                <td><strong>FR-07</strong></td>
-                <td>学習履歴クラウド同期</td>
-                <td>課題結果、得点、エラー種別、解決状況、獲得実績をクラウドDBと同期できること。コード本文は送信しないこと。</td>
-                <td><span class="badge badge-req">必須</span></td>
-            </tr>
-            <tr>
-                <td><strong>FR-08</strong></td>
-                <td>ゲスト・ログイン切替</td>
-                <td>ゲスト状態（端末内保存のみ）とログイン状態（クラウド同期）の双方に対応し、ログイン時に端末内ログをマージできること。</td>
-                <td><span class="badge badge-req">必須</span></td>
-            </tr>
-            <tr>
-                <td><strong>FR-09</strong></td>
-                <td>関数・構文辞書</td>
-                <td>基本構文や組み込み関数（print, len, if, for等）の使い方を検索・閲覧でき、AIヒントからの逆引きリンクに対応すること。</td>
-                <td><span class="badge badge-req">必須</span></td>
-            </tr>
-            <tr>
-                <td><strong>FR-10</strong></td>
-                <td>既習言語構文比較</td>
-                <td>Pythonの構文とJava/JavaScriptの書き方を左右に対比表示できること（静的データ表示）。</td>
-                <td><span class="badge badge-req">必須</span></td>
-            </tr>
-            <tr>
-                <td><strong>FR-11</strong></td>
-                <td>コーディング補助</td>
-                <td>ワンクリックでのコード自動整形（インデント等）および基本構文スニペットの挿入ができること。</td>
-                <td><span class="badge badge-req">必須</span></td>
-            </tr>
-            <tr>
-                <td><strong>FR-12</strong></td>
-                <td>やさしさ表示切替</td>
-                <td>UI表記を「こどもモード（ふりがな・やさしい言葉）」と「大人モード（標準表記）」で切り替えられること。</td>
-                <td><span class="badge badge-req">必須</span></td>
-            </tr>
-            <tr>
-                <td><strong>FR-13</strong></td>
-                <td>アチーブメント機能</td>
-                <td>課題達成や学習継続、エラー解決に応じてバッジ（実績）を付与し、一覧表示できること。</td>
-                <td><span class="badge badge-req">必須</span></td>
-            </tr>
-        </tbody>
+      <thead>
+        <tr>
+          <th style="width: 12%;">要件ID</th>
+          <th style="width: 20%;">要件名</th>
+          <th>詳細要件・仕様</th>
+          <th style="width: 12%;">区分</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>FR-01</strong></td>
+          <td>自由創作モード</td>
+          <td>白紙のエディタでPythonコードを自由に記述・実行し、標準出力・標準エラーを即座に確認できること。</td>
+          <td><span class="badge badge-req">必須</span></td>
+        </tr>
+        <tr>
+          <td><strong>FR-02</strong></td>
+          <td>課題演習モード</td>
+          <td>課題文、目標、期待出力を表示し、白紙からコードを作成してテストを実行できること。</td>
+          <td><span class="badge badge-req">必須</span></td>
+        </tr>
+        <tr>
+          <td><strong>FR-03</strong></td>
+          <td>自動採点機能</td>
+          <td>100点満点（要件達成度50点 / 実行結果30点 / コード妥当性20点）で採点し、80点以上かつ無エラーで合格判定を行うこと。</td>
+          <td><span class="badge badge-req">必須</span></td>
+        </tr>
+        <tr>
+          <td><strong>FR-04</strong></td>
+          <td>段階的AIヒント</td>
+          <td>エラーに対し、答えを直接出さず「着眼点」「考え方」「修正コード例（希望時）」の3段階で支援を提供すること。</td>
+          <td><span class="badge badge-req">必須</span></td>
+        </tr>
+        <tr>
+          <td><strong>FR-05</strong></td>
+          <td>ローカルAI推論基盤</td>
+          <td>端末内の軽量LLMで推論を行い、外部APIなしで動作すること。モデル未導入時でもPython実行を停止しないこと。</td>
+          <td><span class="badge badge-req">必須</span></td>
+        </tr>
+        <tr>
+          <td><strong>FR-06</strong></td>
+          <td>コード自動保存</td>
+          <td>入力中のコードを数秒間隔で端末内に自動一時保存し、再起動時に直前の状態を復元できること。</td>
+          <td><span class="badge badge-req">必須</span></td>
+        </tr>
+        <tr>
+          <td><strong>FR-07</strong></td>
+          <td>学習履歴クラウド同期</td>
+          <td>課題結果、得点、エラー種別、解決状況、実績をクラウドDBと同期できること（コード本文は非送信）。</td>
+          <td><span class="badge badge-req">必須</span></td>
+        </tr>
+        <tr>
+          <td><strong>FR-08</strong></td>
+          <td>ゲスト・ログイン切替</td>
+          <td>ゲスト状態（ローカル保存のみ）とログイン状態（クラウド同期）に対応し、ログイン時に端末内ログをマージできること。</td>
+          <td><span class="badge badge-req">必須</span></td>
+        </tr>
+        <tr>
+          <td><strong>FR-09</strong></td>
+          <td>構文・関数辞書</td>
+          <td>基本構文や関数（<code>print</code>, <code>len</code>, <code>if</code>, <code>for</code>等）の使い方を検索・閲覧できること。</td>
+          <td><span class="badge badge-req">必須</span></td>
+        </tr>
+        <tr>
+          <td><strong>FR-10</strong></td>
+          <td>既習言語構文比較</td>
+          <td>Pythonの構文とJava/JavaScriptの書き方を左右に対比表示できること（静的データ表示）。</td>
+          <td><span class="badge badge-req">必須</span></td>
+        </tr>
+        <tr>
+          <td><strong>FR-11</strong></td>
+          <td>コーディング補助</td>
+          <td>ワンクリックでのコード自動整形（インデント等）および基本構文スニペットの挿入ができること。</td>
+          <td><span class="badge badge-req">必須</span></td>
+        </tr>
+        <tr>
+          <td><strong>FR-12</strong></td>
+          <td>やさしさ表示切替</td>
+          <td>UI表記を「子ども向け（ルビあり）」と「大人向け（標準表記）」で切り替えられること。</td>
+          <td><span class="badge badge-req">必須</span></td>
+        </tr>
+        <tr>
+          <td><strong>FR-13</strong></td>
+          <td>アチーブメント機能</td>
+          <td>課題達成や学習継続、エラー解決に応じてバッジを付与し、一覧表示できること。</td>
+          <td><span class="badge badge-req">必須</span></td>
+        </tr>
+      </tbody>
     </table>
-</section>
+  </section>
 
-<!-- 5. 非機能要件 -->
-<section>
-    <h2>5. 非機能要件（Non-Functional Requirements）</h2>
+  <!-- 4. 非機能要件 -->
+  <section>
+    <h2>4. 非機能要件 (NFR: Non-Functional Requirements)</h2>
     
-    <h3>5.1 性能・パフォーマンス要件</h3>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 25%;">項目</th>
-                <th>仕様基準値</th>
-                <th>設計方針・備考</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>コード実行応答時間</strong></td>
-                <td>実行指示から<strong>1.0秒以内</strong>に出力描画</td>
-                <td>通常の短文・入門コードの場合。ローカル同梱Pythonの即時起動により実現。</td>
-            </tr>
-            <tr>
-                <td><strong>AI推論応答時間</strong></td>
-                <td>CPU推論時で<strong>5〜10秒以内</strong>を目標</td>
-                <td>推論中はUIに「分析中...」のスピナーを表示し、非同期で描画する。</td>
-            </tr>
-            <tr>
-                <td><strong>アプリ起動時間</strong></td>
-                <td>初回起動後、<strong>3.0秒以内</strong>にメイン画面表示</td>
-                <td>Tauri v2 による軽量バイナリ構成により、Chromium起動待機を排除。</td>
-            </tr>
-        </tbody>
-    </table>
+    <h3>4.1 性能・パフォーマンス</h3>
+    <ul>
+      <li><strong>実行応答：</strong> 通常のコード実行は、実行ボタン押下から1秒以内に標準出力・エラーを表示すること。</li>
+      <li><strong>AI応答：</strong> CPU環境でのローカルAI推論は5〜10秒以内を目標とし、処理中はローディング表示を行うこと。</li>
+      <li><strong>起動時間：</strong> アプリ起動から3秒以内にメイン画面を表示すること。</li>
+    </ul>
 
-    <h3>5.2 安全性・セキュリティ要件</h3>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 25%;">項目</th>
-                <th>仕様基準値</th>
-                <th>設計方針・備考</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>プロセス実行時間制限</strong></td>
-                <td><strong>最大5.0秒</strong>でタイムアウト強制停止</td>
-                <td>無限ループ等の暴走コードに対し、Rust側から子プロセスツリーごと強制終了する。</td>
-            </tr>
-            <tr>
-                <td><strong>コンソール出力バッファ制限</strong></td>
-                <td><strong>最大1.0 MiB</strong>で出力を打ち切り</td>
-                <td>無限print等によるメモリ枯渇（OOM）を防止し、上限到達時は警告メッセージを付与して終了。</td>
-            </tr>
-            <tr>
-                <td><strong>コード全文のプライバシー保護</strong></td>
-                <td><strong>クラウドへコード本文は送信しない</strong></td>
-                <td>学習者の著作権とプライバシーを守るため、送信対象は得点・エラー種別・ハッシュ値等に限定する。</td>
-            </tr>
-        </tbody>
-    </table>
+    <h3>4.2 安全性・セキュリティ</h3>
+    <ul>
+      <li><strong>実行時間制限：</strong> コード実行時間は<strong>最大5秒</strong>とし、超過時は子プロセスを含め強制終了（タイムアウト）すること。</li>
+      <li><strong>出力サイズ制限：</strong> 出力バッファの上限は<strong>合計1MiB</strong>とし、無限出力によるメモリ枯渇を防止すること。</li>
+      <li><strong>データ保護：</strong> ユーザーのコード本文全文はクラウドDBへ送信せず、メタデータとハッシュ値のみを送信すること。</li>
+    </ul>
 
-    <h3>5.3 信頼性・可用性要件（フォールバック）</h3>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 25%;">項目</th>
-                <th>仕様基準値</th>
-                <th>設計方針・備考</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>オフライン自立動作</strong></td>
-                <td>ネットワーク切断時でも<strong>主要学習を100%継続可能</strong></td>
-                <td>Python実行、機械的テスト、ローカル保存、辞書閲覧はオフラインで完全動作させる。</td>
-            </tr>
-            <tr>
-                <td><strong>AI障害時の縮退運転</strong></td>
-                <td>モデル破損・未導入時も<strong>アプリを落とさない</strong></td>
-                <td>AIが動作しない環境でも、エディタ編集・Python実行・機械採点・辞書参照は継続動作させる。</td>
-            </tr>
-            <tr>
-                <td><strong>データ整合性・再送制御</strong></td>
-                <td>オフラインキューによる<strong>未同期データの保護</strong></td>
-                <td>オフライン時の学習履歴は端末内に一時保持し、ネットワーク復帰時に安全に再送同期する。</td>
-            </tr>
-        </tbody>
-    </table>
+    <h3>4.3 信頼性・可用性（フォールバック）</h3>
+    <ul>
+      <li><strong>オフライン動作保証：</strong> ネットワーク未接続時でも、Pythonコードの編集・実行・辞書参照・ローカル保存を継続できること。</li>
+      <li><strong>AI障害時の縮退運転：</strong> AIモデルのダウンロード中や推論失敗時でも、Python実行や機械的テストを停止せず学習を継続できること。</li>
+    </ul>
 
-    <h3>5.4 ユーザビリティ・アクセシビリティ要件</h3>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 25%;">項目</th>
-                <th>仕様基準値</th>
-                <th>設計方針・備考</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>画面リサイズ・可変分割</strong></td>
-                <td>最低解像度 <strong>1366×768</strong> に対応</td>
-                <td>エディタ、コンソール、AIヒント、辞書のパネル境界をマウスドラッグで伸縮可能とする。</td>
-            </tr>
-            <tr>
-                <td><strong>漢字・難解用語への配慮</strong></td>
-                <td>ルビ（ふりがな）表示対応</td>
-                <td>小学生高学年でも一人で読み進められるよう、専門用語を平易にし、ふりがな切り替えを設ける。</td>
-            </tr>
-        </tbody>
-    </table>
+    <h3>4.4 ユーザビリティ</h3>
+    <ul>
+      <li>初学者・小中学生が直感的に操作できるよう、専門用語を避けた親しみやすい日本語を採用すること。</li>
+      <li>画面解像度 1366×768 以上で各パネル（エディタ、コンソール、AI、辞書）が快適にリサイズ・操作できること。</li>
+    </ul>
+  </section>
 
-    <div class="callout">
-        <p><strong>💡 採択基準まとめ:</strong> 本要件定義は、学校のPC室や低スペックなノートPC環境でも安定して稼働できるよう、「ローカル自己完結」と「堅牢なフォールバック設計」を中核方針として策定されています。</p>
-    </div>
-</section>
+</div>
+
+</body>
+</html>
