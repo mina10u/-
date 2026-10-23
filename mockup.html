@@ -150,12 +150,31 @@ h1{font-size:21px;margin:0 0 4px}
       <div>コードラボ<small>プログラミング学習 AI誤り分析アシスタント</small></div>
     </div>
     <div class="top-actions">
-      <div class="nav-links">
-        <a href="index.html" class="nav-link">仕様書</a>
-        <a href="RDD.html" class="nav-link">要件定義書</a>
-        <a href="diagram.html" class="nav-link">画面遷移図</a>
-        <a href="activity.html" class="nav-link">アクティビティ図</a>
-      </div>
+      <!-- ① nav.html を挿入するコンテナ -->
+<div id="common-nav"></div>
+
+<!-- ② nav.html を非同期読込し、現在のページを自動で active にするスクリプト -->
+  <script>
+    fetch('nav.html')
+      .then(response => {
+        if (!response.ok) throw new Error('nav.html not found');
+        return response.text();
+      })
+      .then(html => {
+        const navContainer = document.getElementById('common-nav');
+        navContainer.innerHTML = html;
+  
+        // 現在のファイル名を取得して該当リンクに active クラスを自動付与
+        const currentFile = location.pathname.split('/').pop() || 'index.html';
+        const links = navContainer.querySelectorAll('.nav-link');
+        links.forEach(link => {
+          if (link.getAttribute('href') === currentFile) {
+            link.classList.add('active');
+          }
+        });
+      })
+      .catch(err => console.error('ナビゲーション読み込みエラー:', err));
+  </script>
       <button class="btn" id="themeToggleBtn" style="font-weight:bold;">☀️ / 🌙 テーマ切替</button>
       <span class="pill">🐍 Python 特化</span>
       <span class="pill online">● ローカルAI稼働中</span>
