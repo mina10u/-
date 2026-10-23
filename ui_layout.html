@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>コードラボ｜プログラミング学習 AI誤り分析アシスタント 画面構成図</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: "dark",
+  themeVariables: {
+    background: "#0f172a",
+    primaryColor: "#1e293b",
+    primaryTextColor: "#f8fafc",
+    primaryBorderColor: "#38bdf8",
+    lineColor: "#64748b",
+    fontFamily: "system-ui, -apple-system, 'Segoe UI', Meiryo, sans-serif",
+    fontSize: "13px"
+  },
+  flowchart: {
+    useMaxWidth: true,
+    htmlLabels: true,
+    curve: "linear",
+    nodeSpacing: 25,
+    rankSpacing: 35
+  }
+});
+</script>
+<style>
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --card-alt: #162032;
+  --text: #f8fafc;
+  --sub: #cbd5e1;
+  --muted: #94a3b8;
+  --line: #334155;
+  --line-strong: #475569;
+  --accent: #38bdf8;
+  --blue: #2563eb;
+  --amber: #fbbf24;
+  --green: #86efac;
+  --red: #fca5a5;
+  --purple: #c4b5fd;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  padding: 28px;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.75 system-ui, -apple-system, "Segoe UI", Meiryo, sans-serif;
+}
+.container { max-width: 1140px; margin: auto; }
+header {
+  border-bottom: 2px solid var(--line-strong);
+  padding: 0 0 22px;
+  margin-bottom: 24px;
+}
+.nav-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.nav-link {
+  background: var(--card);
+  color: var(--accent);
+  border: 1px solid var(--line-strong);
+  padding: 7px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+.nav-link.active {
+  background: var(--blue);
+  color: #ffffff;
+  border-color: var(--blue);
+}
+.nav-link:hover { background: #334155; }
+
+h1 {
+  font-size: clamp(1.65rem, 3vw, 2.25rem);
+  line-height: 1.35;
+  color: var(--accent);
+  margin: 0 0 12px;
+}
+h2 {
+  font-size: 1.35rem;
+  border-left: 5px solid var(--accent);
+  padding-left: 12px;
+  margin: 0 0 18px;
+  color: #f1f5f9;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  color: var(--sub);
+  font-size: 0.9rem;
+}
+.updated { color: var(--amber); font-weight: 700; }
+
+section {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+  margin: 18px 0;
+  overflow: hidden;
+}
+
+.mermaid-box {
+  background: #0b1220;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 24px 16px;
+  overflow: auto;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.mermaid {
+  display: inline-block;
+  min-width: 900px;
+  width: 100%;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0 12px;
+  font-size: 0.93rem;
+}
+th, td {
+  padding: 11px 12px;
+  border: 1px solid var(--line-strong);
+  text-align: left;
+  vertical-align: top;
+}
+th { background: #172554; color: #e0f2fe; font-weight: 700; width: 28%; }
+tr:nth-child(even) td { background: #1a2436; }
+
+footer {
+  padding: 10px 4px 30px;
+  border-top: 1px solid var(--line);
+  margin-top: 28px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+@media(max-width: 720px) {
+  body { padding: 12px; }
+  section { padding: 16px; }
+  table { display: block; overflow-x: auto; white-space: normal; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="nav-bar">
+    <a href="index.html" class="nav-link">📄 仕様書</a>
+    <a href="RDD.html" class="nav-link">📋 要件定義書</a>
+    <a href="diagram.html" class="nav-link">🔀 画面遷移図</a>
+    <a href="activity.html" class="nav-link">⚡ アクティビティ図</a>
+    <a href="er.html" class="nav-link">🗄️ ER図</a>
+    <a href="mockup.html" class="nav-link">🖥️ モック画面</a>
+    <a href="ui_layout.html" class="nav-link active">📐 画面構成図</a>
+    <a href="sitemap.html" class="nav-link">🌳 画面ツリー</a>
+    <a href="system_architecture.html" class="nav-link">🏗️ システム構成図</a>
+  </div>
+  <h1>コードラボ<br>画面構成図 (Wireframe Flow & UI Layout)</h1>
+  <div class="meta">
+    <span class="updated">最終更新日時：2026年10月23日 14:20</span>
+    <span>アーキテクチャ：Tauri v2</span>
+    <span>画面：React / TypeScript</span>
+    <span>バックエンド：Rust</span>
+    <span>対象OS：Windows 10 / 11</span>
+  </div>
+</header>
+
+<section>
+  <h2>メインワークスペース画面構成・配置ブロック図</h2>
+  <div class="mermaid-box">
+    <div class="mermaid">
+flowchart TB
+    subgraph HEADER ["📌 トップヘッダーバー (固定)"]
+        direction LR
+        H_Left["[ロゴ / アプリ名] + [モードバッジ: こども/大人]"]
+        H_Center["[切替: 🎯 課題演習 ⇄ 📁 自由創作]"]
+        H_Right["[大人向け切替] + [各仕様書リンク]"]
+        H_Left --- H_Center --- H_Right
+    end
+
+    subgraph WORKSPACE ["💻 メインワークスペース (左右2列レイアウト)"]
+        direction LR
+
+        subgraph LEFT_COL ["【左カラム】 コード記述 ＆ 実行結果"]
+            direction TB
+            L_Banner["① お題バナー<br/>(今日のお題 / 目標期待値 ※課題演習時のみ)"]
+            L_Tabs["② マルチファイルタブバー<br/>(main.py / helper.py / ＋新規作成)"]
+            L_Editor["③ コードエディタ領域<br/>(Monaco Editor / コード整形 / スニペット)"]
+            L_Action["④ アクションバー<br/>(テストパターン切替 ＆ [▶ うごかす！]ボタン)"]
+            L_Console["⑤ 出力コンソール ＆ Diff表示<br/>(実行結果 / 期待値差分 / エラー行ジャンプ)"]
+
+            L_Banner --> L_Tabs
+            L_Tabs --> L_Editor
+            L_Editor --> L_Action
+            L_Action -. 横リサイザー (上下調整) .-> L_Console
+        end
+
+        LEFT_COL == "縦リサイザー<br/>(左右幅ドラッグ調整)" === RIGHT_COL
+
+        subgraph RIGHT_COL ["【右カラム】 AI学習支援 ＆ 構文辞書"]
+            direction TB
+            R_AI["⑥ AIロボ アシスタント<br/>(段階的ヒント / エラー原因解説 / 質問チャット)"]
+            R_Dict["⑦ ふりがな付き 関数・構文辞書<br/>(用語検索 / ルビ解説 / 既習言語Java・JS対比)"]
+
+            R_AI -. 横リサイザー (上下調整) .-> R_Dict
+        end
+    end
+
+    HEADER --> WORKSPACE
+
+    classDef headerStyle fill:#1e293b,stroke:#38bdf8,color:#f8fafc,stroke-width:1.5px;
+    classDef leftStyle fill:#162032,stroke:#60a5fa,color:#f8fafc,stroke-width:1.5px;
+    classDef rightStyle fill:#172554,stroke:#a855f7,color:#f8fafc,stroke-width:1.5px;
+    classDef actionBtn fill:#2563eb,stroke:#93c5fd,color:#ffffff,stroke-width:2px;
+
+    class H_Left,H_Center,H_Right headerStyle;
+    class L_Banner,L_Tabs,L_Editor,L_Console leftStyle;
+    class L_Action actionBtn;
+    class R_AI,R_Dict rightStyle;
+    </div>
+  </div>
+
+  <h2>各レイアウト領域の仕様と操作</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>配置ブロック</th>
+        <th>内包コンポーネント</th>
+        <th>動作・機能仕様</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>📌 トップヘッダー</td>
+        <td>ロゴ、対象バッジ、モード切替トグル、大人向け切替</td>
+        <td>「🎯 課題演習」と「📁 自由創作」のワンクリック切り替え、ふりがな有無（こども／大人）のグローバル状態管理を担当[cite: 3, 7]。</td>
+      </tr>
+      <tr>
+        <td>【左上】エディタ領域</td>
+        <td>お題バナー、ファイルタブ、Monaco Editor、ツールバー</td>
+        <td>課題のゴール確認、複数ファイル（main.py/helper.py等）の切り替え編集、コード整形・構文挿入に対応[cite: 3, 7]。</td>
+      </tr>
+      <tr>
+        <td>【左下】コンソール領域</td>
+        <td>実行ボタン、テストパターン切替、Diff差分、エラージャンプ</td>
+        <td>ワンクリックでローカルPythonを実行し、目標との差分比較や別ファイルのエラー行へのジャンプリンクを表示[cite: 3, 7]。</td>
+      </tr>
+      <tr>
+        <td>【右上】AI支援パネル</td>
+        <td>ロボットアバター、段階的ヒント表示、対話入力欄</td>
+        <td>答えをすぐ出さず、「注目箇所」→「概念」→「修正方針」とステップアップ式に助言する[cite: 3, 7]。</td>
+      </tr>
+      <tr>
+        <td>【右下】辞書パネル</td>
+        <td>検索ボックス、ふりがな付きカード、既習言語比較</td>
+        <td>小学生でも読めるルビ付き解説と、JavaやJavaScript等の書き方との対比を即時検索表示[cite: 3, 7]。</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<footer>
+  文書名：コードラボ プログラミング学習 AI誤り分析アシスタント 画面構成図 (ui_layout.html)[cite: 3]
+</footer>
+
+</div>
+</body>
+</html>
