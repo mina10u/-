@@ -104,13 +104,6 @@
             font-weight: bold;
         }
 
-        .nav-btn.primary {
-            background-color: var(--primary);
-            border-color: var(--primary);
-            color: white;
-            font-weight: bold;
-        }
-
         /* メインワークスペース */
         main.workspace {
             flex: 1;
@@ -206,24 +199,34 @@
             font-weight: bold;
         }
 
-        /* マルチファイル用タブバー（自由創作モード時） */
+        /* ★ 常時表示されるマルチファイル用タブバー ★ */
         .file-tab-bar {
-            display: none;
-            background: rgba(15, 23, 42, 0.8);
-            border-bottom: 1px solid var(--border);
+            display: flex;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid var(--border);
+            border-bottom: none;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
             overflow-x: auto;
             flex-shrink: 0;
         }
 
         .file-tab {
-            padding: 6px 14px;
-            font-size: 0.8rem;
+            padding: 7px 16px;
+            font-size: 0.82rem;
             color: var(--text-sub);
             border-right: 1px solid var(--border);
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            background: rgba(15, 23, 42, 0.6);
+            transition: all 0.15s;
+        }
+
+        .file-tab:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .file-tab.active {
@@ -246,7 +249,11 @@
         .tool-btn:hover { background: rgba(255, 255, 255, 0.15); }
 
         /* エディタ */
-        .editor-container { flex: 1.2; }
+        .editor-container { 
+            flex: 1.2; 
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
 
         textarea.code-editor {
             width: 100%;
@@ -444,7 +451,7 @@
             <a href="index.html" class="nav-btn">仕様書</a>
             <a href="RDD.html" class="nav-btn">要件定義書</a>
             <a href="diagram.html" class="nav-btn">画面遷移図</a>
-            <a href="activity.html" class="nav-link nav-btn">アクティビティ図</a>
+            <a href="activity.html" class="nav-btn">アクティビティ図</a>
         </div>
     </header>
 
@@ -454,24 +461,24 @@
         <!-- 左カラム：エディタ & コンソール -->
         <div class="left-column" id="leftColumn">
             
-            <!-- ① 課題お題バナー (課題演習時) -->
+            <!-- ① 課題お題バナー (課題演習時に表示) -->
             <div class="task-banner" id="taskBanner">
                 <div><span class="task-title">🎯 今日のお題:</span> 年齢（10歳）を表示するコードを書こう！</div>
                 <div>期待される出力: <span class="task-target">ねんれいは 10さいです</span></div>
             </div>
 
-            <!-- ② ファイルタブバー (自由創作時) -->
+            <!-- ② 常時表示のマルチファイルタブバー -->
             <div class="file-tab-bar" id="fileTabBar">
-                <div class="file-tab active" id="tab-main" onclick="switchFreeTab('main.py')">📄 main.py</div>
-                <div class="file-tab" id="tab-helper" onclick="switchFreeTab('helper.py')">📄 helper.py</div>
-                <div class="file-tab" id="tab-utils" onclick="switchFreeTab('utils.py')">📄 utils.py</div>
-                <button class="tool-btn" style="margin:4px;" onclick="addNewFreeFile()">＋</button>
+                <div class="file-tab active" id="tab-main" onclick="switchFileTab('main.py')">📄 main.py</div>
+                <div class="file-tab" id="tab-helper" onclick="switchFileTab('helper.py')">📄 helper.py</div>
+                <div class="file-tab" id="tab-utils" onclick="switchFileTab('utils.py')">📄 utils.py</div>
+                <button class="tool-btn" style="margin:4px 6px;" onclick="addNewFileTab()">＋ 新規</button>
             </div>
 
             <!-- コードエディタ -->
             <div class="panel editor-container" id="editorPanel">
                 <div class="panel-header">
-                    <span id="editorTitle">📝 コードエディタ (Python)</span>
+                    <span id="editorTitle">📝 my_project/main.py</span>
                     <div style="display: flex; gap: 0.4rem;">
                         <button class="tool-btn" onclick="formatCode()">✨ 整形</button>
                         <button class="tool-btn" onclick="insertSnippet('if')">＋ if文</button>
@@ -490,7 +497,7 @@
                     <label><input type="radio" name="testPattern" value="success"> 大成功</label>
                 </div>
                 <div id="freeModeInfo" style="display: none; font-size: 0.8rem; color: var(--text-sub);">
-                    📂 作業フォルダ: <code>my_game_project/</code> （import対応）
+                    📂 作業フォルダ: <code>my_project/</code> （import相互実行対応）
                 </div>
                 <button class="run-btn" onclick="runCurrentCode()">▶ うごかす！</button>
             </div>
@@ -522,8 +529,8 @@
                 </div>
                 <div id="chatMessages" class="chat-messages">
                     <div class="chat-bubble ai" id="aiWelcomeBubble">
-                        こんにちは！今日のお題は「ねんれいは 10さいです」と表示することだよ。<br>
-                        コードが書けたら「▶ うごかす！」を押して試してみてね！
+                        こんにちは！コードが書けたら「▶ うごかす！」を押して試してみてね！<br>
+                        複数のファイルを見比べながらプログラミングできるよ。
                     </div>
                 </div>
                 <div class="chat-input-area">
@@ -554,17 +561,17 @@
                     </div>
                     <div class="dict-item">
                         <div class="dict-title">
-                            <span>str (ストリング)</span>
-                        </div>
-                        <div class="ruby">【数字（すうじ）を もじに変（か）える】</div>
-                        <div class="dict-desc">数字を文字の仲間に変えて、他の文字とくっつけられるようにします。</div>
-                    </div>
-                    <div class="dict-item">
-                        <div class="dict-title">
                             <span>import (インポート)</span>
                         </div>
                         <div class="ruby">【別（べつ）のファイルを 読（よ）み込（こ）む】</div>
                         <div class="dict-desc">同じフォルダにある別のプログラムの関数やデータを使えるようにします。</div>
+                    </div>
+                    <div class="dict-item">
+                        <div class="dict-title">
+                            <span>str (ストリング)</span>
+                        </div>
+                        <div class="ruby">【数字（すうじ）を もじに変（か）える】</div>
+                        <div class="dict-desc">数字を文字の仲間に変えて、他の文字とくっつけられるようにします。</div>
                     </div>
                 </div>
             </div>
@@ -576,88 +583,92 @@
         let currentMode = 'task'; // 'task' | 'free'
         let isKidMode = true;
 
-        // 課題演習用コード
-        let taskCode = `# 課題: 年齢(10歳)を表示するプログラムを作ろう！\nage = 10 + 5\nprint("ねんれいは " + str(age) + "さいです")`;
-
-        // 自由創作（マルチファイル）用仮想データ
-        const freeFiles = {
+        // 仮想ファイルデータ（ファイル間相互参照）
+        const virtualFiles = {
             'main.py': `# [main.py] メインプログラム\nimport helper\n\nprint("計算をはじめます...")\n# helper.py の関数を呼び出します\ntotal = helper.calc_score(10)\nprint("合計得点: " + str(total))\n`,
             'helper.py': `# [helper.py] 補助関数ファイル\ndef calc_score(base_point):\n    bonus = 5\n    # ⚠️ bonus_rate が未定義のためエラーになります\n    return base_point + bonus_rate\n`,
             'utils.py': `# [utils.py] 共通ツール\ndef banner(text):\n    print("=== " + text + " ===")\n`
         };
-        let activeFreeFile = 'main.py';
 
-        // 初期化ロード
+        // 課題演習用コード
+        let taskCode = `# 課題: 年齢(10歳)を表示するプログラムを作ろう！\nage = 10 + 5\nprint("ねんれいは " + str(age) + "さいです")`;
+
+        let activeFile = 'main.py';
+
         window.onload = () => {
             setAppMode('task');
         };
 
-        // モード切り替え（課題演習 ⇄ 自由創作）
+        // モード切り替え
         function setAppMode(mode) {
             currentMode = mode;
             document.getElementById('btnModeTask').classList.toggle('active', mode === 'task');
             document.getElementById('btnModeFree').classList.toggle('active', mode === 'free');
 
             const taskBanner = document.getElementById('taskBanner');
-            const fileTabBar = document.getElementById('fileTabBar');
             const testPatternBox = document.getElementById('testPatternBox');
             const freeModeInfo = document.getElementById('freeModeInfo');
-            const editorTitle = document.getElementById('editorTitle');
             const editor = document.getElementById('codeEditor');
 
             if (mode === 'task') {
                 taskBanner.style.display = 'flex';
-                fileTabBar.style.display = 'none';
                 testPatternBox.style.display = 'flex';
                 freeModeInfo.style.display = 'none';
-                editorTitle.textContent = "📝 コードエディタ (Python)";
                 editor.value = taskCode;
+                document.getElementById('editorTitle').textContent = "📝 課題演習 (solution.py)";
             } else {
                 taskBanner.style.display = 'none';
-                fileTabBar.style.display = 'flex';
                 testPatternBox.style.display = 'none';
                 freeModeInfo.style.display = 'block';
-                switchFreeTab(activeFreeFile);
+                switchFileTab(activeFile);
             }
         }
 
-        // 自由創作タブ切り替え
-        function switchFreeTab(filename) {
-            activeFreeFile = filename;
+        // ファイルタブの切り替え
+        function switchFileTab(filename) {
+            activeFile = filename;
+
+            // タブの見た目更新
             document.querySelectorAll('.file-tab').forEach(t => t.classList.remove('active'));
-            const targetTab = document.getElementById(`tab-${filename.replace('.py', '')}`);
-            if (targetTab) targetTab.classList.add('active');
+            let tabId = `tab-${filename.replace('.py', '')}`;
+            let targetTab = document.getElementById(tabId);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
 
-            document.getElementById('editorTitle').textContent = `📝 my_game_project/${filename}`;
-            document.getElementById('codeEditor').value = freeFiles[filename];
+            // エディタへ内容反映
+            if (currentMode === 'task' && filename === 'main.py') {
+                document.getElementById('codeEditor').value = taskCode;
+            } else {
+                document.getElementById('codeEditor').value = virtualFiles[filename] || '';
+            }
+            document.getElementById('editorTitle').textContent = `📝 my_project/${filename}`;
         }
 
-        // コード編集時の保存
         function saveCurrentCode() {
-            if (currentMode === 'task') {
-                taskCode = document.getElementById('codeEditor').value;
+            const val = document.getElementById('codeEditor').value;
+            if (currentMode === 'task' && activeFile === 'main.py') {
+                taskCode = val;
             } else {
-                freeFiles[activeFreeFile] = document.getElementById('codeEditor').value;
+                virtualFiles[activeFile] = val;
             }
         }
 
-        // 実行ボタン押下
+        // 実行
         function runCurrentCode() {
             const consoleOut = document.getElementById('consoleOutput');
             consoleOut.innerHTML = `<span style="color:var(--text-sub);">⏳ プログラムを実行中...</span>`;
 
             setTimeout(() => {
                 if (currentMode === 'task') {
-                    // 課題演習モードの実行
                     runTaskMode();
                 } else {
-                    // 自由創作（マルチファイル）モードの実行
                     runFreeMode();
                 }
             }, 300);
         }
 
-        // 課題演習実行ロジック
+        // 課題演習実行
         function runTaskMode() {
             const pattern = document.querySelector('input[name="testPattern"]:checked').value;
             const consoleOut = document.getElementById('consoleOutput');
@@ -686,13 +697,13 @@
             }
         }
 
-        // 自由創作（マルチファイル）実行ロジック
+        // 自由創作（マルチファイル）実行
         function runFreeMode() {
             const consoleOut = document.getElementById('consoleOutput');
-            const helperCode = freeFiles['helper.py'];
+            const helperCode = virtualFiles['helper.py'] || '';
 
             if (helperCode.includes('bonus_rate')) {
-                // helper.py 側の未定義エラー
+                // 呼び出し先エラー再現
                 consoleOut.innerHTML = `
                     <div class="console-msg error">
                         Traceback (most recent call last):<br>
@@ -704,7 +715,7 @@
                     </div>
                     <div style="border-top: 1px dashed var(--border); padding-top: 6px; margin-top: 6px;">
                         ⚠️ <strong>呼び出し先の helper.py の 4行目でエラーが発生しました</strong><br>
-                        <button class="jump-error-btn" onclick="switchFreeTab('helper.py')">
+                        <button class="jump-error-btn" onclick="switchFileTab('helper.py')">
                             👉 helper.py の4行目を開いて直す
                         </button>
                     </div>
@@ -712,13 +723,12 @@
 
                 appendAiMessage(`
                     🤖 <strong>AIロボ（両方のコードを分析したよ！）:</strong><br>
-                    <code>main.py</code> の6行目で呼び出した <strong>helper.py の4行目</strong> でエラーが起きているよ！<br><br>
+                    <code>main.py</code> の6行目で呼び出した <strong>helper.py の4行目</strong> で変数が未定義のエラーになっているよ！<br><br>
                     💡 <strong>【2つの直し方提案】</strong><br>
                     ① <code>helper.py</code> の中で <code>bonus_rate = 5</code> と定義してあげる<br>
                     ② <code>helper.py</code> の4行目を定義済みの <code>bonus</code> に直す
                 `);
             } else {
-                // 修正後の成功
                 consoleOut.innerHTML = `
                     <div class="console-msg success">
                         計算をはじめます...<br>
@@ -772,18 +782,18 @@
 
         function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
 
-        function addNewFreeFile() {
-            const name = prompt("作成するファイル名を入力してください (例: sound.py):", "settings.py");
-            if (name && !freeFiles[name]) {
-                freeFiles[name] = `# [${name}]\n# 新しいファイルです\n`;
+        function addNewFileTab() {
+            const name = prompt("作成するファイル名を入力してください (例: config.py):", "settings.py");
+            if (name && !virtualFiles[name]) {
+                virtualFiles[name] = `# [${name}]\n# 新しいファイルです\n`;
                 const tabBar = document.getElementById('fileTabBar');
                 const newTab = document.createElement('div');
                 newTab.className = 'file-tab';
                 newTab.id = `tab-${name.replace('.py', '')}`;
                 newTab.textContent = `📄 ${name}`;
-                newTab.onclick = () => switchFreeTab(name);
+                newTab.onclick = () => switchFileTab(name);
                 tabBar.insertBefore(newTab, tabBar.lastElementChild);
-                switchFreeTab(name);
+                switchFileTab(name);
             }
         }
 
