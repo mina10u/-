@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>コードラボ｜システム構成図</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: "default",
+  themeVariables: {
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    fontSize: "13px",
+    lineColor: "#334155"
+  },
+  flowchart: {
+    useMaxWidth: true,
+    htmlLabels: true,
+    curve: "linear",
+    nodeSpacing: 25,
+    rankSpacing: 40
+  }
+});
+</script>
+<style>
+:root {
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --border: #cbd5e1;
+  --text: #0f172a;
+  --muted: #64748b;
+  --primary: #2563eb;
+  --accent: #0284c7;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  padding: 16px 24px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.nav-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.nav-link {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.nav-link.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+h1 { font-size: 1.25rem; color: #1e3a8a; }
+.container {
+  width: 100%;
+  max-width: 1350px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  flex: 1;
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  overflow: auto;
+  text-align: center;
+}
+.mermaid {
+  display: inline-block;
+  min-width: 950px;
+  width: 100%;
+}
+.summary-table {
+  width: 100%;
+  margin-top: 24px;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+.summary-table th, .summary-table td {
+  padding: 12px;
+  border: 1px solid var(--border);
+}
+.summary-table th {
+  background: #f1f5f9;
+  width: 25%;
+  color: #334155;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>システム構成図 (ネットワーク・配置構成)</h1>
+    <span style="color: var(--muted); font-size: 0.85rem;">コードラボ システム仕様書</span>
+  </div>
+  <div class="nav-bar">
+    <a href="index.html" class="nav-link">仕様書</a>
+    <a href="diagram.html" class="nav-link">画面遷移図</a>
+    <a href="activity.html" class="nav-link">アクティビティ図</a>
+    <a href="er.html" class="nav-link">ER図</a>
+    <a href="mockup.html" class="nav-link">モック画面</a>
+    <a href="system_architecture.html" class="nav-link active">システム構成図</a>
+  </div>
+</header>
+
+<main class="container">
+  <div class="card">
+    <div class="mermaid">
+flowchart LR
+    subgraph CLIENTS ["💻 学習者端末 (ローカル環境)"]
+        direction TB
+        PC["🖥️ デスクトップ PC<br/>(Windows 10/11)"]
+        LAPTOP["💻 ノート PC<br/>(学校PC室 / 自宅)"]
+        CLIENT_NOTE["【内包機能】<br/>・Tauri v2 + React アプリ<br/>・同梱 Python 3.x 実行環境<br/>・ローカル AI 推論エンジン"]
+        PC --- LAPTOP --- CLIENT_NOTE
+    end
+
+    NET((🌐<br/>インターネット))
+
+    subgraph AP_SERVER ["🖥️ クラウド API サーバ<br/>(Web & AP)"]
+        direction TB
+        API_AUTH["🔐 ユーザー認証・認可"]
+        API_SYNC["🔄 学習データ同期・検証"]
+        API_SVC["⚙️ 課題・教材配信"]
+    end
+
+    subgraph DB_SERVER ["🗄️ クラウド DB サーバ<br/>(MySQL / NoSQL)"]
+        direction TB
+        DB_USER[("👤 ユーザー情報<br/>(users)")]
+        DB_RECORD[("📊 学習履歴・ログ<br/>(learning_records)")]
+        DB_BADGE[("🏆 実績・課題マスタ<br/>(tasks / badges)")]
+    end
+
+    subgraph ADMIN_CLIENTS ["👥 管理・教員クライアント"]
+        direction TB
+        ADM_1["👨‍🏫 指導員 / 教員<br/>(進捗・エラー分析確認)"]
+        ADM_2["🛠️ 開発者 / 管理者<br/>(課題コンテンツ追加・更新)"]
+    end
+
+    CLIENTS <== "HTTPS (暗号化通信)<br/>※学習履歴・得点のみ同期" ==> NET
+    NET <== "REST API / JSON" ==> AP_SERVER
+    AP_SERVER <== "SQL / DB接続" ==> DB_SERVER
+    DB_SERVER <== "管理画面 / コンソール経由" ==> ADMIN_CLIENTS
+
+    classDef clientStyle fill:#f8fafc,stroke:#2563eb,stroke-width:2px,color:#0f172a;
+    classDef netStyle fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#ffffff;
+    classDef serverStyle fill:#f1f5f9,stroke:#0284c7,stroke-width:2px,color:#0f172a;
+    classDef dbStyle fill:#eff6ff,stroke:#6366f1,stroke-width:2px,color:#0f172a;
+    classDef adminStyle fill:#fafafa,stroke:#475569,stroke-width:2px,color:#0f172a;
+
+    class CLIENTS,PC,LAPTOP,CLIENT_NOTE clientStyle;
+    class NET netStyle;
+    class AP_SERVER,API_AUTH,API_SYNC,API_SVC serverStyle;
+    class DB_SERVER,DB_USER,DB_RECORD,DB_BADGE dbStyle;
+    class ADMIN_CLIENTS,ADM_1,ADM_2 adminStyle;
+    </div>
+
+    <table class="summary-table">
+      <tr>
+        <th>💻 学習者端末 (Client)</th>
+        <td>Tauriアプリ本体内に「同梱Python」と「小型ローカルAI推論エンジン」を備え、コーディング・実行・ヒント提示はネット不要のローカル完結[cite: 3]。</td>
+      </tr>
+      <tr>
+        <th>🌐 インターネット通信</th>
+        <td>コード全文は送信せず、ログイン時のアカウント認証および合否・スコア・エラー種別・バッジ獲得情報のみをHTTPS通信で送受信[cite: 3, 5]。</td>
+      </tr>
+      <tr>
+        <th>🖥️ Web & AP サーバ</th>
+        <td>APIエンドポイントとして認証処理、データのバリデーション、同期キューの受け入れ、課題配信を担当[cite: 1, 3]。</td>
+      </tr>
+      <tr>
+        <th>🗄️ DB サーバ</th>
+        <td>MySQLまたはNoSQL（Firestore等）を用い、学習ログ・スコア・実績バッジを永続化[cite: 1, 3]。</td>
+      </tr>
+      <tr>
+        <th>👥 管理・教員クライアント</th>
+        <td>指導員による学習進捗の可視化や、開発者・管理者による課題マスタ・テストケースのコンテンツ更新を実施[cite: 3, 4]。</td>
+      </tr>
+    </table>
+  </div>
+</main>
+
+</body>
+</html>
