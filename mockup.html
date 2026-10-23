@@ -1,731 +1,831 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeLab - モック画面 (マルチファイル＆相互実行対応)</title>
-    <style>
-        :root {
-            --bg-base: #0f172a;
-            --bg-panel: #1e293b;
-            --bg-sub: #090d16;
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --accent: #38bdf8;
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --border: #334155;
-            --tab-active-bg: #1e293b;
-            --tab-inactive-bg: #0f172a;
-            --line-num: #64748b;
-            --error-bg: rgba(239, 68, 68, 0.15);
-            --error-border: #ef4444;
-            --error-text: #fca5a5;
-            --success-text: #86efac;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>コードラボ｜画面モックアップ（課題演習 ＆ 自由制作 独立画面）</title>
+<style>
+  :root {
+    --bg-base: #0f172a;
+    --bg-panel: #1e293b;
+    --bg-sub: #090d16;
+    --text-main: #f8fafc;
+    --text-sub: #94a3b8;
+    --accent: #38bdf8;
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --border: #334155;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+  }
 
-        body.light-theme {
-            --bg-base: #f1f5f9;
-            --bg-panel: #ffffff;
-            --bg-sub: #e2e8f0;
-            --text-main: #0f172a;
-            --text-sub: #475569;
-            --accent: #0284c7;
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --border: #cbd5e1;
-            --tab-active-bg: #ffffff;
-            --tab-inactive-bg: #e2e8f0;
-            --line-num: #94a3b8;
-            --error-bg: #fee2e2;
-            --error-border: #ef4444;
-            --error-text: #b91c1c;
-            --success-text: #15803d;
-        }
+  body.light-theme {
+    --bg-base: #f1f5f9;
+    --bg-panel: #ffffff;
+    --bg-sub: #e2e8f0;
+    --text-main: #0f172a;
+    --text-sub: #475569;
+    --accent: #0284c7;
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --border: #cbd5e1;
+    --success: #16a34a;
+    --warning: #d97706;
+    --danger: #dc2626;
+  }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--bg-base);
-            color: var(--text-main);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transition: background-color 0.2s, color 0.2s;
-        }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
 
-        /* トップナビゲーションバー */
-        header {
-            background-color: var(--bg-panel);
-            border-bottom: 1px solid var(--border);
-            padding: 8px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 52px;
-            flex-shrink: 0;
-        }
+  /* トップヘッダー */
+  header {
+    background-color: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    height: 52px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
 
-        .logo {
-            font-weight: 800;
-            font-size: 1.15rem;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+  .logo {
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
 
-        .nav-links {
-            display: flex;
-            gap: 6px;
-            margin-left: 10px;
-        }
+  /* 画面切り替えタブスイッチ */
+  .screen-switcher {
+    display: flex;
+    background-color: var(--bg-sub);
+    padding: 3px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
 
-        .nav-link {
-            color: var(--text-sub);
-            text-decoration: none;
-            padding: 4px 10px;
-            font-size: 0.8rem;
-            border-radius: 6px;
-            border: 1px solid transparent;
-            font-weight: 600;
-        }
-        .nav-link:hover { color: var(--text-main); background: var(--bg-sub); }
-        .nav-link.active {
-            background: var(--bg-sub);
-            color: var(--accent);
-            border-color: var(--border);
-        }
+  .switch-btn {
+    padding: 5px 14px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    border: none;
+    background: transparent;
+    color: var(--text-sub);
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+  .switch-btn.active {
+    background-color: var(--primary);
+    color: white;
+  }
 
-        .btn-theme {
-            background: var(--bg-sub);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+  .header-nav {
+    display: flex;
+    gap: 8px;
+  }
 
-        .mode-badge {
-            background: rgba(56, 189, 248, 0.15);
-            color: var(--accent);
-            border: 1px solid var(--accent);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
+  .nav-item {
+    color: var(--text-sub);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+  }
+  .nav-item:hover { color: var(--text-main); background: var(--bg-sub); }
 
-        /* メインワークスペースレイアウト */
-        .workspace {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-        /* 1. 左端：ファイルツリー / ワークスペースフォルダ */
-        .sidebar-tree {
-            width: 220px;
-            background-color: var(--bg-panel);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-        }
+  .btn-theme {
+    background: var(--bg-sub);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
 
-        .tree-header {
-            padding: 10px 14px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--text-sub);
-            text-transform: uppercase;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+  /* 画面コンテナ */
+  .screen-container {
+    flex: 1;
+    display: none;
+    overflow: hidden;
+  }
 
-        .tree-actions {
-            display: flex;
-            gap: 6px;
-        }
+  .screen-container.active {
+    display: flex;
+  }
 
-        .tree-btn {
-            background: none;
-            border: none;
-            color: var(--text-sub);
-            cursor: pointer;
-            font-size: 0.85rem;
-            padding: 2px 4px;
-            border-radius: 4px;
-        }
-        .tree-btn:hover { color: var(--accent); background: var(--bg-sub); }
+  /* 共通ボタンスタイル */
+  .btn-run {
+    background-color: #16a34a;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-run:hover { background-color: #15803d; }
 
-        .folder-title {
-            padding: 8px 14px;
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(0,0,0,0.05);
-        }
+  .btn-test {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
 
-        .file-list {
-            list-style: none;
-            padding: 4px 0;
-            flex: 1;
-            overflow-y: auto;
-        }
+  /* =========================================================
+     画面A: 課題演習モード (Task Screen)
+     ========================================================= */
+  .task-workspace {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) 380px;
+    overflow: hidden;
+  }
 
-        .file-item {
-            padding: 6px 14px 6px 26px;
-            font-size: 0.82rem;
-            color: var(--text-sub);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.15s;
-        }
-        .file-item:hover {
-            color: var(--text-main);
-            background: var(--bg-sub);
-        }
-        .file-item.active {
-            color: var(--accent);
-            background: rgba(56, 189, 248, 0.1);
-            font-weight: 700;
-            border-left: 3px solid var(--accent);
-            padding-left: 23px;
-        }
+  .task-left {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    overflow: hidden;
+  }
 
-        /* 2. 中央：タブ + エディタ + コンソール */
-        .editor-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--bg-panel);
-            border-right: 1px solid var(--border);
-            min-width: 320px;
-        }
+  .task-banner {
+    background: rgba(30, 58, 138, 0.25);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-        .tab-bar {
-            height: 38px;
-            background-color: var(--tab-inactive-bg);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            overflow-x: auto;
-            flex-shrink: 0;
-        }
+  .task-target-box {
+    background: var(--bg-sub);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: monospace;
+    color: var(--success);
+    font-weight: bold;
+    font-size: 0.85rem;
+  }
 
-        .tab {
-            padding: 0 16px;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.82rem;
-            color: var(--text-sub);
-            background-color: var(--tab-inactive-bg);
-            border-right: 1px solid var(--border);
-            cursor: pointer;
-            border-top: 2px solid transparent;
-            user-select: none;
-        }
-        .tab:hover { color: var(--text-main); }
-        .tab.active {
-            background-color: var(--tab-active-bg);
-            color: var(--accent);
-            font-weight: 700;
-            border-top-color: var(--accent);
-        }
-        .tab-close {
-            font-size: 0.75rem;
-            border-radius: 50%;
-            padding: 1px 4px;
-        }
-        .tab-close:hover { background: rgba(0,0,0,0.2); color: var(--text-main); }
+  .task-editor-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-panel);
+    position: relative;
+  }
 
-        .editor-toolbar {
-            padding: 6px 12px;
-            background: var(--bg-sub);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+  .task-editor-toolbar {
+    padding: 8px 16px;
+    background: var(--bg-sub);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-        .tool-left {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            font-size: 0.78rem;
-            color: var(--text-sub);
-        }
+  .code-textarea {
+    flex: 1;
+    padding: 14px;
+    background: var(--bg-panel);
+    color: var(--text-main);
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    white-space: pre;
+  }
 
-        .btn-run {
-            background-color: #16a34a;
-            color: white;
-            border: none;
-            padding: 5px 14px;
-            border-radius: 6px;
-            font-size: 0.82rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: background 0.15s;
-        }
-        .btn-run:hover { background-color: #15803d; }
+  .task-console-area {
+    height: 200px;
+    background: var(--bg-sub);
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+  }
 
-        .editor-area {
-            flex: 1;
-            display: flex;
-            font-family: Consolas, "Courier New", monospace;
-            font-size: 0.9rem;
-            position: relative;
-            overflow: hidden;
-        }
+  .console-head {
+    padding: 6px 14px;
+    background: rgba(0,0,0,0.1);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-sub);
+    display: flex;
+    justify-content: space-between;
+  }
 
-        .line-numbers {
-            width: 42px;
-            background: var(--bg-panel);
-            color: var(--line-num);
-            text-align: right;
-            padding: 12px 8px;
-            user-select: none;
-            font-size: 0.85rem;
-            line-height: 1.5;
-            border-right: 1px solid var(--border);
-        }
+  .console-body {
+    flex: 1;
+    padding: 10px 14px;
+    font-family: Consolas, monospace;
+    font-size: 0.85rem;
+    overflow-y: auto;
+    line-height: 1.6;
+  }
 
-        .line-error-marker {
-            background-color: var(--error-border);
-            color: white !important;
-            border-radius: 3px;
-            font-weight: bold;
-        }
+  .task-right {
+    background: var(--bg-panel);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 16px;
+    gap: 14px;
+  }
 
-        .code-textarea {
-            flex: 1;
-            padding: 12px;
-            background: var(--bg-panel);
-            color: var(--text-main);
-            border: none;
-            outline: none;
-            resize: none;
-            font-family: inherit;
-            font-size: inherit;
-            line-height: 1.5;
-            white-space: pre;
-        }
+  .card {
+    background: var(--bg-sub);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 0.85rem;
+  }
+  .card-title {
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--accent);
+    display: flex;
+    justify-content: space-between;
+  }
 
-        /* 下部：コンソールエリア */
-        .console-container {
-            height: 180px;
-            background-color: var(--bg-sub);
-            border-top: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-        }
+  .score-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    background: var(--success);
+    color: white;
+  }
 
-        .console-header {
-            padding: 6px 14px;
-            background-color: rgba(0,0,0,0.1);
-            border-bottom: 1px solid var(--border);
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--text-sub);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+  /* =========================================================
+     画面B: 自由制作モード (Free / Workspace Screen)
+     ========================================================= */
+  .free-workspace {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
 
-        .console-body {
-            flex: 1;
-            padding: 10px 14px;
-            font-family: Consolas, monospace;
-            font-size: 0.85rem;
-            overflow-y: auto;
-            line-height: 1.5;
-        }
+  .free-tree {
+    width: 220px;
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
 
-        .jump-error-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 6px;
-            padding: 4px 10px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .jump-error-btn:hover { background-color: var(--primary-hover); }
+  .tree-title {
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+  }
 
-        /* 3. 右端：AIアシスタント ＆ 構文辞書 */
-        .ai-sidebar {
-            width: 320px;
-            background-color: var(--bg-panel);
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-        }
+  .tree-list {
+    list-style: none;
+    padding: 6px 0;
+    flex: 1;
+    overflow-y: auto;
+  }
 
-        .ai-header {
-            padding: 10px 14px;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.82rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--accent);
-        }
+  .tree-item {
+    padding: 6px 14px 6px 24px;
+    font-size: 0.82rem;
+    color: var(--text-sub);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tree-item:hover { background: var(--bg-sub); color: var(--text-main); }
+  .tree-item.active {
+    background: rgba(56, 189, 248, 0.12);
+    color: var(--accent);
+    font-weight: bold;
+    border-left: 3px solid var(--accent);
+    padding-left: 21px;
+  }
 
-        .ai-content {
-            flex: 1;
-            padding: 14px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+  .free-editor-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    min-width: 320px;
+  }
 
-        .ai-card {
-            background-color: var(--bg-sub);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 0.84rem;
-            line-height: 1.6;
-        }
+  .tab-bar {
+    height: 38px;
+    background: var(--bg-sub);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+  }
 
-        .ai-card-title {
-            font-weight: 700;
-            margin-bottom: 6px;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+  .tab {
+    padding: 0 16px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--text-sub);
+    background: var(--bg-sub);
+    border-right: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .tab.active {
+    background: var(--bg-panel);
+    color: var(--accent);
+    font-weight: bold;
+    border-top: 2px solid var(--accent);
+  }
 
-        .target-tag {
-            display: inline-block;
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--error-text);
-            border: 1px solid var(--error-border);
-            padding: 1px 6px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-    </style>
+  .jump-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    padding: 4px 10px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .jump-btn:hover { background: var(--primary-hover); }
+
+  .free-sidebar {
+    width: 340px;
+    background: var(--bg-panel);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+</style>
 </head>
 <body>
 
-    <!-- ヘッダー -->
-    <header>
-        <div class="header-left">
-            <div class="logo">⚡ CodeLab</div>
-            <span class="mode-badge">📁 自由創作モード</span>
-            <div class="nav-links">
-                <a href="index.html" class="nav-link">仕様書</a>
-                <a href="RDD.html" class="nav-link">要件定義書</a>
-                <a href="diagram.html" class="nav-link">画面遷移図</a>
-                <a href="activity.html" class="nav-link">アクティビティ図</a>
-                <a href="mockup.html" class="nav-link active">モック画面</a>
-            </div>
-        </div>
-        <div class="header-right">
-            <button class="btn-theme" onclick="toggleTheme()" id="themeBtn">☀️ ライトモード</button>
-        </div>
-    </header>
+  <!-- トップヘッダー -->
+  <header>
+    <div class="header-left">
+      <div class="logo">⚡ CodeLab</div>
 
-    <!-- ワークスペース全体 -->
-    <div class="workspace">
+      <!-- 画面切り替えスイッチ（独立画面切替） -->
+      <div class="screen-switcher">
+        <button class="switch-btn active" id="btnSwitchTask" onclick="switchMainScreen('task')">
+          🎯 課題演習画面
+        </button>
+        <button class="switch-btn" id="btnSwitchFree" onclick="switchMainScreen('free')">
+          📁 自由制作画面 (マルチファイル)
+        </button>
+      </div>
 
-        <!-- ① 左カラム：ワークスペース・ファイルツリー -->
-        <div class="sidebar-tree">
-            <div class="tree-header">
-                <span>プロジェクト フォルダ</span>
-                <div class="tree-actions">
-                    <button class="tree-btn" onclick="addNewFile()" title="新しいファイルを作成">＋</button>
-                    <button class="tree-btn" title="フォルダ再読み込み">🔄</button>
-                </div>
-            </div>
-            <div class="folder-title">
-                📁 <span>my_game_project/</span>
-            </div>
-            <ul class="file-list" id="fileTreeList">
-                <li class="file-item active" onclick="switchFile('main.py')">📄 main.py</li>
-                <li class="file-item" onclick="switchFile('helper.py')">📄 helper.py</li>
-                <li class="file-item" onclick="switchFile('utils.py')">📄 utils.py</li>
-            </ul>
-            <div style="padding: 10px; font-size: 0.72rem; color: var(--text-sub); border-top: 1px solid var(--border);">
-                💡 別ファイルは <code>import [名前]</code> で読み込んで実行できます。
-            </div>
-        </div>
-
-        <!-- ② 中央カラム：エディタ ＆ コンソール -->
-        <div class="editor-container">
-            <!-- エディタ上部 タブバー -->
-            <div class="tab-bar" id="tabBar">
-                <div class="tab active" id="tab-main.py" onclick="switchFile('main.py')">
-                    <span>📄 main.py</span>
-                </div>
-                <div class="tab" id="tab-helper.py" onclick="switchFile('helper.py')">
-                    <span>📄 helper.py</span>
-                </div>
-            </div>
-
-            <!-- エディタ ツールバー -->
-            <div class="editor-toolbar">
-                <div class="tool-left">
-                    <span id="currentEditingPath">作業フォルダ: my_game_project/<strong>main.py</strong></span>
-                </div>
-                <button class="btn-run" onclick="runMultiFileCode()">
-                    ▶ 実行する (F5)
-                </button>
-            </div>
-
-            <!-- コード入力エリア -->
-            <div class="editor-area">
-                <div class="line-numbers" id="lineNumbers">
-                    1<br>2<br>3<br>4<br>5<br>6<br>7
-                </div>
-                <textarea class="code-textarea" id="codeEditor" spellcheck="false" oninput="updateCurrentFileCode()"></textarea>
-            </div>
-
-            <!-- やさしい出力コンソール -->
-            <div class="console-container">
-                <div class="console-header">
-                    <span>📟 やさしい出力コンソール</span>
-                    <span style="font-size: 0.7rem; color: var(--text-sub);">作業ディレクトリ: /my_game_project</span>
-                </div>
-                <div class="console-body" id="consoleBody">
-                    <span style="color: var(--text-sub);">「▶ 実行する」ボタンを押すと、プロジェクト内のコードを実行します。</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- ③ 右カラム：AIアシスタント ＆ モジュール解説 -->
-        <div class="ai-sidebar">
-            <div class="ai-header">
-                🤖 AI誤り分析アシスタント
-            </div>
-            <div class="ai-content" id="aiContent">
-                <div class="ai-card">
-                    <div class="ai-card-title">💡 マルチファイル連携機能</div>
-                    <p>ここでは自分で作成した複数の <code>.py</code> ファイルを <code>import</code> して組み合わせることができます！</p>
-                    <p style="margin-top:6px; font-size:0.78rem; color:var(--text-sub);">
-                        実行時にエラーが起きたときは、どのファイルに原因があるかをAIが特定して案内します。
-                    </p>
-                </div>
-
-                <div class="ai-card" id="aiDynamicAdvice">
-                    <div class="ai-card-title">📖 今日のポイント: import</div>
-                    <p><code>import helper</code> と書くと、同じフォルダにある <code>helper.py</code> の関数を呼び出せるようになります。</p>
-                </div>
-            </div>
-        </div>
-
+      <nav class="header-nav">
+        <a href="index.html" class="nav-item">仕様書</a>
+        <a href="RDD.html" class="nav-item">要件定義書</a>
+        <a href="diagram.html" class="nav-item">画面遷移図</a>
+        <a href="activity.html" class="nav-item">アクティビティ図</a>
+      </nav>
     </div>
 
-    <script>
-        // プロジェクト内のファイル仮想データ
-        const projectFiles = {
-            'main.py': {
-                code: "# [main.py] メインプログラム\nimport helper\n\nprint('計算をはじめます...')\n# helper.py の関数を呼び出します\ntotal = helper.calc_score(10)\nprint('合計得点:', total)\n"
-            },
-            'helper.py': {
-                code: "# [helper.py] 補助関数ファイル\ndef calc_score(base_point):\n    bonus = 5\n    # ⚠️ 4行目：未定義の変数 'bonus_rate' を使ってエラーを再現\n    return base_point + bonus_rate\n"
-            },
-            'utils.py': {
-                code: "# [utils.py] 便利なツール集\ndef show_banner(title):\n    print('=== ' + title + ' ===')\n"
-            }
-        };
+    <div class="header-right">
+      <button class="btn-theme" onclick="toggleTheme()" id="themeBtn">☀️ ライトモード</button>
+    </div>
+  </header>
 
-        let currentActiveFile = 'main.py';
+  <!-- ==============================================================
+       画面 1: 課題演習モード (独立画面)
+       ============================================================== -->
+  <div class="screen-container active" id="screenTask">
+    <div class="task-workspace">
+      
+      <!-- 左：お題、エディタ、テストコンソール -->
+      <div class="task-left">
+        <!-- お題バナー -->
+        <div class="task-banner">
+          <div>
+            <span style="font-weight:bold; color:var(--accent);">🎯 課題 01:</span> 
+            <span>変数 age を使って「年齢は10歳です」と出力しよう！</span>
+          </div>
+          <div>
+            期待される出力: <span class="task-target-box">年齢は10歳です</span>
+          </div>
+        </div>
 
-        // 初期化ロード
-        window.onload = () => {
-            loadFileIntoEditor(currentActiveFile);
-        };
+        <!-- ツールバー -->
+        <div class="task-editor-toolbar">
+          <span style="font-size:0.8rem; color:var(--text-sub);">編集中のファイル: <strong>solution.py</strong>（白紙から記述）</span>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-run" onclick="runTaskCode(false)">▶ 実行</button>
+            <button class="btn-test" onclick="runTaskCode(true)">✓ テスト・採点</button>
+          </div>
+        </div>
 
-        // ファイル切り替え
-        function switchFile(filename, targetLine = null) {
-            currentActiveFile = filename;
+        <!-- エディタ本体 -->
+        <div class="task-editor-area">
+          <textarea class="code-textarea" id="taskEditor" spellcheck="false"># 年齢を表示するプログラムを作ろう！
+age = 10 + 5
+print(f"年齢は{age}歳です")</textarea>
+        </div>
 
-            // タブの見た目更新
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            let activeTab = document.getElementById(`tab-${filename}`);
-            if (!activeTab) {
-                // タブになければ追加
-                const tabBar = document.getElementById('tabBar');
-                const newTab = document.createElement('div');
-                newTab.className = 'tab active';
-                newTab.id = `tab-${filename}`;
-                newTab.onclick = () => switchFile(filename);
-                newTab.innerHTML = `<span>📄 ${filename}</span>`;
-                tabBar.appendChild(newTab);
-            } else {
-                activeTab.classList.add('active');
-            }
+        <!-- 実行・テスト結果コンソール -->
+        <div class="task-console-area">
+          <div class="console-head">
+            <span>💻 実行・テスト結果コンソール</span>
+            <span id="taskConsoleStatus" style="color:var(--text-sub);">待機中</span>
+          </div>
+          <div class="console-body" id="taskConsoleBody">
+            <span style="color:var(--text-sub);">「✓ テスト・採点」を押すと、テストケース実行と自動採点が行われます。</span>
+          </div>
+        </div>
+      </div>
 
-            // ツリーの見た目更新
-            document.querySelectorAll('.file-item').forEach(item => {
-                item.classList.toggle('active', item.textContent.includes(filename));
-            });
+      <!-- 右：AIヒント ＆ 2段階採点パネル -->
+      <div class="task-right">
+        <!-- AIヒント -->
+        <div class="card">
+          <div class="card-title">
+            <span>🤖 AI学習アシスタント</span>
+            <span style="font-size:0.75rem; color:var(--text-sub);">段階的ヒント</span>
+          </div>
+          <p id="taskAiAdvice">
+            まずは自分でコードを書いて「テスト・採点」を押してみましょう！答えをいきなり言わずに、考え方のヒントを出すよ。
+          </p>
+        </div>
 
-            // エディタへ内容展開
-            loadFileIntoEditor(filename);
+        <!-- 採点カード (100点満点) -->
+        <div class="card" id="taskScoreCard">
+          <div class="card-title">
+            <span>📊 採点サマリー</span>
+            <span class="score-badge" id="passBadge">未評価</span>
+          </div>
+          <div style="font-size:1.6rem; font-weight:800; color:var(--accent); margin:6px 0;" id="scoreTotal">-- / 100 点</div>
+          <div style="display:flex; flex-direction:column; gap:4px; font-size:0.8rem; color:var(--text-sub);">
+            <div>・要件達成度: <strong id="scoreReq">-- / 50 点</strong></div>
+            <div>・実行結果: <strong id="scoreExec">-- / 30 点</strong></div>
+            <div>・コード妥当性(AI): <strong id="scoreAi">-- / 20 点</strong></div>
+          </div>
+        </div>
 
-            // 特定行へのジャンプ指定がある場合
-            if (targetLine) {
-                highlightErrorLine(targetLine);
-            }
+        <!-- 構文辞書 -->
+        <div class="card">
+          <div class="card-title">📖 今日のポイント辞書</div>
+          <p><strong>f文字列 (フォーマット文字列):</strong></p>
+          <code style="background:var(--bg-panel); padding:4px; border-radius:4px; display:block; margin:4px 0;">f"文字列{変数名}"</code>
+          <p style="font-size:0.78rem; color:var(--text-sub);">波括弧の中に変数を入れると、文字と数字を簡単につなぐことができます。</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==============================================================
+       画面 2: 自由制作モード (独立画面・マルチファイル対応)
+       ============================================================== -->
+  <div class="screen-container" id="screenFree">
+    <div class="free-workspace">
+      
+      <!-- 左：ファイルツリー (フォルダ管理) -->
+      <div class="free-tree">
+        <div class="tree-title">
+          <span>📁 プロジェクトファイル</span>
+          <button style="background:none; border:none; color:var(--accent); cursor:pointer; font-weight:bold;" onclick="addNewFreeFile()">＋</button>
+        </div>
+        <div style="padding:8px 14px; font-size:0.82rem; font-weight:bold; background:rgba(0,0,0,0.1);">
+          📂 my_game_project/
+        </div>
+        <ul class="tree-list" id="freeTreeList">
+          <li class="tree-item active" onclick="switchFreeTab('main.py')">📄 main.py</li>
+          <li class="tree-item" onclick="switchFreeTab('helper.py')">📄 helper.py</li>
+          <li class="tree-item" onclick="switchFreeTab('utils.py')">📄 utils.py</li>
+        </ul>
+        <div style="padding:10px; font-size:0.74rem; color:var(--text-sub); border-top:1px solid var(--border);">
+          💡 複数ファイルを作成し、<code>import</code> で相互に呼び出して動かせます。
+        </div>
+      </div>
+
+      <!-- 中央：マルチタブ ＆ エディタ ＆ コンソール -->
+      <div class="free-editor-container">
+        <!-- タブバー -->
+        <div class="tab-bar" id="freeTabBar">
+          <div class="tab active" id="tab-main.py" onclick="switchFreeTab('main.py')">📄 main.py</div>
+          <div class="tab" id="tab-helper.py" onclick="switchFreeTab('helper.py')">📄 helper.py</div>
+        </div>
+
+        <!-- ツールバー -->
+        <div class="task-editor-toolbar">
+          <span style="font-size:0.8rem; color:var(--text-sub);" id="freeCurrentPath">作業中: my_game_project/<strong>main.py</strong></span>
+          <button class="btn-run" onclick="runFreeMultiFile()">▶ 実行する (main.py)</button>
+        </div>
+
+        <!-- エディタ本体 -->
+        <div class="task-editor-area">
+          <textarea class="code-textarea" id="freeEditor" spellcheck="false" oninput="saveCurrentFreeCode()"></textarea>
+        </div>
+
+        <!-- コンソール -->
+        <div class="task-console-area">
+          <div class="console-head">
+            <span>📟 プログラム出力コンソール</span>
+            <span style="color:var(--text-sub);">作業ディレクトリ: /my_game_project</span>
+          </div>
+          <div class="console-body" id="freeConsoleBody">
+            <span style="color:var(--text-sub);">「▶ 実行する」を押すと、プロジェクト内のプログラムを実行します。</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右：マルチファイルAIアシスタント (両コード参照) -->
+      <div class="free-sidebar">
+        <div class="card">
+          <div class="card-title">🤖 AIファイル間エラー分析</div>
+          <div id="freeAiAdvice">
+            <p>自由制作では、複数のファイルを見比べながらプログラミングできます。</p>
+            <p style="margin-top:6px; font-size:0.78rem; color:var(--text-sub);">
+              別ファイルでエラーが発生した時は、呼び出し元と呼び出し先の「両方のコード」をAIがチェックして直す場所を教えます。
+            </p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">💡 マルチファイル実行のヒント</div>
+          <p>同じフォルダ内の <code>helper.py</code> を使うには、先頭に以下のように書きます：</p>
+          <code style="background:var(--bg-base); padding:4px; border-radius:4px; display:block; margin:6px 0;">import helper</code>
+          <p style="font-size:0.78rem; color:var(--text-sub);"><code>helper.calc_score()</code> のように関数を呼び出せます。</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /* ==============================================================
+       画面切り替えロジック（課題演習 ⇄ 自由制作）
+       ============================================================== */
+    function switchMainScreen(screenKey) {
+      document.getElementById('screenTask').classList.toggle('active', screenKey === 'task');
+      document.getElementById('screenFree').classList.toggle('active', screenKey === 'free');
+
+      document.getElementById('btnSwitchTask').classList.toggle('active', screenKey === 'task');
+      document.getElementById('btnSwitchFree').classList.toggle('active', screenKey === 'free');
+    }
+
+    /* ==============================================================
+       画面 1: 課題演習用スクリプト
+       ============================================================== */
+    function runTaskCode(isGrading) {
+      const code = document.getElementById('taskEditor').value;
+      const consoleBody = document.getElementById('taskConsoleBody');
+      const status = document.getElementById('taskConsoleStatus');
+      const aiAdvice = document.getElementById('taskAiAdvice');
+      const passBadge = document.getElementById('passBadge');
+      const scoreTotal = document.getElementById('scoreTotal');
+
+      status.textContent = isGrading ? "採点中..." : "実行中...";
+
+      setTimeout(() => {
+        if (code.includes('10 + 5')) {
+          // 論理エラー（15歳が出力される）
+          consoleBody.innerHTML = `
+            <div style="color:var(--warning); font-weight:bold;">🤔 期待した結果と少し違うようです（論理エラー）</div>
+            <div style="background:rgba(0,0,0,0.2); padding:6px; border-radius:4px; margin-top:6px;">
+              <div>【目標の答え】年齢は10歳です</div>
+              <div>【今の出力】 <span style="color:var(--danger); font-weight:bold;">年齢は15歳です</span></div>
+            </div>
+          `;
+
+          aiAdvice.innerHTML = `
+            <p><strong>【着眼点ヒント】</strong><br>
+            プログラムは正常に動いたけれど、出力が「15歳」になっているよ！<br>
+            お題は「10歳」を表示することだから、<code>10 + 5</code> の計算を見直してみよう。
+            </p>
+          `;
+
+          if (isGrading) {
+            passBadge.textContent = "不合格";
+            passBadge.style.background = "var(--danger)";
+            scoreTotal.textContent = "50 / 100 点";
+            document.getElementById('scoreReq').textContent = "40 / 50 点";
+            document.getElementById('scoreExec').textContent = "0 / 30 点";
+            document.getElementById('scoreAi').textContent = "10 / 20 点";
+          }
+        } else {
+          // 合格パターン
+          consoleBody.innerHTML = `
+            <div style="color:var(--success); font-weight:bold;">年齢は10歳です</div>
+            <div style="color:var(--success); margin-top:4px;">🎉 お題通りの出力が確認できました！</div>
+          `;
+
+          aiAdvice.innerHTML = `
+            <p style="color:var(--success);"><strong>🎉 素晴らしい！パーフェクトです！</strong><br>
+            変数を使ってきれいにお題通りの文字列を出力できましたね。
+            </p>
+          `;
+
+          if (isGrading) {
+            passBadge.textContent = "合格！";
+            passBadge.style.background = "var(--success)";
+            scoreTotal.textContent = "100 / 100 点";
+            document.getElementById('scoreReq').textContent = "50 / 50 点";
+            document.getElementById('scoreExec').textContent = "30 / 30 点";
+            document.getElementById('scoreAi').textContent = "20 / 20 点";
+          }
         }
+        status.textContent = "完了";
+      }, 400);
+    }
 
-        function loadFileIntoEditor(filename) {
-            const editor = document.getElementById('codeEditor');
-            editor.value = projectFiles[filename].code;
-            document.getElementById('currentEditingPath').innerHTML = `作業フォルダ: my_game_project/<strong>${filename}</strong>`;
-            updateLineNumbers();
+    /* ==============================================================
+       画面 2: 自由制作（マルチファイル）用スクリプト
+       ============================================================== */
+    const freeFiles = {
+      'main.py': {
+        code: "# [main.py] メインプログラム\nimport helper\n\nprint('計算をはじめます...')\n# helper.py の関数を呼び出します\ntotal = helper.calc_score(10)\nprint('合計得点:', total)\n"
+      },
+      'helper.py': {
+        code: "# [helper.py] 補助関数ファイル\ndef calc_score(base_point):\n    bonus = 5\n    # ⚠️ 未定義の変数 bonus_rate を使ってエラーを再現しています\n    return base_point + bonus_rate\n"
+      },
+      'utils.py': {
+        code: "# [utils.py] 共通ツール\ndef print_line():\n    print('--------------------')\n"
+      }
+    };
+
+    let activeFreeFile = 'main.py';
+
+    function initFreeEditor() {
+      document.getElementById('freeEditor').value = freeFiles[activeFreeFile].code;
+    }
+
+    function switchFreeTab(filename) {
+      activeFreeFile = filename;
+
+      // タブの更新
+      document.querySelectorAll('#freeTabBar .tab').forEach(t => t.classList.remove('active'));
+      let tab = document.getElementById(`tab-${filename}`);
+      if (!tab) {
+        tab = document.createElement('div');
+        tab.className = 'tab active';
+        tab.id = `tab-${filename}`;
+        tab.textContent = `📄 ${filename}`;
+        tab.onclick = () => switchFreeTab(filename);
+        document.getElementById('freeTabBar').appendChild(tab);
+      } else {
+        tab.classList.add('active');
+      }
+
+      // ツリーの更新
+      document.querySelectorAll('#freeTreeList .tree-item').forEach(item => {
+        item.classList.toggle('active', item.textContent.includes(filename));
+      });
+
+      // 内容ロード
+      document.getElementById('freeEditor').value = freeFiles[filename].code;
+      document.getElementById('freeCurrentPath').innerHTML = `作業中: my_game_project/<strong>${filename}</strong>`;
+    }
+
+    function saveCurrentFreeCode() {
+      freeFiles[activeFreeFile].code = document.getElementById('freeEditor').value;
+    }
+
+    // 自由制作でのファイル間プログラム実行
+    function runFreeMultiFile() {
+      const consoleBody = document.getElementById('freeConsoleBody');
+      const aiAdvice = document.getElementById('freeAiAdvice');
+
+      consoleBody.innerHTML = `<span style="color:var(--text-sub);">⏳ python main.py を実行中...</span>`;
+
+      setTimeout(() => {
+        const helperCode = freeFiles['helper.py'].code;
+
+        if (helperCode.includes('bonus_rate')) {
+          // 呼び出し先エラーの再現
+          consoleBody.innerHTML = `
+            <div style="color:var(--danger); font-weight:bold;">
+              Traceback (most recent call last):<br>
+              &nbsp;&nbsp;File "main.py", line 6, in &lt;module&gt;<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;total = helper.calc_score(10)<br>
+              &nbsp;&nbsp;File "helper.py", line 4, in calc_score<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;return base_point + bonus_rate<br>
+              NameError: name 'bonus_rate' is not defined
+            </div>
+            <div style="border-top:1px dashed var(--border); padding-top:6px; margin-top:6px;">
+              ⚠️ <strong>呼び出し先の helper.py (4行目) でエラーが発生しました</strong><br>
+              <button class="jump-btn" onclick="switchFreeTab('helper.py')">👉 helper.py の4行目を開いて直す</button>
+            </div>
+          `;
+
+          aiAdvice.innerHTML = `
+            <p><strong>🔍 両方のコードを分析したよ！</strong></p>
+            <p style="margin-top:4px;">
+              呼び出し元の <code>main.py</code> ではなく、呼び出された <strong>helper.py の4行目</strong> で変数が未定義のエラーになっています。
+            </p>
+            <div style="margin-top:8px; font-size:0.78rem; background:rgba(0,0,0,0.2); padding:6px; border-radius:4px;">
+              <strong>【直し方の提案】</strong><br>
+              ・<code>helper.py</code> の <code>bonus_rate</code> を、定義済みの <code>bonus</code> に直すか定義を追加しましょう。
+            </div>
+          `;
+        } else {
+          // 修正後の成功パターン
+          consoleBody.innerHTML = `
+            <div style="color:var(--success); font-weight:bold;">
+              計算をはじめます...<br>
+              合計得点: 15<br>
+              --------------------<br>
+              🎉 プログラムは正常に終了しました (終了コード: 0)
+            </div>
+          `;
+
+          aiAdvice.innerHTML = `
+            <p style="color:var(--success);"><strong>🎉 ファイル連携 成功！</strong></p>
+            <p><code>main.py</code> から <code>helper.py</code> を正常に呼び出して計算できました！</p>
+          `;
         }
+      }, 400);
+    }
 
-        function updateCurrentFileCode() {
-            projectFiles[currentActiveFile].code = document.getElementById('codeEditor').value;
-            updateLineNumbers();
-        }
+    function addNewFreeFile() {
+      const name = prompt("新しいファイル名を入力してください (例: sound.py):", "settings.py");
+      if (name && !freeFiles[name]) {
+        freeFiles[name] = { code: `# [${name}]\n# 新規ファイル\n` };
+        const li = document.createElement('li');
+        li.className = 'tree-item';
+        li.textContent = `📄 ${name}`;
+        li.onclick = () => switchFreeTab(name);
+        document.getElementById('freeTreeList').appendChild(li);
+        switchFreeTab(name);
+      }
+    }
 
-        function updateLineNumbers() {
-            const editor = document.getElementById('codeEditor');
-            const lines = editor.value.split('\n').length;
-            const lineNumbers = document.getElementById('lineNumbers');
-            let numHtml = '';
-            for (let i = 1; i <= Math.max(lines, 8); i++) {
-                numHtml += `<div id="num-line-${i}">${i}</div>`;
-            }
-            lineNumbers.innerHTML = numHtml;
-        }
+    // テーマ切り替え
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+      const isLight = document.body.classList.contains('light-theme');
+      document.getElementById('themeBtn').textContent = isLight ? '🌙 ダークモード' : '☀️ ライトモード';
+    }
 
-        // プログラム実行シミュレーション（マルチファイル＆Traceback解析）
-        function runMultiFileCode() {
-            const consoleBody = document.getElementById('consoleBody');
-            const aiAdvice = document.getElementById('aiDynamicAdvice');
-
-            consoleBody.innerHTML = `<span style="color:var(--text-sub);">⏳ python main.py を実行中...</span>`;
-
-            setTimeout(() => {
-                // helper.py 側の bonus_rate エラーを検知するシミュレーション
-                const helperCode = projectFiles['helper.py'].code;
-                
-                if (helperCode.includes('bonus_rate')) {
-                    // エラー発生パターン
-                    consoleBody.innerHTML = `
-                        <div style="color: var(--error-text); font-weight: 700; margin-bottom: 4px;">
-                            Traceback (most recent call last):<br>
-                            &nbsp;&nbsp;File "main.py", line 6, in &lt;module&gt;<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;total = helper.calc_score(10)<br>
-                            &nbsp;&nbsp;File "helper.py", line 4, in calc_score<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;return base_point + bonus_rate<br>
-                            NameError: name 'bonus_rate' is not defined
-                        </div>
-                        <div style="border-top: 1px dashed var(--border); padding-top: 6px; margin-top: 6px;">
-                            ⚠️ <strong>エラー発生：呼び出し先の helper.py の 4行目</strong><br>
-                            <button class="jump-error-btn" onclick="switchFile('helper.py', 4)">
-                                👉 helper.py の4行目を開いて修正する
-                            </button>
-                        </div>
-                    `;
-
-                    aiAdvice.innerHTML = `
-                        <div class="ai-card-title">🔍 エラー分析：別ファイルの不具合</div>
-                        <p>呼び出し元の <code>main.py</code> ではなく、呼び出された <span class="target-tag">helper.py の4行目</span> でエラーが起きています！</p>
-                        <p style="margin-top: 6px; font-size: 0.8rem; color: var(--text-sub);">
-                            <strong>【修正のヒント】</strong><br>
-                            <code>bonus_rate</code> という名前の変数が作られていません。3行目の <code>bonus</code> と名前が合っているか確認してみましょう！
-                        </p>
-                    `;
-                } else {
-                    // 修正後・正常終了パターン
-                    consoleBody.innerHTML = `
-                        <div style="color: var(--success-text); font-weight: 700;">
-                            計算をはじめます...<br>
-                            合計得点: 15<br>
-                            -----------------------------------<br>
-                            🎉 プログラムは正常に終了しました (終了コード: 0)
-                        </div>
-                    `;
-
-                    aiAdvice.innerHTML = `
-                        <div class="ai-card-title" style="color: var(--success-text);">🎉 連携大成功！</div>
-                        <p><code>main.py</code> から <code>helper.py</code> の関数を呼び出し、正しく計算結果を受け取ることができました！</p>
-                    `;
-                }
-            }, 500);
-        }
-
-        // 指定行のハイライト表示
-        function highlightErrorLine(lineNum) {
-            const lineEl = document.getElementById(`num-line-${lineNum}`);
-            if (lineEl) {
-                lineEl.classList.add('line-error-marker');
-                lineEl.title = "ここでエラーが発生しました";
-            }
-        }
-
-        // 新規ファイル作成ダイアログ
-        function addNewFile() {
-            const name = prompt("作成するファイル名を入力してください (例: config.py):", "my_script.py");
-            if (name && !projectFiles[name]) {
-                projectFiles[name] = { code: `# [${name}]\n# 新しいスクリプトファイルです\n` };
-                
-                const list = document.getElementById('fileTreeList');
-                const li = document.createElement('li');
-                li.className = 'file-item';
-                li.onclick = () => switchFile(name);
-                li.innerHTML = `📄 ${name}`;
-                list.appendChild(li);
-
-                switchFile(name);
-            }
-        }
-
-        // テーマ切り替え
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            document.getElementById('themeBtn').textContent = isLight ? '🌙 ダークモード' : '☀️ ライトモード';
-        }
-    </script>
+    // 初期化実行
+    window.onload = () => {
+      initFreeEditor();
+    };
+  </script>
 </body>
 </html>
