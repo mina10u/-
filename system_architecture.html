@@ -3,147 +3,203 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>コードラボ｜システム構成図</title>
+<title>コードラボ｜プログラミング学習 AI誤り分析アシスタント システム構成図</title>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
 <script>
 mermaid.initialize({
   startOnLoad: true,
-  theme: "default",
+  theme: "dark",
   themeVariables: {
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-    fontSize: "13px",
-    lineColor: "#334155"
+    background: "#0f172a",
+    primaryColor: "#1e293b",
+    primaryTextColor: "#f8fafc",
+    primaryBorderColor: "#38bdf8",
+    lineColor: "#64748b",
+    fontFamily: "system-ui, -apple-system, 'Segoe UI', Meiryo, sans-serif",
+    fontSize: "13px"
   },
   flowchart: {
     useMaxWidth: true,
     htmlLabels: true,
     curve: "linear",
-    nodeSpacing: 25,
-    rankSpacing: 40
+    nodeSpacing: 28,
+    rankSpacing: 45
   }
 });
 </script>
 <style>
 :root {
-  --bg: #f8fafc;
-  --panel: #ffffff;
-  --border: #cbd5e1;
-  --text: #0f172a;
-  --muted: #64748b;
-  --primary: #2563eb;
-  --accent: #0284c7;
+  --bg: #0f172a;
+  --card: #1e293b;
+  --card-alt: #162032;
+  --text: #f8fafc;
+  --sub: #cbd5e1;
+  --muted: #94a3b8;
+  --line: #334155;
+  --line-strong: #475569;
+  --accent: #38bdf8;
+  --blue: #2563eb;
+  --amber: #fbbf24;
+  --green: #86efac;
+  --red: #fca5a5;
+  --purple: #c4b5fd;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
+  margin: 0;
+  padding: 28px;
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.6;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  font: 15px/1.75 system-ui, -apple-system, "Segoe UI", Meiryo, sans-serif;
 }
+.container { max-width: 1140px; margin: auto; }
 header {
-  padding: 16px 24px;
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
+  border-bottom: 2px solid var(--line-strong);
+  padding: 0 0 22px;
+  margin-bottom: 24px;
 }
 .nav-bar {
   display: flex;
-  gap: 8px;
+  gap: 10px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
 }
 .nav-link {
-  background: #f1f5f9;
-  color: #334155;
-  border: 1px solid var(--border);
-  padding: 6px 12px;
-  border-radius: 6px;
+  background: var(--card);
+  color: var(--accent);
+  border: 1px solid var(--line-strong);
+  padding: 7px 14px;
+  border-radius: 8px;
   text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.86rem;
+  font-weight: 700;
+  transition: all 0.15s ease;
 }
 .nav-link.active {
-  background: var(--primary);
+  background: var(--blue);
   color: #ffffff;
-  border-color: var(--primary);
+  border-color: var(--blue);
 }
-h1 { font-size: 1.25rem; color: #1e3a8a; }
-.container {
-  width: 100%;
-  max-width: 1350px;
-  margin: 0 auto;
-  padding: 24px 16px;
-  flex: 1;
+.nav-link:hover { background: #334155; }
+
+h1 {
+  font-size: clamp(1.65rem, 3vw, 2.25rem);
+  line-height: 1.35;
+  color: var(--accent);
+  margin: 0 0 12px;
 }
-.card {
-  background: var(--panel);
-  border: 1px solid var(--border);
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  color: var(--sub);
+  font-size: 0.9rem;
+}
+.updated { color: var(--amber); font-weight: 700; }
+
+section {
+  background: var(--card);
+  border: 1px solid var(--line);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  margin: 18px 0;
+  overflow: hidden;
+}
+h2 {
+  font-size: 1.35rem;
+  border-left: 5px solid var(--accent);
+  padding-left: 12px;
+  margin: 0 0 18px;
+  color: #f1f5f9;
+}
+.mermaid-box {
+  background: #0b1220;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 24px 16px;
   overflow: auto;
   text-align: center;
+  margin-bottom: 20px;
 }
 .mermaid {
   display: inline-block;
-  min-width: 950px;
+  min-width: 900px;
   width: 100%;
 }
-.summary-table {
+
+table {
   width: 100%;
-  margin-top: 24px;
   border-collapse: collapse;
+  margin: 16px 0 12px;
+  font-size: 0.93rem;
+}
+th, td {
+  padding: 11px 12px;
+  border: 1px solid var(--line-strong);
   text-align: left;
-  font-size: 0.9rem;
+  vertical-align: top;
 }
-.summary-table th, .summary-table td {
-  padding: 12px;
-  border: 1px solid var(--border);
+th { background: #172554; color: #e0f2fe; font-weight: 700; width: 25%; }
+tr:nth-child(even) td { background: #1a2436; }
+
+.small { font-size: 0.88rem; color: var(--sub); }
+footer {
+  padding: 10px 4px 30px;
+  border-top: 1px solid var(--line);
+  margin-top: 28px;
+  color: var(--muted);
+  font-size: 0.85rem;
 }
-.summary-table th {
-  background: #f1f5f9;
-  width: 25%;
-  color: #334155;
+@media(max-width: 720px) {
+  body { padding: 12px; }
+  section { padding: 16px; }
+  table { display: block; overflow-x: auto; white-space: normal; }
 }
 </style>
 </head>
 <body>
+<div class="container">
 
 <header>
-  <div>
-    <h1>システム構成図 (ネットワーク・配置構成)</h1>
-    <span style="color: var(--muted); font-size: 0.85rem;">コードラボ システム仕様書</span>
-  </div>
   <div class="nav-bar">
-    <a href="index.html" class="nav-link">仕様書</a>
-    <a href="diagram.html" class="nav-link">画面遷移図</a>
-    <a href="activity.html" class="nav-link">アクティビティ図</a>
-    <a href="er.html" class="nav-link">ER図</a>
-    <a href="mockup.html" class="nav-link">モック画面</a>
-    <a href="system_architecture.html" class="nav-link active">システム構成図</a>
+    <a href="index.html" class="nav-link">📄 仕様書</a>
+    <a href="RDD.html" class="nav-link">📋 要件定義書</a>
+    <a href="diagram.html" class="nav-link">🔀 画面遷移図</a>
+    <a href="activity.html" class="nav-link">⚡ アクティビティ図</a>
+    <a href="er.html" class="nav-link">🗄️ ER図</a>
+    <a href="mockup.html" class="nav-link">🖥️ モック画面</a>
+    <a href="system_architecture.html" class="nav-link active">🏗️ システム構成図</a>
+  </div>
+  <h1>コードラボ<br>システム構成図 (ネットワーク・物理配置図)</h1>
+  <div class="meta">
+    <span class="updated">最終更新日時：2026年10月23日 14:00</span>
+    <span>アーキテクチャ：Tauri v2</span>
+    <span>フロントエンド：React / TypeScript</span>
+    <span>バックエンド：Rust</span>
+    <span>対象OS：Windows 10 / 11</span>
+    <span>開発チーム：6名</span>
   </div>
 </header>
 
-<main class="container">
-  <div class="card">
+<section>
+  <h2>物理配置・ネットワーク構成図</h2>
+  <div class="mermaid-box">
     <div class="mermaid">
 flowchart LR
+    %% 端末側
     subgraph CLIENTS ["💻 学習者端末 (ローカル環境)"]
         direction TB
-        PC["🖥️ デスクトップ PC<br/>(Windows 10/11)"]
-        LAPTOP["💻 ノート PC<br/>(学校PC室 / 自宅)"]
-        CLIENT_NOTE["【内包機能】<br/>・Tauri v2 + React アプリ<br/>・同梱 Python 3.x 実行環境<br/>・ローカル AI 推論エンジン"]
+        PC["🖥️ デスクトップ PC<br/>(Windows 10 / 11)"]
+        LAPTOP["💻 ノート PC<br/>(自宅 / 学校PC室)"]
+        CLIENT_NOTE["【完全ローカル内包基盤】<br/>・Tauri v2 + React アプリ本体<br/>・同梱 Python 3.x 実行環境<br/>・小型ローカル AI 推論エンジン"]
         PC --- LAPTOP --- CLIENT_NOTE
     end
 
+    %% インターネット
     NET((🌐<br/>インターネット))
 
+    %% クラウド側：Web & AP
     subgraph AP_SERVER ["🖥️ クラウド API サーバ<br/>(Web & AP)"]
         direction TB
         API_AUTH["🔐 ユーザー認証・認可"]
@@ -151,6 +207,7 @@ flowchart LR
         API_SVC["⚙️ 課題・教材配信"]
     end
 
+    %% クラウド側：DB
     subgraph DB_SERVER ["🗄️ クラウド DB サーバ<br/>(MySQL / NoSQL)"]
         direction TB
         DB_USER[("👤 ユーザー情報<br/>(users)")]
@@ -158,22 +215,25 @@ flowchart LR
         DB_BADGE[("🏆 実績・課題マスタ<br/>(tasks / badges)")]
     end
 
+    %% 管理・教育者端末
     subgraph ADMIN_CLIENTS ["👥 管理・教員クライアント"]
         direction TB
         ADM_1["👨‍🏫 指導員 / 教員<br/>(進捗・エラー分析確認)"]
         ADM_2["🛠️ 開発者 / 管理者<br/>(課題コンテンツ追加・更新)"]
     end
 
-    CLIENTS <== "HTTPS (暗号化通信)<br/>※学習履歴・得点のみ同期" ==> NET
+    %% 接続関係
+    CLIENTS <== "HTTPS (暗号化通信)<br/>※学習メタ情報のみ同期" ==> NET
     NET <== "REST API / JSON" ==> AP_SERVER
     AP_SERVER <== "SQL / DB接続" ==> DB_SERVER
-    DB_SERVER <== "管理画面 / コンソール経由" ==> ADMIN_CLIENTS
+    DB_SERVER <== "管理画面経由" ==> ADMIN_CLIENTS
 
-    classDef clientStyle fill:#f8fafc,stroke:#2563eb,stroke-width:2px,color:#0f172a;
-    classDef netStyle fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#ffffff;
-    classDef serverStyle fill:#f1f5f9,stroke:#0284c7,stroke-width:2px,color:#0f172a;
-    classDef dbStyle fill:#eff6ff,stroke:#6366f1,stroke-width:2px,color:#0f172a;
-    classDef adminStyle fill:#fafafa,stroke:#475569,stroke-width:2px,color:#0f172a;
+    %% 仕様書カラーパレットと統一したスタイル定義
+    classDef clientStyle fill:#162032,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef netStyle fill:#1e3a8a,stroke:#60a5fa,stroke-width:2px,color:#ffffff;
+    classDef serverStyle fill:#1e293b,stroke:#818cf8,stroke-width:2px,color:#f8fafc;
+    classDef dbStyle fill:#172554,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef adminStyle fill:#1f2937,stroke:#94a3b8,stroke-width:2px,color:#f8fafc;
 
     class CLIENTS,PC,LAPTOP,CLIENT_NOTE clientStyle;
     class NET netStyle;
@@ -181,31 +241,51 @@ flowchart LR
     class DB_SERVER,DB_USER,DB_RECORD,DB_BADGE dbStyle;
     class ADMIN_CLIENTS,ADM_1,ADM_2 adminStyle;
     </div>
-
-    <table class="summary-table">
-      <tr>
-        <th>💻 学習者端末 (Client)</th>
-        <td>Tauriアプリ本体内に「同梱Python」と「小型ローカルAI推論エンジン」を備え、コーディング・実行・ヒント提示はネット不要のローカル完結[cite: 3]。</td>
-      </tr>
-      <tr>
-        <th>🌐 インターネット通信</th>
-        <td>コード全文は送信せず、ログイン時のアカウント認証および合否・スコア・エラー種別・バッジ獲得情報のみをHTTPS通信で送受信[cite: 3, 5]。</td>
-      </tr>
-      <tr>
-        <th>🖥️ Web & AP サーバ</th>
-        <td>APIエンドポイントとして認証処理、データのバリデーション、同期キューの受け入れ、課題配信を担当[cite: 1, 3]。</td>
-      </tr>
-      <tr>
-        <th>🗄️ DB サーバ</th>
-        <td>MySQLまたはNoSQL（Firestore等）を用い、学習ログ・スコア・実績バッジを永続化[cite: 1, 3]。</td>
-      </tr>
-      <tr>
-        <th>👥 管理・教員クライアント</th>
-        <td>指導員による学習進捗の可視化や、開発者・管理者による課題マスタ・テストケースのコンテンツ更新を実施[cite: 3, 4]。</td>
-      </tr>
-    </table>
   </div>
-</main>
 
+  <h2>各レイヤーの責務と構成詳細</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>構成要素</th>
+        <th>責務・動作詳細</th>
+        <th>通信プロトコル / 技術</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>💻 学習者端末 (Client)</td>
+        <td>Tauriアプリ本体内に「同梱Python」と「小型ローカルAI推論エンジン」を備え、コーディング・実行・ヒント提示はネット不要の完全ローカルで動作。</td>
+        <td>Tauri IPC / OSプロセス制御 (CWD作業ディレクトリ実行)</td>
+      </tr>
+      <tr>
+        <td>🌐 インターネット通信</td>
+        <td>コード全文は送信せず、ログイン時のアカウント認証および合否・スコア・エラー種別・バッジ獲得情報のみを送受信[cite: 3]。ネット切断時はローカルキューへ保持[cite: 3]。</td>
+        <td>HTTPS / TLS 暗号化通信 (REST API, JSON)[cite: 3]</td>
+      </tr>
+      <tr>
+        <td>🖥️ クラウド Web & AP サーバ</td>
+        <td>認証処理、データのバリデーション、オフライン蓄積キューの受け入れ・マージ、課題データの配信を担当[cite: 3]。</td>
+        <td>Node.js / FastAPI / Firebase Cloud Functions[cite: 3]</td>
+      </tr>
+      <tr>
+        <td>🗄️ クラウド DB サーバ</td>
+        <td>ユーザー情報、学習履歴（得点・エラーログ）、実績バッジマスタを永続化保存[cite: 3]。</td>
+        <td>MySQL / PostgreSQL または Firestore[cite: 3]</td>
+      </tr>
+      <tr>
+        <td>👥 管理・教員クライアント</td>
+        <td>指導員による生徒の学習進捗・つまずき傾向の可視化、開発者による課題マスタやテストケースの登録・更新を実施[cite: 3]。</td>
+        <td>Webブラウザ (管理コンソール)[cite: 3]</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<footer>
+  文書名：コードラボ プログラミング学習 AI誤り分析アシスタント システム構成図[cite: 3]
+</footer>
+
+</div>
 </body>
 </html>
