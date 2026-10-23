@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>コードラボ｜データベース設計 (ER図)</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: "dark",
+  themeVariables: {
+    background: "#101a2c",
+    primaryColor: "#1e293b",
+    primaryTextColor: "#f8fafc",
+    primaryBorderColor: "#38bdf8",
+    lineColor: "#94a3b8",
+    secondaryColor: "#172554",
+    tertiaryColor: "#172033",
+    fontFamily: "sans-serif",
+    fontSize: "12px"
+  }
+});
+</script>
+<style>
+:root {
+  --bg: #0b1120;
+  --panel: #111b2e;
+  --border: #2b3b55;
+  --text: #e8eef8;
+  --muted: #9aaac0;
+  --accent: #38bdf8;
+  --primary: #2563eb;
+  --card-bg: #1e293b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Meiryo, sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ヘッダー・共通ナビゲーション */
+header {
+  padding: 16px 28px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.nav-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  background: #1e293b;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.nav-link.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+.nav-link:hover {
+  background: #334155;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+h1 {
+  font-size: 1.35rem;
+  color: var(--accent);
+}
+
+.container {
+  max-width: 1300px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+  flex: 1;
+}
+
+section {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 24px;
+}
+
+h2 {
+  color: var(--accent);
+  font-size: 1.15rem;
+  margin-bottom: 14px;
+  border-left: 4px solid var(--accent);
+  padding-left: 10px;
+}
+
+.img-container {
+  background: #0f172a;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  overflow: auto;
+}
+
+.img-container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.diagram-card {
+  background: #101a2c;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  overflow: auto;
+  text-align: center;
+}
+
+.meta-note {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 10px;
+}
+
+.table-summary {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 0.88rem;
+}
+
+.table-summary th, .table-summary td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.table-summary th {
+  background: rgba(37, 99, 235, 0.2);
+  color: var(--accent);
+}
+
+.table-summary tr:nth-child(even) td {
+  background: rgba(15, 23, 42, 0.4);
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-bar">
+    <a href="index.html" class="nav-link">📄 仕様書</a>
+    <a href="RDD.html" class="nav-link">📋 要件定義書</a>
+    <a href="diagram.html" class="nav-link">🔀 画面遷移図</a>
+    <a href="activity.html" class="nav-link">⚡ アクティビティ図</a>
+    <a href="er.html" class="nav-link active">🗄️ ER図</a>
+    <a href="mockup.html" class="nav-link">🖥️ モック画面</a>
+  </div>
+  <div class="header-content">
+    <div>
+      <h1>データベース設計 (ER図 / Entity Relationship Diagram)</h1>
+      <p style="color: var(--muted); font-size: 0.85rem;">コードラボ｜プログラミング学習 AI誤り分析アシスタント</p>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- 1. 画像表示エリア -->
+  <section>
+    <h2>1. データベース論理設計図（設計イメージ）</h2>
+    <div class="img-container">
+      <img src="ER.jpg" alt="コードラボ ER図" onerror="this.style.display='none'; document.getElementById('img-fallback').style.display='block';">
+      <div id="img-fallback" style="display:none; color: var(--muted); padding: 30px;">
+        ⚠️ 画像ファイル（<code>ER.jpg</code>）が見つかりません。同じディレクトリに画像をアップロードしてください。
+      </div>
+    </div>
+    <p class="meta-note">※ 課題定義・ユーザー・学習履歴・お気に入り・アチーブメント（実績）の5領域を連携させた論理モデルです。</p>
+  </section>
+
+  <!-- 2. ベクター描画エリア (Mermaid) -->
+  <section>
+    <h2>2. エンティティ関連図 (Mermaid レンダリング)</h2>
+    <div class="diagram-card">
+      <div class="mermaid">
+erDiagram
+    users ||--o{ learning_records : "1対多 (学習履歴)"
+    tasks ||--o{ learning_records : "1対多 (課題演習時)"
+    users ||--o{ user_achievements : "1対多 (実績獲得)"
+    achievements ||--o{ user_achievements : "1対多 (実績定義)"
+    users ||--o{ dictionary_favorites : "1対多 (お気に入り)"
+
+    users {
+        string user_id PK "UUID / ユーザー一意識別子"
+        string username "ユーザー名"
+        string email "メアド (NULL可)"
+        json settings "設定(ui_mode, 言語等)"
+        datetime created_at "作成日時"
+        datetime updated_at "更新日時"
+    }
+
+    tasks {
+        string task_id PK "課題ID (例: task_py_001)"
+        string title "課題タイトル"
+        text description "お題・要件説明"
+        string language "対象言語"
+        int difficulty "難易度 (1-5)"
+        json criteria "期待出力・テストケース"
+        datetime created_at "作成日時"
+    }
+
+    learning_records {
+        string record_id PK "UUID / 記録ID"
+        string user_id FK "ユーザーID"
+        string task_id FK "課題ID (NULL可)"
+        datetime executed_at "実行日時"
+        boolean is_passed "合否判定"
+        int score "スコア (0-100)"
+        string error_type "エラー種別 (SyntaxError等)"
+        json details "詳細(エラー文, AI解説, 採点内訳)"
+        string sync_status "同期状態 (synced/pending)"
+    }
+
+    achievements {
+        string badge_id PK "バッジID"
+        string name "バッジ名"
+        text description "獲得条件説明"
+        string icon_key "アイコンアセット名"
+        string condition_type "判定種別 (clear_count等)"
+    }
+
+    user_achievements {
+        bigint id PK "連番ID"
+        string user_id FK "ユーザーID"
+        string badge_id FK "バッジID"
+        datetime unlocked_at "解除日時"
+        string sync_status "同期状態 (synced/pending)"
+    }
+
+    dictionary_favorites {
+        string favorite_id PK "お気に入りID"
+        string user_id FK "ユーザーID"
+        string keyword "対象単語 (print等)"
+        string language "対象言語"
+        datetime created_at "登録日時"
+    }
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. テーブル一覧概要 -->
+  <section>
+    <h2>3. テーブル一覧と概要</h2>
+    <table class="table-summary">
+      <thead>
+        <tr>
+          <th>テーブル名</th>
+          <th>物理名</th>
+          <th>概要・役割</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ユーザー</td>
+          <td><code>users</code></td>
+          <td>ユーザーアカウント情報およびUI表示モード等のユーザー設定を管理。</td>
+        </tr>
+        <tr>
+          <td>演習課題</td>
+          <td><code>tasks</code></td>
+          <td>出題される課題タイトル、要件文、期待出力・テストケース条件（JSON）。</td>
+        </tr>
+        <tr>
+          <td>学習履歴</td>
+          <td><code>learning_records</code></td>
+          <td>コード実行・採点結果、エラー種別、AIによる解説ログ、同期ステータス。</td>
+        </tr>
+        <tr>
+          <td>実績マスタ</td>
+          <td><code>achievements</code></td>
+          <td>獲得可能なバッジ・アチーブメントの定義情報。</td>
+        </tr>
+        <tr>
+          <td>ユーザー実績</td>
+          <td><code>user_achievements</code></td>
+          <td>各ユーザーのバッジ獲得履歴と解除日時。</td>
+        </tr>
+        <tr>
+          <td>辞書お気に入り</td>
+          <td><code>dictionary_favorites</code></td>
+          <td>組み込み辞書パネルでブックマークした単語と対象言語。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+</body>
+</html>
