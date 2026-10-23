@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>コードラボ｜画面遷移図 (Flowchart)</title>
+<title>コードラボ｜画面遷移図 (SVG)</title>
 <style>
 :root {
   --bg: #0b1120;
@@ -21,24 +21,25 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Meiryo, sans-serif;
-  line-height: 1.6;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden; /* 画面枠自体の余分な揺れを防止 */
 }
 
 /* ヘッダー・共通ナビゲーション */
 header {
-  padding: 16px 28px;
+  padding: 12px 24px;
   background: var(--panel);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
+  z-index: 10;
 }
 
 .nav-bar {
   display: flex;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   flex-wrap: wrap;
 }
 
@@ -60,9 +61,7 @@ header {
   border-color: var(--primary);
 }
 
-.nav-link:hover {
-  background: #334155;
-}
+.nav-link:hover { background: #334155; }
 
 .header-content {
   display: flex;
@@ -72,69 +71,73 @@ header {
   gap: 12px;
 }
 
-h1 {
-  font-size: 1.35rem;
-  color: var(--accent);
-}
+h1 { font-size: 1.25rem; color: var(--accent); }
 
-.container {
-  max-width: 1400px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 24px 20px 60px;
-  flex: 1;
-}
-
-section {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 22px;
-  margin-bottom: 24px;
-}
-
-h2 {
-  color: var(--accent);
-  font-size: 1.15rem;
-  margin-bottom: 14px;
-  border-left: 4px solid var(--accent);
-  padding-left: 10px;
-}
-
-.img-container {
-  background: #0f172a;
-  border: 1px solid var(--border);
+/* 拡大・縮小ツールバー */
+.zoom-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1e293b;
+  padding: 4px 8px;
   border-radius: 8px;
-  padding: 20px;
-  text-align: center;
-  overflow: auto;
+  border: 1px solid var(--border);
 }
 
-.img-container img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 6px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-  background: #ffffff; /* 白地のフローチャートも見やすく表示 */
-  padding: 10px;
-}
-
-.meta-note {
-  color: var(--muted);
+.zoom-btn {
+  background: #0f172a;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
   font-size: 0.85rem;
-  margin-top: 14px;
-  line-height: 1.7;
+  font-weight: bold;
 }
 
-.summary-list {
-  padding-left: 1.4rem;
-  margin-top: 8px;
-  color: #cbd5e1;
-  font-size: 0.9rem;
+.zoom-btn:hover {
+  background: var(--primary);
+  color: #ffffff;
 }
 
-.summary-list li {
-  margin-bottom: 6px;
+.zoom-level {
+  font-size: 0.8rem;
+  min-width: 50px;
+  text-align: center;
+  color: var(--accent);
+}
+
+/* 表示ビューア領域（縦横スクロール可能） */
+.viewer-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background: #060a12;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* SVGを包むラッパー（白背景で図のコントラストを確保） */
+.svg-wrapper {
+  transform-origin: top center;
+  transition: transform 0.15s ease-out;
+  display: inline-block;
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+}
+
+/* ★ポイント：SVGの自動縮小を無効化し、文字がしっかり読める標準幅に設定★ */
+.svg-wrapper img,
+.svg-wrapper object {
+  display: block;
+  width: 1100px; /* 文字がつぶれず快適に読める横幅 */
+  max-width: none !important;
+  height: auto;
 }
 </style>
 </head>
@@ -151,35 +154,47 @@ h2 {
   </div>
   <div class="header-content">
     <div>
-      <h1>画面遷移・システム機能フロー図 (Flowchart)</h1>
-      <p style="color: var(--muted); font-size: 0.85rem;">コードラボ｜全体画面遷移・実行・採点・クラウド同期</p>
+      <h1>画面遷移・システム機能フロー図 (SVG)</h1>
+      <p style="color: var(--muted); font-size: 0.8rem;">※ マウスホイールやバーでスクロール、右上のボタンで自由にズーム倍率を変更できます</p>
+    </div>
+    <div class="zoom-tools">
+      <button class="zoom-btn" onclick="zoom(-0.15)">➖ 縮小</button>
+      <span class="zoom-level" id="zoomText">100%</span>
+      <button class="zoom-btn" onclick="zoom(0.15)">➕ 拡大</button>
+      <button class="zoom-btn" onclick="resetZoom()">リセット</button>
     </div>
   </div>
 </header>
 
-<main class="container">
-
-  <!-- 画面遷移図 画像表示エリア -->
-  <section>
-    <h2>システム機能・画面遷移フロー図</h2>
-    <div class="img-container">
-      <img src="flowchart.svg" alt="コードラボ 画面遷移図" onerror="this.style.display='none'; document.getElementById('img-fallback').style.display='block';">
-      <div id="img-fallback" style="display:none; color: var(--muted); padding: 40px;">
-        ⚠️ 画像ファイル（<code>flowchart.png</code>）が見つかりません。リポジトリ内に画像をアップロードしてください。
-      </div>
+<main class="viewer-container" id="viewerContainer">
+  <div class="svg-wrapper" id="svgWrapper">
+    <img src="flowchart.svg" alt="コードラボ 画面遷移図" id="targetSvg" onerror="this.style.display='none'; document.getElementById('svg-fallback').style.display='block';">
+    <div id="svg-fallback" style="display:none; color: #ef4444; padding: 40px; font-weight: bold; background: #fee2e2; border-radius: 8px;">
+      ⚠️ SVGファイル（<code>flowchart.svg</code>）が見つかりません。リポジトリ内にファイルをアップロードしてください。
     </div>
-    <div class="meta-note">
-      <strong>【画面遷移・機能フロー概要】</strong>
-      <ul class="summary-list">
-        <li><strong>初期化・起動：</strong> アプリ起動時のAIモデル判定および初期セットアップ。</li>
-        <li><strong>メインワークスペース：</strong> 自由創作／課題演習モードの切り替え、白紙からのコード記述、ローカル自動保存。</li>
-        <li><strong>実行・判定・AI支援：</strong> 同梱Pythonによる安全な実行、2段階自動採点（80点合格基準）、3段階の段階的ヒント提示。</li>
-        <li><strong>学習記録・同期：</strong> ローカルでの履歴蓄積およびログイン時のクラウドDB非同期同期。</li>
-      </ul>
-    </div>
-  </section>
-
+  </div>
 </main>
+
+<script>
+  let currentScale = 1.0;
+  const svgWrapper = document.getElementById('svgWrapper');
+  const zoomText = document.getElementById('zoomText');
+
+  function updateZoom() {
+    svgWrapper.style.transform = `scale(${currentScale})`;
+    zoomText.textContent = `${Math.round(currentScale * 100)}%`;
+  }
+
+  function zoom(delta) {
+    currentScale = Math.min(Math.max(currentScale + delta, 0.3), 2.5);
+    updateZoom();
+  }
+
+  function resetZoom() {
+    currentScale = 1.0;
+    updateZoom();
+  }
+</script>
 
 </body>
 </html>
