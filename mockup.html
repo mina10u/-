@@ -1,282 +1,731 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>コードラボ | プログラミング学習 AI誤り分析アシスタント</title>
-<style>
-:root{
-  --bg:#0b1120;--panel:#111b2e;--panel2:#162238;--border:#293750;
-  --text:#e8eef8;--muted:#91a1bb;--blue:#4f8cff;--cyan:#54d6e8;
-  --green:#49d6a0;--orange:#ffbd69;--red:#ff7185;
-}
-[data-theme="light"]{
-  --bg:#f1f5f9;--panel:#ffffff;--panel2:#f8fafc;--border:#cbd5e1;
-  --text:#0f172a;--muted:#64748b;--blue:#2563eb;--cyan:#0284c7;
-  --green:#16a34a;--orange:#d97706;--red:#dc2626;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 "Segoe UI",Meiryo,sans-serif;transition:background 0.2s,color 0.2s}
-button,textarea{font:inherit}
-button{cursor:pointer}
-.app{min-height:100vh;display:flex;flex-direction:column}
-.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:var(--panel2);gap:18px}
-.brand{display:flex;align-items:center;gap:12px;font-weight:750;font-size:17px;white-space:nowrap}
-.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3986ff,#48d7d0);display:grid;place-items:center;color:#061323;font-weight:900;font-size:19px}
-.brand small{display:block;color:var(--muted);font-size:11px;font-weight:500;letter-spacing:.04em}
-.top-actions{display:flex;align-items:center;gap:10px}
-.pill{border:1px solid var(--border);border-radius:999px;padding:6px 11px;color:var(--muted);font-size:12px}
-.pill.online{color:var(--green);border-color:var(--border)}
-.avatar{width:32px;height:32px;border-radius:50%;background:var(--border);display:grid;place-items:center;font-weight:700}
-.nav-links{display:flex;gap:8px;margin-right:10px}
-.nav-link{text-decoration:none;font-size:12px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);color:var(--text);background:var(--panel)}
-.nav-link:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
-.layout{display:grid;grid-template-columns:220px minmax(380px,1fr) minmax(290px,340px);gap:16px;padding:18px;flex:1;min-height:0}
-.sidebar,.workspace,.rightbar{min-width:0}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.sidebar .panel{padding:16px}
-.side-title{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.12em;margin:8px 8px 10px}
-.nav{display:flex;align-items:center;gap:10px;padding:10px 11px;margin:3px 0;border-radius:9px;color:var(--text);cursor:pointer}
-.nav.active{background:var(--panel2);color:var(--blue);border:1px solid var(--border);font-weight:700}
-.nav .ico{width:19px;text-align:center;font-size:16px}
-.side-note{margin-top:18px;padding:13px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:12px}
-.side-note strong{display:block;color:var(--cyan);margin-bottom:4px}
-.mainhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:3px 2px 14px}
-h1{font-size:21px;margin:0 0 4px}
-.sub{color:var(--muted);font-size:12px}
-.mode-switch{display:flex;padding:4px;border-radius:10px;border:1px solid var(--border);background:var(--panel2);white-space:nowrap}
-.mode-switch button{background:transparent;color:var(--muted);border:0;border-radius:7px;padding:7px 10px;font-size:12px}
-.mode-switch button.active{background:var(--blue);color:#fff}
-.editor-panel{display:flex;flex-direction:column;min-height:420px}
-.panel-head{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;border-bottom:1px solid var(--border);background:var(--panel2)}
-.panel-head strong{font-size:13px}
-.file-label{display:flex;align-items:center;gap:8px;color:var(--text);font-size:12px}
-.py-icon{display:inline-grid;place-items:center;width:20px;height:20px;background:#f1c75b;color:#18233a;border-radius:5px;font-size:11px;font-weight:900}
-.tools{display:flex;gap:7px}
-.btn{border:1px solid var(--border);background:var(--panel);color:var(--text);border-radius:8px;padding:7px 11px;font-size:12px}
-.btn:hover{filter:brightness(1.15)}
-.btn-primary{background:var(--blue);border-color:var(--blue);color:white;font-weight:700;padding:8px 16px}
-.btn-run{background:#1d9c75;border-color:#1d9c75;color:#fff;font-weight:800}
-.editor-wrap{display:grid;grid-template-columns:42px minmax(0,1fr);flex:1;min-height:300px;background:var(--bg)}
-.line-numbers{padding:17px 10px 17px 0;text-align:right;color:var(--muted);white-space:pre;user-select:none;font:13px/1.8 Consolas,monospace;border-right:1px solid var(--border)}
-#code{resize:none;width:100%;height:100%;min-height:300px;background:transparent;border:0;outline:none;color:var(--text);padding:17px 16px;font:13px/1.8 Consolas,"Cascadia Code",monospace;tab-size:4;white-space:pre;overflow:auto}
-.editor-footer{display:flex;justify-content:space-between;gap:10px;padding:8px 14px;border-top:1px solid var(--border);color:var(--muted);font-size:11px}
-.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
-.output-panel,.hint-panel{min-height:160px}
-.small-head{padding:11px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:12px}
-.status{font-size:10px;padding:3px 7px;border-radius:999px;background:var(--panel2);color:var(--muted)}
-.output-body{padding:12px 14px;color:var(--text);font:12px/1.8 Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
-.output-body .success{color:var(--green)}
-.output-body .error{color:var(--red)}
-.hint-body{padding:12px 14px;color:var(--text);font-size:12px}
-.hint-body strong{color:var(--cyan)}
-.rightbar{display:flex;flex-direction:column;gap:14px}
-.ai-head{display:flex;align-items:center;gap:9px}
-.ai-mark{width:29px;height:29px;border-radius:9px;background:var(--panel2);color:var(--cyan);display:grid;place-items:center;font-weight:900}
-.ai-card{padding:15px}
-.ai-card h2{font-size:14px;margin:0}
-.ai-card .sub{margin-top:3px}
-.ai-message{margin:15px 0 12px;background:var(--panel2);border:1px solid var(--border);border-radius:11px;padding:12px;color:var(--text);font-size:12px}
-.ai-message strong{color:var(--text)}
-.quick-prompts{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 13px}
-.quick-prompts button{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:999px;padding:6px 9px;font-size:11px}
-.chat-form{display:flex;gap:7px}
-.chat-form input{width:100%;min-width:0;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);outline:none}
-.chat-form button{border:0;border-radius:8px;background:var(--blue);color:white;padding:0 13px;font-weight:700}
-.task-card{padding:15px}
-.card-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.card-title h2{font-size:14px;margin:0}
-.tag{font-size:10px;color:var(--cyan);background:var(--panel2);border-radius:5px;padding:4px 7px}
-.task-card p{font-size:12px;color:var(--text);margin:0 0 12px}
-.example{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;font:12px/1.7 Consolas,monospace;color:var(--text)}
-.task-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:11px}
-.progress-card{padding:15px}
-.progress-top{display:flex;justify-content:space-between;align-items:center}
-.progress-top h2{font-size:14px;margin:0}
-.progress-num{font-size:20px;font-weight:800;color:var(--green)}
-.progress-track{height:7px;border-radius:10px;background:var(--border);overflow:hidden;margin:12px 0 8px}
-.progress-fill{height:100%;width:35%;background:linear-gradient(90deg,#2c9e9a,#58ddb0);border-radius:10px}
-.progress-foot{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
-.footer{padding:10px 22px;border-top:1px solid var(--border);color:var(--muted);font-size:10px;display:flex;justify-content:space-between;gap:10px}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);padding:11px 16px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--text);box-shadow:0 10px 35px #0005;display:none;max-width:90vw;z-index:10}
-@media(max-width:1100px){.layout{grid-template-columns:190px minmax(0,1fr)}.rightbar{grid-column:2;display:grid;grid-template-columns:1fr 1fr}.rightbar .ai-card{grid-row:span 2}}
-@media(max-width:760px){.topbar{padding:0 12px}.top-actions .pill{display:none}.layout{display:flex;flex-direction:column;padding:12px}.sidebar .panel{display:flex;gap:4px;overflow:auto;padding:8px}.side-title,.side-note{display:none}.nav{white-space:nowrap;padding:8px}.mainhead{flex-direction:column}.rightbar{display:flex}.bottom-grid{grid-template-columns:1fr}.editor-panel{min-height:380px}.footer{flex-direction:column}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeLab - モック画面 (マルチファイル＆相互実行対応)</title>
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: #1e293b;
+            --bg-sub: #090d16;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent: #38bdf8;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --border: #334155;
+            --tab-active-bg: #1e293b;
+            --tab-inactive-bg: #0f172a;
+            --line-num: #64748b;
+            --error-bg: rgba(239, 68, 68, 0.15);
+            --error-border: #ef4444;
+            --error-text: #fca5a5;
+            --success-text: #86efac;
+        }
+
+        body.light-theme {
+            --bg-base: #f1f5f9;
+            --bg-panel: #ffffff;
+            --bg-sub: #e2e8f0;
+            --text-main: #0f172a;
+            --text-sub: #475569;
+            --accent: #0284c7;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --border: #cbd5e1;
+            --tab-active-bg: #ffffff;
+            --tab-inactive-bg: #e2e8f0;
+            --line-num: #94a3b8;
+            --error-bg: #fee2e2;
+            --error-border: #ef4444;
+            --error-text: #b91c1c;
+            --success-text: #15803d;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        /* トップナビゲーションバー */
+        header {
+            background-color: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 52px;
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.15rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 6px;
+            margin-left: 10px;
+        }
+
+        .nav-link {
+            color: var(--text-sub);
+            text-decoration: none;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            font-weight: 600;
+        }
+        .nav-link:hover { color: var(--text-main); background: var(--bg-sub); }
+        .nav-link.active {
+            background: var(--bg-sub);
+            color: var(--accent);
+            border-color: var(--border);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-theme {
+            background: var(--bg-sub);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .mode-badge {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        /* メインワークスペースレイアウト */
+        .workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* 1. 左端：ファイルツリー / ワークスペースフォルダ */
+        .sidebar-tree {
+            width: 220px;
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .tree-header {
+            padding: 10px 14px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tree-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .tree-btn {
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .tree-btn:hover { color: var(--accent); background: var(--bg-sub); }
+
+        .folder-title {
+            padding: 8px 14px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0,0,0,0.05);
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 4px 0;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            padding: 6px 14px 6px 26px;
+            font-size: 0.82rem;
+            color: var(--text-sub);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+        .file-item:hover {
+            color: var(--text-main);
+            background: var(--bg-sub);
+        }
+        .file-item.active {
+            color: var(--accent);
+            background: rgba(56, 189, 248, 0.1);
+            font-weight: 700;
+            border-left: 3px solid var(--accent);
+            padding-left: 23px;
+        }
+
+        /* 2. 中央：タブ + エディタ + コンソール */
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            min-width: 320px;
+        }
+
+        .tab-bar {
+            height: 38px;
+            background-color: var(--tab-inactive-bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            flex-shrink: 0;
+        }
+
+        .tab {
+            padding: 0 16px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            color: var(--text-sub);
+            background-color: var(--tab-inactive-bg);
+            border-right: 1px solid var(--border);
+            cursor: pointer;
+            border-top: 2px solid transparent;
+            user-select: none;
+        }
+        .tab:hover { color: var(--text-main); }
+        .tab.active {
+            background-color: var(--tab-active-bg);
+            color: var(--accent);
+            font-weight: 700;
+            border-top-color: var(--accent);
+        }
+        .tab-close {
+            font-size: 0.75rem;
+            border-radius: 50%;
+            padding: 1px 4px;
+        }
+        .tab-close:hover { background: rgba(0,0,0,0.2); color: var(--text-main); }
+
+        .editor-toolbar {
+            padding: 6px 12px;
+            background: var(--bg-sub);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tool-left {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            font-size: 0.78rem;
+            color: var(--text-sub);
+        }
+
+        .btn-run {
+            background-color: #16a34a;
+            color: white;
+            border: none;
+            padding: 5px 14px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.15s;
+        }
+        .btn-run:hover { background-color: #15803d; }
+
+        .editor-area {
+            flex: 1;
+            display: flex;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .line-numbers {
+            width: 42px;
+            background: var(--bg-panel);
+            color: var(--line-num);
+            text-align: right;
+            padding: 12px 8px;
+            user-select: none;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            border-right: 1px solid var(--border);
+        }
+
+        .line-error-marker {
+            background-color: var(--error-border);
+            color: white !important;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .code-textarea {
+            flex: 1;
+            padding: 12px;
+            background: var(--bg-panel);
+            color: var(--text-main);
+            border: none;
+            outline: none;
+            resize: none;
+            font-family: inherit;
+            font-size: inherit;
+            line-height: 1.5;
+            white-space: pre;
+        }
+
+        /* 下部：コンソールエリア */
+        .console-container {
+            height: 180px;
+            background-color: var(--bg-sub);
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .console-header {
+            padding: 6px 14px;
+            background-color: rgba(0,0,0,0.1);
+            border-bottom: 1px solid var(--border);
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-sub);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .console-body {
+            flex: 1;
+            padding: 10px 14px;
+            font-family: Consolas, monospace;
+            font-size: 0.85rem;
+            overflow-y: auto;
+            line-height: 1.5;
+        }
+
+        .jump-error-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+            padding: 4px 10px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .jump-error-btn:hover { background-color: var(--primary-hover); }
+
+        /* 3. 右端：AIアシスタント ＆ 構文辞書 */
+        .ai-sidebar {
+            width: 320px;
+            background-color: var(--bg-panel);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .ai-header {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.82rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--accent);
+        }
+
+        .ai-content {
+            flex: 1;
+            padding: 14px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ai-card {
+            background-color: var(--bg-sub);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.84rem;
+            line-height: 1.6;
+        }
+
+        .ai-card-title {
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .target-tag {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error-text);
+            border: 1px solid var(--error-border);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+    </style>
 </head>
 <body>
-<div class="app">
-  <header class="topbar">
-    <div class="brand"><div class="logo">&lt;/&gt;</div><div>コードラボ<small>プログラミング学習 AI誤り分析アシスタント</small></div></div>
-    <div class="top-actions">
-      <div class="nav-links">
-        <a href="index.html" class="nav-link">仕様書</a>
-        <a href="diagram.html" class="nav-link">画面遷移図</a>
-        <a href="activity.html" class="nav-link">アクティビティ図</a>
-      </div>
-      <button class="btn" id="themeToggleBtn" style="font-weight:bold;">☀️ / 🌙 テーマ切替</button>
-      <span class="pill">🐍 Python のみ</span>
-      <span class="pill online">● ローカルモード</span>
-      <span class="avatar">学</span>
+
+    <!-- ヘッダー -->
+    <header>
+        <div class="header-left">
+            <div class="logo">⚡ CodeLab</div>
+            <span class="mode-badge">📁 自由創作モード</span>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">仕様書</a>
+                <a href="RDD.html" class="nav-link">要件定義書</a>
+                <a href="diagram.html" class="nav-link">画面遷移図</a>
+                <a href="activity.html" class="nav-link">アクティビティ図</a>
+                <a href="mockup.html" class="nav-link active">モック画面</a>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="btn-theme" onclick="toggleTheme()" id="themeBtn">☀️ ライトモード</button>
+        </div>
+    </header>
+
+    <!-- ワークスペース全体 -->
+    <div class="workspace">
+
+        <!-- ① 左カラム：ワークスペース・ファイルツリー -->
+        <div class="sidebar-tree">
+            <div class="tree-header">
+                <span>プロジェクト フォルダ</span>
+                <div class="tree-actions">
+                    <button class="tree-btn" onclick="addNewFile()" title="新しいファイルを作成">＋</button>
+                    <button class="tree-btn" title="フォルダ再読み込み">🔄</button>
+                </div>
+            </div>
+            <div class="folder-title">
+                📁 <span>my_game_project/</span>
+            </div>
+            <ul class="file-list" id="fileTreeList">
+                <li class="file-item active" onclick="switchFile('main.py')">📄 main.py</li>
+                <li class="file-item" onclick="switchFile('helper.py')">📄 helper.py</li>
+                <li class="file-item" onclick="switchFile('utils.py')">📄 utils.py</li>
+            </ul>
+            <div style="padding: 10px; font-size: 0.72rem; color: var(--text-sub); border-top: 1px solid var(--border);">
+                💡 別ファイルは <code>import [名前]</code> で読み込んで実行できます。
+            </div>
+        </div>
+
+        <!-- ② 中央カラム：エディタ ＆ コンソール -->
+        <div class="editor-container">
+            <!-- エディタ上部 タブバー -->
+            <div class="tab-bar" id="tabBar">
+                <div class="tab active" id="tab-main.py" onclick="switchFile('main.py')">
+                    <span>📄 main.py</span>
+                </div>
+                <div class="tab" id="tab-helper.py" onclick="switchFile('helper.py')">
+                    <span>📄 helper.py</span>
+                </div>
+            </div>
+
+            <!-- エディタ ツールバー -->
+            <div class="editor-toolbar">
+                <div class="tool-left">
+                    <span id="currentEditingPath">作業フォルダ: my_game_project/<strong>main.py</strong></span>
+                </div>
+                <button class="btn-run" onclick="runMultiFileCode()">
+                    ▶ 実行する (F5)
+                </button>
+            </div>
+
+            <!-- コード入力エリア -->
+            <div class="editor-area">
+                <div class="line-numbers" id="lineNumbers">
+                    1<br>2<br>3<br>4<br>5<br>6<br>7
+                </div>
+                <textarea class="code-textarea" id="codeEditor" spellcheck="false" oninput="updateCurrentFileCode()"></textarea>
+            </div>
+
+            <!-- やさしい出力コンソール -->
+            <div class="console-container">
+                <div class="console-header">
+                    <span>📟 やさしい出力コンソール</span>
+                    <span style="font-size: 0.7rem; color: var(--text-sub);">作業ディレクトリ: /my_game_project</span>
+                </div>
+                <div class="console-body" id="consoleBody">
+                    <span style="color: var(--text-sub);">「▶ 実行する」ボタンを押すと、プロジェクト内のコードを実行します。</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ③ 右カラム：AIアシスタント ＆ モジュール解説 -->
+        <div class="ai-sidebar">
+            <div class="ai-header">
+                🤖 AI誤り分析アシスタント
+            </div>
+            <div class="ai-content" id="aiContent">
+                <div class="ai-card">
+                    <div class="ai-card-title">💡 マルチファイル連携機能</div>
+                    <p>ここでは自分で作成した複数の <code>.py</code> ファイルを <code>import</code> して組み合わせることができます！</p>
+                    <p style="margin-top:6px; font-size:0.78rem; color:var(--text-sub);">
+                        実行時にエラーが起きたときは、どのファイルに原因があるかをAIが特定して案内します。
+                    </p>
+                </div>
+
+                <div class="ai-card" id="aiDynamicAdvice">
+                    <div class="ai-card-title">📖 今日のポイント: import</div>
+                    <p><code>import helper</code> と書くと、同じフォルダにある <code>helper.py</code> の関数を呼び出せるようになります。</p>
+                </div>
+            </div>
+        </div>
+
     </div>
-  </header>
 
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="panel">
-        <div class="side-title">LEARNING</div>
-        <div class="nav active" data-nav="エディタ"><span class="ico">⌨</span>コードエディタ</div>
-        <div class="nav" data-nav="課題演習"><span class="ico">▣</span>課題演習</div>
-        <div class="nav" data-nav="関数・構文辞書"><span class="ico">⌕</span>関数・構文辞書</div>
-        <div class="side-title" style="margin-top:22px">MY RECORDS</div>
-        <div class="nav" data-nav="成長カルテ"><span class="ico">▥</span>成長カルテ</div>
-        <div class="nav" data-nav="エラー履歴"><span class="ico">↺</span>エラー履歴</div>
-        <div class="nav" data-nav="アチーブメント"><span class="ico">✧</span>アチーブメント</div>
-        <div class="side-note"><strong>✦ 学習を続けよう！</strong>エラーは上達のチャンス。AIと一緒に、少しずつ理解していこう。</div>
-      </div>
-    </aside>
+    <script>
+        // プロジェクト内のファイル仮想データ
+        const projectFiles = {
+            'main.py': {
+                code: "# [main.py] メインプログラム\nimport helper\n\nprint('計算をはじめます...')\n# helper.py の関数を呼び出します\ntotal = helper.calc_score(10)\nprint('合計得点:', total)\n"
+            },
+            'helper.py': {
+                code: "# [helper.py] 補助関数ファイル\ndef calc_score(base_point):\n    bonus = 5\n    # ⚠️ 4行目：未定義の変数 'bonus_rate' を使ってエラーを再現\n    return base_point + bonus_rate\n"
+            },
+            'utils.py': {
+                code: "# [utils.py] 便利なツール集\ndef show_banner(title):\n    print('=== ' + title + ' ===')\n"
+            }
+        };
 
-    <main class="workspace">
-      <div class="mainhead">
-        <div><h1>コードエディタ</h1><div class="sub">自分で書いて、実行して、エラーの理由を学ぼう。</div></div>
-        <div class="mode-switch" aria-label="学習モード"><button class="active" data-mode="自由創作">自由創作</button><button data-mode="課題演習">課題演習</button></div>
-      </div>
+        let currentActiveFile = 'main.py';
 
-      <section class="panel editor-panel">
-        <div class="panel-head">
-          <div class="file-label"><span class="py-icon">Py</span><strong>main.py</strong><span class="status">Python 3</span></div>
-          <div class="tools"><button class="btn" id="resetBtn">初期コード</button><button class="btn btn-run" id="runBtn">▶ 実行</button></div>
-        </div>
-        <div class="editor-wrap">
-          <div class="line-numbers" id="lineNumbers">1
-2
-3
-4
-5</div>
-          <textarea id="code" spellcheck="false" aria-label="Pythonコードエディタ"># はじめてのPython
-name = "せんせい"
-print("こんにちは、" + name + "！")
+        // 初期化ロード
+        window.onload = () => {
+            loadFileIntoEditor(currentActiveFile);
+        };
 
-for i in range(3):
-    print("学習中", i + 1)</textarea>
-        </div>
-        <div class="editor-footer"><span id="editorStatus">準備完了</span><span>UTF-8 | Python</span></div>
-      </section>
+        // ファイル切り替え
+        function switchFile(filename, targetLine = null) {
+            currentActiveFile = filename;
 
-      <div class="bottom-grid">
-        <section class="panel output-panel">
-          <div class="small-head"><span>▹ 実行結果</span><span class="status" id="runStatus">未実行</span></div>
-          <div class="output-body" id="output">ここにプログラムの実行結果が表示されます。</div>
-        </section>
-        <section class="panel hint-panel">
-          <div class="small-head"><span>✦ エラー分析</span><span class="status">学習サポート</span></div>
-          <div class="hint-body" id="hint"><strong>実行すると、ここにヒントが表示されます。</strong><br>エラーが出た場合も、原因と直し方をわかりやすく確認できます。</div>
-        </section>
-      </div>
-    </main>
+            // タブの見た目更新
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            let activeTab = document.getElementById(`tab-${filename}`);
+            if (!activeTab) {
+                // タブになければ追加
+                const tabBar = document.getElementById('tabBar');
+                const newTab = document.createElement('div');
+                newTab.className = 'tab active';
+                newTab.id = `tab-${filename}`;
+                newTab.onclick = () => switchFile(filename);
+                newTab.innerHTML = `<span>📄 ${filename}</span>`;
+                tabBar.appendChild(newTab);
+            } else {
+                activeTab.classList.add('active');
+            }
 
-    <aside class="rightbar">
-      <section class="panel ai-card">
-        <div class="ai-head"><div class="ai-mark">✦</div><div><h2>AI学習アシスタント</h2><div class="sub">初心者向けに、やさしくサポート</div></div></div>
-        <div class="ai-message" id="chatMessages"><strong>こんにちは！</strong><br>コードで困ったところはある？「この行の意味を教えて」など、気軽に聞いてね。<br><br><span style="color:var(--muted)">※ AI接続前の画面プレビューです。</span></div>
-        <div class="quick-prompts"><button data-prompt="このコードを説明して">コードを説明して</button><button data-prompt="エラーの直し方を教えて">エラーを直したい</button><button data-prompt="次に練習する課題を教えて">次の課題</button></div>
-        <form class="chat-form" id="chatForm"><input id="chatInput" placeholder="質問を入力..." aria-label="AIへの質問"><button type="submit">送信</button></form>
-      </section>
+            // ツリーの見た目更新
+            document.querySelectorAll('.file-item').forEach(item => {
+                item.classList.toggle('active', item.textContent.includes(filename));
+            });
 
-      <section class="panel task-card">
-        <div class="card-title"><h2>今日のミニ課題</h2><span class="tag">初級</span></div>
-        <p id="taskText">変数 <code>fruit</code> に好きな果物を入れて、画面に表示してみよう。</p>
-        <div class="example">fruit = "りんご"<br>print(fruit)</div>
-        <div class="task-meta"><span>目安：3分</span><span>合格ライン：80点</span></div>
-      </section>
+            // エディタへ内容展開
+            loadFileIntoEditor(filename);
 
-      <section class="panel progress-card">
-        <div class="progress-top"><h2>学習の進み具合</h2><span class="progress-num">35%</span></div>
-        <div class="progress-track"><div class="progress-fill"></div></div>
-        <div class="progress-foot"><span>今週の目標</span><span>3 / 8 課題</span></div>
-      </section>
-    </aside>
-  </div>
-  <footer class="footer"><span>コードラボ | Python学習環境</span><span>オフライン対応を想定したUI試作 · 実行・AI・同期はバックエンド接続前</span></footer>
-</div>
-<div class="toast" id="toast" role="status"></div>
-<script>
-const code = document.getElementById('code');
-const output = document.getElementById('output');
-const hint = document.getElementById('hint');
-const lineNumbers = document.getElementById('lineNumbers');
-const toast = document.getElementById('toast');
-const initialCode = code.value;
+            // 特定行へのジャンプ指定がある場合
+            if (targetLine) {
+                highlightErrorLine(targetLine);
+            }
+        }
 
-// テーマ切り替え機能
-const themeToggleBtn = document.getElementById('themeToggleBtn');
-themeToggleBtn.addEventListener('click', () => {
-  const currentTheme = document.documentElement.getAttribute('data-theme');
-  if (currentTheme === 'light') {
-    document.documentElement.removeAttribute('data-theme');
-    notify('ダークモードに切り替えました');
-  } else {
-    document.documentElement.setAttribute('data-theme', 'light');
-    notify('ライトモードに切り替えました');
-  }
-});
+        function loadFileIntoEditor(filename) {
+            const editor = document.getElementById('codeEditor');
+            editor.value = projectFiles[filename].code;
+            document.getElementById('currentEditingPath').innerHTML = `作業フォルダ: my_game_project/<strong>${filename}</strong>`;
+            updateLineNumbers();
+        }
 
-function updateLines(){
-  const n = Math.max(1, code.value.split('\n').length);
-  lineNumbers.textContent = Array.from({length:n},(_,i)=>i+1).join('\n');
-}
-function notify(message){
-  toast.textContent=message; toast.style.display='block';
-  clearTimeout(notify.timer); notify.timer=setTimeout(()=>toast.style.display='none',2600);
-}
-code.addEventListener('input',updateLines);
-code.addEventListener('scroll',()=>{lineNumbers.scrollTop=code.scrollTop});
-code.addEventListener('keydown',e=>{
-  if(e.key==='Tab'){
-    e.preventDefault();
-    const start=code.selectionStart,end=code.selectionEnd;
-    code.setRangeText('    ',start,end,'end');updateLines();
-  }
-  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();document.getElementById('runBtn').click();}
-});
-document.getElementById('resetBtn').addEventListener('click',()=>{
-  code.value=initialCode;updateLines();output.textContent='コードを初期状態に戻しました。';hint.innerHTML='<strong>準備できました。</strong><br>「実行」を押すと、結果を確認できます。';notify('初期コードに戻しました');
-});
-document.getElementById('runBtn').addEventListener('click',()=>{
-  document.getElementById('runStatus').textContent='実行接続待ち';
-  document.getElementById('editorStatus').textContent='プレビュー画面';
-  output.innerHTML='<span class="success">画面プレビューのため、Pythonコードはまだ実行していません。</span>\n\nTauri + Rust の実行バックエンド接続後、ここに実際の標準出力・エラーが表示されます。';
-  hint.innerHTML='<strong>次の実装ステップ</strong><br>1. Rust側でPython実行プロセスを起動<br>2. 実行時間・出力サイズを制限<br>3. 標準出力とエラーをこの画面に返す<br><br>入力されたコードは、このHTMLだけでは実行されません。';
-  notify('画面プレビュー：Python実行機能は未接続です');
-});
-document.querySelectorAll('[data-mode]').forEach(btn=>btn.addEventListener('click',()=>{
-  document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b===btn));
-  if(btn.dataset.mode==='課題演習'){
-    document.getElementById('taskText').innerHTML='課題モード：変数 <code>fruit</code> に好きな果物を入れて、画面に表示してみよう。';
-    notify('課題演習モードを選択しました');
-  }else{
-    document.getElementById('taskText').innerHTML='変数 <code>fruit</code> に好きな果物を入れて、画面に表示してみよう。';
-    notify('自由創作モードを選択しました');
-  }
-}));
-document.querySelectorAll('[data-nav]').forEach(item=>item.addEventListener('click',()=>{
-  document.querySelectorAll('[data-nav]').forEach(n=>n.classList.toggle('active',n===item));
-  if(item.dataset.nav!=='エディタ') notify(item.dataset.nav+'画面は今後実装する予定です');
-}));
-document.querySelectorAll('[data-prompt]').forEach(btn=>btn.addEventListener('click',()=>{
-  document.getElementById('chatInput').value=btn.dataset.prompt;
-  document.getElementById('chatInput').focus();
-}));
-document.getElementById('chatForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  const input=document.getElementById('chatInput');
-  const question=input.value.trim();
-  if(!question){notify('質問を入力してください');return;}
-  const safe=question.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  document.getElementById('chatMessages').innerHTML='<strong>あなた：</strong><br>'+safe+'<br><br><strong>AIアシスタント：</strong><br>AI接続前のプレビューです。実装後は、コード・実行結果・エラー情報をもとに回答します。';
-  input.value='';
-});
-updateLines();
-</script>
+        function updateCurrentFileCode() {
+            projectFiles[currentActiveFile].code = document.getElementById('codeEditor').value;
+            updateLineNumbers();
+        }
+
+        function updateLineNumbers() {
+            const editor = document.getElementById('codeEditor');
+            const lines = editor.value.split('\n').length;
+            const lineNumbers = document.getElementById('lineNumbers');
+            let numHtml = '';
+            for (let i = 1; i <= Math.max(lines, 8); i++) {
+                numHtml += `<div id="num-line-${i}">${i}</div>`;
+            }
+            lineNumbers.innerHTML = numHtml;
+        }
+
+        // プログラム実行シミュレーション（マルチファイル＆Traceback解析）
+        function runMultiFileCode() {
+            const consoleBody = document.getElementById('consoleBody');
+            const aiAdvice = document.getElementById('aiDynamicAdvice');
+
+            consoleBody.innerHTML = `<span style="color:var(--text-sub);">⏳ python main.py を実行中...</span>`;
+
+            setTimeout(() => {
+                // helper.py 側の bonus_rate エラーを検知するシミュレーション
+                const helperCode = projectFiles['helper.py'].code;
+                
+                if (helperCode.includes('bonus_rate')) {
+                    // エラー発生パターン
+                    consoleBody.innerHTML = `
+                        <div style="color: var(--error-text); font-weight: 700; margin-bottom: 4px;">
+                            Traceback (most recent call last):<br>
+                            &nbsp;&nbsp;File "main.py", line 6, in &lt;module&gt;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;total = helper.calc_score(10)<br>
+                            &nbsp;&nbsp;File "helper.py", line 4, in calc_score<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;return base_point + bonus_rate<br>
+                            NameError: name 'bonus_rate' is not defined
+                        </div>
+                        <div style="border-top: 1px dashed var(--border); padding-top: 6px; margin-top: 6px;">
+                            ⚠️ <strong>エラー発生：呼び出し先の helper.py の 4行目</strong><br>
+                            <button class="jump-error-btn" onclick="switchFile('helper.py', 4)">
+                                👉 helper.py の4行目を開いて修正する
+                            </button>
+                        </div>
+                    `;
+
+                    aiAdvice.innerHTML = `
+                        <div class="ai-card-title">🔍 エラー分析：別ファイルの不具合</div>
+                        <p>呼び出し元の <code>main.py</code> ではなく、呼び出された <span class="target-tag">helper.py の4行目</span> でエラーが起きています！</p>
+                        <p style="margin-top: 6px; font-size: 0.8rem; color: var(--text-sub);">
+                            <strong>【修正のヒント】</strong><br>
+                            <code>bonus_rate</code> という名前の変数が作られていません。3行目の <code>bonus</code> と名前が合っているか確認してみましょう！
+                        </p>
+                    `;
+                } else {
+                    // 修正後・正常終了パターン
+                    consoleBody.innerHTML = `
+                        <div style="color: var(--success-text); font-weight: 700;">
+                            計算をはじめます...<br>
+                            合計得点: 15<br>
+                            -----------------------------------<br>
+                            🎉 プログラムは正常に終了しました (終了コード: 0)
+                        </div>
+                    `;
+
+                    aiAdvice.innerHTML = `
+                        <div class="ai-card-title" style="color: var(--success-text);">🎉 連携大成功！</div>
+                        <p><code>main.py</code> から <code>helper.py</code> の関数を呼び出し、正しく計算結果を受け取ることができました！</p>
+                    `;
+                }
+            }, 500);
+        }
+
+        // 指定行のハイライト表示
+        function highlightErrorLine(lineNum) {
+            const lineEl = document.getElementById(`num-line-${lineNum}`);
+            if (lineEl) {
+                lineEl.classList.add('line-error-marker');
+                lineEl.title = "ここでエラーが発生しました";
+            }
+        }
+
+        // 新規ファイル作成ダイアログ
+        function addNewFile() {
+            const name = prompt("作成するファイル名を入力してください (例: config.py):", "my_script.py");
+            if (name && !projectFiles[name]) {
+                projectFiles[name] = { code: `# [${name}]\n# 新しいスクリプトファイルです\n` };
+                
+                const list = document.getElementById('fileTreeList');
+                const li = document.createElement('li');
+                li.className = 'file-item';
+                li.onclick = () => switchFile(name);
+                li.innerHTML = `📄 ${name}`;
+                list.appendChild(li);
+
+                switchFile(name);
+            }
+        }
+
+        // テーマ切り替え
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            document.getElementById('themeBtn').textContent = isLight ? '🌙 ダークモード' : '☀️ ライトモード';
+        }
+    </script>
 </body>
 </html>
-```[cite: 6]
