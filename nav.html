@@ -1,0 +1,47 @@
+<nav class="nav-bar">
+  <a href="index.html" class="nav-link">📄 仕様書</a>
+  <a href="RDD.html" class="nav-link">📋 要件定義書</a>
+  <a href="diagram.html" class="nav-link">🔀 画面遷移図</a>
+  <a href="activity.html" class="nav-link">⚡ アクティビティ図</a>
+  <a href="er.html" class="nav-link">🗄️ ER図</a>
+  <a href="mockup.html" class="nav-link">🖥️ モック画面</a>
+  <a href="ui_layout.html" class="nav-link">📐 画面構成図</a>
+  <a href="sitemap.html" class="nav-link">🌳 画面ツリー</a>
+  <a href="system_architecture.html" class="nav-link">🏗️ システム構成図</a>
+</nav>
+
+<style>
+/* nav.html 内にスタイルを持たせることで、各ページへのスタイル追記を最小限にします */
+.nav-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  background: var(--card, #1e293b);
+  color: var(--accent, #38bdf8);
+  border: 1px solid var(--line-strong, #475569);
+  padding: 7px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 700;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-link:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+.nav-link.active {
+  background: var(--blue, #2563eb);
+  color: #ffffff;
+  border-color: var(--blue, #2563eb);
+  pointer-events: none;
+}
+</style>
