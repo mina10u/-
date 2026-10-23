@@ -4,92 +4,181 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>コードラボ｜アクティビティ図</title>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
 <style>
-:root{--bg:#0b1120;--panel:#111b2e;--border:#2b3b55;--text:#e8eef8;--muted:#9aaac0;--blue:#60a5fa;--cyan:#67e8f9;--green:#6ee7b7;--yellow:#fcd34d}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,sans-serif;line-height:1.55}
-header{padding:20px clamp(16px,4vw,52px);border-bottom:1px solid var(--border);background:linear-gradient(115deg,#111d34,#0b1120)}
-.nav-bar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
-.nav-link{background:#1e293b;color:#38bdf8;border:1px solid var(--border);padding:6px 12px;border-radius:6px;text-decoration:none;font-size:0.85rem;font-weight:bold}
-.nav-link.active{background:#2563eb;color:white;border-color:#2563eb}
-.nav-link:hover{background:#334155}
-.eyebrow{color:var(--cyan);font-size:12px;letter-spacing:.16em;font-weight:700}h1{font-size:clamp(22px,3vw,32px);margin:5px 0}
-main{max-width:1440px;margin:auto;padding:28px clamp(12px,3vw,36px) 60px}section{margin:0 0 38px}.section-title{font-size:22px;margin:0 0 5px}.section-sub{color:var(--muted);margin:0 0 18px;font-size:14px}
-.diagram-card{background:#101a2c;border:1px solid var(--border);border-radius:16px;padding:24px;overflow:auto;text-align:center}
-.mermaid {
-  display: inline-block;
+:root {
+  --bg: #0b1120;
+  --panel: #111b2e;
+  --border: #2b3b55;
+  --text: #e8eef8;
+  --muted: #9aaac0;
+  --accent: #38bdf8;
+  --primary: #2563eb;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Meiryo, sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ヘッダー・共通ナビゲーション */
+header {
+  padding: 16px 28px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.nav-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  background: #1e293b;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.nav-link.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+.nav-link:hover {
+  background: #334155;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+h1 {
+  font-size: 1.35rem;
+  color: var(--accent);
+}
+
+.container {
+  max-width: 1300px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+  flex: 1;
+}
+
+section {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 24px;
+}
+
+h2 {
+  color: var(--accent);
+  font-size: 1.15rem;
+  margin-bottom: 14px;
+  border-left: 4px solid var(--accent);
+  padding-left: 10px;
+}
+
+.img-container {
+  background: #0f172a;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  overflow: auto;
+}
+
+.img-container img {
   max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  background: #ffffff; /* 白地のアクティビティ図を見やすく表示 */
+  padding: 8px;
 }
-.mermaid svg {
-  height: auto !important;
-  max-height: 80vh;
+
+.meta-note {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 14px;
+  line-height: 1.7;
 }
-.note{color:var(--muted);font-size:13px;margin-top:12px}
+
+.summary-list {
+  padding-left: 1.4rem;
+  margin-top: 8px;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.summary-list li {
+  margin-bottom: 6px;
+}
 </style>
 </head>
 <body>
+
 <header>
- <div class="nav-bar">
-   <a href="index.html" class="nav-link">仕様書</a>
-   <a href="diagram.html" class="nav-link">画面遷移図</a>
-   <a href="activity.html" class="nav-link active">アクティビティ図</a>
-   <a href="mockup.html" class="nav-link">モック画面</a>
- </div>
- <div class="eyebrow">CODE LAB / DESIGN DOCUMENT</div>
- <h1>アクティビティ図</h1>
+  <div class="nav-bar">
+    <a href="index.html" class="nav-link">📄 仕様書</a>
+    <a href="RDD.html" class="nav-link">📋 要件定義書</a>
+    <a href="diagram.html" class="nav-link">🔀 画面遷移図</a>
+    <a href="activity.html" class="nav-link active">⚡ アクティビティ図</a>
+    <a href="er.html" class="nav-link">🗄️ ER図</a>
+    <a href="mockup.html" class="nav-link">🖥️ モック画面</a>
+  </div>
+  <div class="header-content">
+    <div>
+      <h1>アクティビティ図 (Activity Diagram)</h1>
+      <p style="color: var(--muted); font-size: 0.85rem;">コードラボ｜学習・実行・AI支援・クラウド同期フロー</p>
+    </div>
+  </div>
 </header>
-<main>
-<section>
- <h2 class="section-title">実行・採点・AIフォールバックフロー</h2>
- <p class="section-sub">課題演習でコードを編集し、保存・実行・テスト・採点・AI支援を行う代表的な流れです。</p>
- <div class="diagram-card">
- <pre class="mermaid">
-flowchart TD
-    Start([開始]) --> Select[課題を選択]
-    Select --> Edit[コードを編集]
-    Edit --> AutoSave[端末内へ自動保存]
-    AutoSave --> Choice{操作を選択}
-    Choice -- 実行 --> Validate[実行要求を検証]
-    Validate --> Sandbox[隔離環境でPython実行]
-    Sandbox --> Limit{制限超過?}
-    Limit -- はい --> Stop[関連プロセスを停止]
-    Stop --> ErrorResult[タイムアウト / 実行エラー表示]
-    Limit -- いいえ --> Output[標準出力・標準エラー表示]
-    ErrorResult --> AskAI
-    Output --> Tests{課題演習?}
-    Tests -- いいえ --> Choice
-    Tests -- はい --> RunTests[テストケースを実行]
-    RunTests --> Calc[配点に基づき採点]
-    Calc --> AIState{AI評価が必要?}
-    AIState -- いいえ --> Result[採点結果を表示]
-    AIState -- はい --> AIReady{AI利用可能?}
-    AIReady -- はい --> Analyze[エラー・コードを分析]
-    AIReady -- いいえ --> Incomplete[AI評価未完了を表示]
-    Analyze --> Result
-    Incomplete --> Result
-    Result --> AskAI[ヒントを確認]
-    AskAI --> Fix{コードを修正する?}
-    Fix -- はい --> Edit
-    Fix -- いいえ --> SaveRecord[学習記録をローカル保存]
-    SaveRecord --> Login{ログイン済み・通信可能?}
-    Login -- はい --> Sync[クラウドへ同期]
-    Login -- いいえ --> Queue[同期待ちキューへ保持]
-    Sync --> End([終了 / 次の課題へ])
-    Queue --> End
-    Choice -- 保存のみ --> AutoSave
-    classDef action fill:#15345a,stroke:#60a5fa,color:#eff6ff
-    classDef decision fill:#342b17,stroke:#fcd34d,color:#fef3c7
-    classDef result fill:#12352f,stroke:#34d399,color:#d1fae5
-    class Edit,AutoSave,Validate,Sandbox,Stop,Output,RunTests,Calc,Analyze,Incomplete,AskAI,SaveRecord,Sync,Queue action
-    class Choice,Limit,Tests,AIState,AIReady,Fix,Login decision
-    class Result,ErrorResult result
- </pre>
- <p class="note">AIが使えない場合も、コード編集・実行・機械的テスト・ローカル保存は継続します。AI評価を必須とする採点は未完了として扱い、合格にはしません。</p>
- </div>
-</section>
+
+<main class="container">
+
+  <!-- アクティビティ図 画像エリア -->
+  <section>
+    <h2>システム処理フロー図（3レーン構成）</h2>
+    <div class="img-container">
+      <img src="activity.png" alt="コードラボ アクティビティ図" onerror="this.style.display='none'; document.getElementById('img-fallback').style.display='block';">
+      <div id="img-fallback" style="display:none; color: var(--muted); padding: 40px;">
+        ⚠️ 画像ファイル（<code>activity.png</code>）が見つかりません。リポジトリ内に画像をアップロードしてください。
+      </div>
+    </div>
+    <div class="meta-note">
+      <strong>【図の処理要点】</strong>
+      <ul class="summary-list">
+        <li><strong>ユーザーレーン：</strong> アプリ選択、自由制作／課題選択、シナリオ作成・コード入力、実行ボタン押下、対話チャットでのメッセージ送信を担当。</li>
+        <li><strong>APPレーン：</strong> アプリ起動、バックグラウンド自動保存、Python実行、自動採点、エラー表示／結果表示、AI検証・修正補助、再挑戦分岐を管理。</li>
+        <li><strong>データベース（サーバー）レーン：</strong> 実行・採点完了後に学習記録を非同期送信し、DBへ保存後に Flow final（⨂）で独立完了。</li>
+      </ul>
+    </div>
+  </section>
+
 </main>
-<script>
-mermaid.initialize({startOnLoad:true,theme:'dark',securityLevel:'loose',flowchart:{htmlLabels:true,useMaxWidth:true,curve:'linear',nodeSpacing:25,rankSpacing:30}});
-</script>
+
 </body>
 </html>
