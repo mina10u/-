@@ -22,22 +22,95 @@ body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 "Segoe UI",M
 button,textarea,input{font:inherit}
 button{cursor:pointer}
 .app{height:100vh;display:flex;flex-direction:column}
+
+/* トップバー */
 .topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:var(--panel2);gap:18px;flex-shrink:0}
 .brand{display:flex;align-items:center;gap:12px;font-weight:750;font-size:17px;white-space:nowrap}
 .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3986ff,#48d7d0);display:grid;place-items:center;color:#061323;font-weight:900;font-size:19px}
 .brand small{display:block;color:var(--muted);font-size:11px;font-weight:500;letter-spacing:.04em}
+
+/* ★ トップバー中央：大きく押しやすいメインモード切替スイッチ ★ */
+.top-mode-switcher {
+  display: flex;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+}
+.mode-toggle-btn {
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.mode-toggle-btn:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+}
+.mode-toggle-btn.active {
+  background: var(--blue);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(79, 140, 255, 0.4);
+}
+.mode-shortcut-badge {
+  font-size: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
 .top-actions{display:flex;align-items:center;gap:10px}
 .pill{border:1px solid var(--border);border-radius:999px;padding:6px 11px;color:var(--muted);font-size:12px;background:var(--panel)}
 .pill.online{color:var(--green);border-color:var(--border)}
 .avatar{width:32px;height:32px;border-radius:50%;background:var(--border);display:grid;place-items:center;font-weight:700}
-.nav-links{display:flex;gap:8px;margin-right:10px}
-.nav-link{text-decoration:none;font-size:12px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);color:var(--text);background:var(--panel)}
-.nav-link:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
 
-.layout{display:grid;grid-template-columns:250px minmax(380px,1fr) minmax(290px,340px);gap:16px;padding:18px;flex:1;min-height:0;overflow:hidden}
+/* レイアウト */
+.layout{display:grid;grid-template-columns:250px minmax(380px,1fr) minmax(300px,350px);gap:16px;padding:18px;flex:1;min-height:0;overflow:hidden}
 .sidebar,.workspace,.rightbar{min-width:0;display:flex;flex-direction:column;height:100%;overflow:hidden}
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
 .sidebar .panel{padding:14px;overflow-y:auto}
+
+/* サイドバー内ミニモード切替 */
+.side-mode-box {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.side-mode-btn {
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 0;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.side-mode-btn.active {
+  background: var(--blue);
+  color: #fff;
+}
+
 .side-title{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.12em;margin:6px 8px 8px;display:flex;justify-content:space-between;align-items:center}
 .nav{display:flex;align-items:center;gap:10px;padding:9px 11px;margin:2px 0;border-radius:9px;color:var(--text);cursor:pointer;opacity:0.85}
 .nav:hover{opacity:1;background:var(--panel2)}
@@ -64,21 +137,144 @@ button{cursor:pointer}
 /* 中央ワークスペース */
 .workspace{overflow-y:auto;padding-right:4px}
 .mainhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:3px 2px 14px;flex-shrink:0}
-h1{font-size:21px;margin:0 0 4px}
+h1{font-size:20px;margin:0 0 4px}
 .sub{color:var(--muted);font-size:12px}
-.mode-switch{display:flex;padding:4px;border-radius:10px;border:1px solid var(--border);background:var(--panel2);white-space:nowrap}
-.mode-switch button{background:transparent;color:var(--muted);border:0;border-radius:7px;padding:7px 12px;font-size:12px;font-weight:bold}
-.mode-switch button.active{background:var(--blue);color:#fff}
 
-.editor-panel{display:flex;flex-direction:column;flex:1;min-height:360px}
+/* 課題演習：問題選択カード一覧 */
+.task-selection-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+.task-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+.task-select-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.task-select-card:hover {
+  border-color: var(--blue);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(79,140,255,0.15);
+}
+.task-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+.task-card-header h3 {
+  font-size: 15px;
+  margin: 0;
+  color: var(--text);
+}
+.badge-diff {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+.badge-easy { background: rgba(73,214,160,0.15); color: var(--green); border: 1px solid var(--green); }
+.badge-mid { background: rgba(255,189,105,0.15); color: var(--orange); border: 1px solid var(--orange); }
+
+.task-select-card p {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0 0 14px;
+}
+.task-target-box {
+  background: var(--editor-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 12px;
+  margin-bottom: 14px;
+}
+.task-target-box .label {
+  color: var(--muted);
+  font-size: 11px;
+  display: block;
+  margin-bottom: 4px;
+}
+.task-target-box .val {
+  color: var(--green);
+  font-family: Consolas, monospace;
+  font-weight: bold;
+}
+.task-card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.btn-start-task {
+  background: var(--blue);
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 12px;
+  transition: all 0.15s;
+}
+.btn-start-task:hover { filter: brightness(1.15); }
+
+/* 課題演習：作業ビュー */
+.task-work-view {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.active-task-banner {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+.banner-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.btn-back-tasks {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--cyan);
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+}
+.btn-back-tasks:hover { background: var(--border); color: #fff; }
+
+.editor-panel{display:flex;flex-direction:column;flex:1;min-height:340px}
 
 /* タブバー */
 .file-tabs-bar{display:flex;align-items:center;background:var(--panel2);border-bottom:1px solid var(--border);padding:0 8px;gap:4px;overflow-x:auto}
 .file-tab{display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:12px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;user-select:none}
 .file-tab:hover{color:var(--text)}
 .file-tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:bold;background:rgba(79,140,255,0.06)}
-.file-tab-close{font-size:10px;margin-left:4px;border-radius:50%;padding:1px 4px;}
-.file-tab-close:hover{background:rgba(255,255,255,0.2);color:var(--red)}
 
 .panel-head{display:flex;justify-content:space-between;align-items:center;padding:10px 15px;border-bottom:1px solid var(--border);background:var(--panel)}
 .file-label{display:flex;align-items:center;gap:8px;color:var(--text);font-size:12px}
@@ -88,19 +284,19 @@ h1{font-size:21px;margin:0 0 4px}
 .btn:hover{filter:brightness(1.15)}
 .btn-run{background:#1d9c75;border-color:#1d9c75;color:#fff;font-weight:800;padding:6px 15px}
 
-.editor-wrap{display:grid;grid-template-columns:42px minmax(0,1fr);flex:1;min-height:220px;background:var(--editor-bg);overflow:hidden}
+.editor-wrap{display:grid;grid-template-columns:42px minmax(0,1fr);flex:1;min-height:200px;background:var(--editor-bg);overflow:hidden}
 .line-numbers{padding:17px 10px 17px 0;text-align:right;color:var(--line-num-text);white-space:pre;user-select:none;font:13px/1.8 Consolas,monospace;border-right:1px solid var(--border);background:var(--line-num-bg)}
 #code{resize:none;width:100%;height:100%;background:transparent;border:0;outline:none;color:var(--editor-text);padding:17px 16px;font:13px/1.8 Consolas,"Cascadia Code",monospace;tab-size:4;white-space:pre;overflow:auto}
 .editor-footer{display:flex;justify-content:space-between;gap:10px;padding:8px 14px;border-top:1px solid var(--border);color:var(--muted);font-size:11px;flex-shrink:0;background:var(--panel)}
 
-.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;flex-shrink:0}
-.output-panel,.hint-panel{min-height:170px}
-.small-head{padding:11px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:12px;background:var(--panel2)}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;flex-shrink:0}
+.output-panel,.hint-panel{min-height:160px}
+.small-head{padding:10px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:12px;background:var(--panel2)}
 .status{font-size:10px;padding:3px 7px;border-radius:999px;background:var(--panel);color:var(--muted);border:1px solid var(--border)}
-.output-body{padding:12px 14px;color:var(--text);font:12px/1.8 Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:140px;overflow-y:auto;background:var(--editor-bg)}
+.output-body{padding:12px 14px;color:var(--text);font:12px/1.8 Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:130px;overflow-y:auto;background:var(--editor-bg)}
 .output-body .success{color:var(--green);font-weight:bold}
 .output-body .error{color:var(--red);font-weight:bold}
-.hint-body{padding:12px 14px;color:var(--text);font-size:12px;max-height:140px;overflow-y:auto}
+.hint-body{padding:12px 14px;color:var(--text);font-size:12px;max-height:130px;overflow-y:auto}
 .hint-body strong{color:var(--cyan)}
 
 .btn-jump-error{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:5px 12px;background:var(--blue);color:white;border:none;border-radius:6px;font-size:11px;font-weight:bold;cursor:pointer}
@@ -109,11 +305,11 @@ h1{font-size:21px;margin:0 0 4px}
 /* 右サイドバー */
 .rightbar{display:flex;flex-direction:column;gap:14px;overflow-y:auto}
 .ai-head{display:flex;align-items:center;gap:9px}
-.ai-mark{width:29px;height:29px;border-radius:9px;background:var(--panel2);color:var(--cyan);display:grid;place-items:center;font-weight:900}
+.ai-mark{width:29px;height:29px;border-radius:999px;background:var(--panel2);color:var(--cyan);display:grid;place-items:center;font-weight:900}
 .ai-card{padding:15px}
 .ai-card h2{font-size:14px;margin:0}
 .ai-card .sub{margin-top:3px}
-.ai-message{margin:15px 0 12px;background:var(--panel2);border:1px solid var(--border);border-radius:11px;padding:12px;color:var(--text);font-size:12px;max-height:150px;overflow-y:auto}
+.ai-message{margin:15px 0 12px;background:var(--panel2);border:1px solid var(--border);border-radius:11px;padding:12px;color:var(--text);font-size:12px;max-height:140px;overflow-y:auto}
 .ai-message strong{color:var(--text)}
 .quick-prompts{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 13px}
 .quick-prompts button{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:999px;padding:6px 9px;font-size:11px}
@@ -149,32 +345,38 @@ h1{font-size:21px;margin:0 0 4px}
       <div class="logo">&lt;/&gt;</div>
       <div>コードラボ<small>プログラミング学習 AI誤り分析アシスタント</small></div>
     </div>
-    <div class="top-actions">
-      <!-- ① nav.html を挿入するコンテナ -->
-<div id="common-nav"></div>
 
-<!-- ② nav.html を非同期読込し、現在のページを自動で active にするスクリプト -->
-  <script>
-    fetch('nav.html')
-      .then(response => {
-        if (!response.ok) throw new Error('nav.html not found');
-        return response.text();
-      })
-      .then(html => {
-        const navContainer = document.getElementById('common-nav');
-        navContainer.innerHTML = html;
-  
-        // 現在のファイル名を取得して該当リンクに active クラスを自動付与
-        const currentFile = location.pathname.split('/').pop() || 'index.html';
-        const links = navContainer.querySelectorAll('.nav-link');
-        links.forEach(link => {
-          if (link.getAttribute('href') === currentFile) {
-            link.classList.add('active');
-          }
-        });
-      })
-      .catch(err => console.error('ナビゲーション読み込みエラー:', err));
-  </script>
+    <!-- ★ 中央に大きく目立つモード切替トグル（ショートカット表記付き） ★ -->
+    <div class="top-mode-switcher">
+      <button class="mode-toggle-btn active" id="btnModeFree" onclick="setAppMode('free')">
+        <span>📁 自由創作</span>
+        <span class="mode-shortcut-badge">Alt+1</span>
+      </button>
+      <button class="mode-toggle-btn" id="btnModeTask" onclick="setAppMode('task')">
+        <span>🎯 課題演習</span>
+        <span class="mode-shortcut-badge">Alt+2</span>
+      </button>
+    </div>
+
+    <div class="top-actions">
+      <div id="common-nav"></div>
+      <script>
+        fetch('nav.html')
+          .then(response => {
+            if (!response.ok) throw new Error('nav.html not found');
+            return response.text();
+          })
+          .then(html => {
+            const navContainer = document.getElementById('common-nav');
+            navContainer.innerHTML = html;
+            const currentFile = location.pathname.split('/').pop() || 'mockup.html';
+            const links = navContainer.querySelectorAll('.nav-link');
+            links.forEach(link => {
+              if (link.getAttribute('href') === currentFile) link.classList.add('active');
+            });
+          })
+          .catch(err => console.error('ナビゲーション読み込みエラー:', err));
+      </script>
       <button class="btn" id="themeToggleBtn" style="font-weight:bold;">☀️ / 🌙 テーマ切替</button>
       <span class="pill">🐍 Python 特化</span>
       <span class="pill online">● ローカルAI稼働中</span>
@@ -183,15 +385,20 @@ h1{font-size:21px;margin:0 0 4px}
   </header>
 
   <div class="layout">
-    <!-- ① 左サイドバー：モードに応じて「通常メニュー」または「階層ツリー」を表示 -->
+    <!-- ① 左サイドバー -->
     <aside class="sidebar">
       <div class="panel">
         
-        <!-- A. 課題演習時の標準ナビ -->
-        <div id="standardNavArea">
+        <!-- サイドバー最上部にもクイック切替を配置 -->
+        <div class="side-mode-box">
+          <button class="side-mode-btn active" id="sideBtnFree" onclick="setAppMode('free')">📁 自由創作</button>
+          <button class="side-mode-btn" id="sideBtnTask" onclick="setAppMode('task')">🎯 課題演習</button>
+        </div>
+
+        <!-- A. 課題演習時の通常メニュー -->
+        <div id="standardNavArea" style="display:none;">
           <div class="side-title">LEARNING</div>
-          <div class="nav" onclick="setAppMode('free')"><span class="ico">⌨</span>自由創作</div>
-          <div class="nav active" onclick="setAppMode('task')"><span class="ico">▣</span>課題演習</div>
+          <div class="nav active"><span class="ico">▣</span>問題一覧カード</div>
           <div class="nav"><span class="ico">⌕</span>関数・構文辞書</div>
           <div class="side-title" style="margin-top:20px">MY RECORDS</div>
           <div class="nav"><span class="ico">▥</span>成長カルテ</div>
@@ -199,8 +406,8 @@ h1{font-size:21px;margin:0 0 4px}
           <div class="nav"><span class="ico">✧</span>アチーブメント</div>
         </div>
 
-        <!-- B. 自由創作時のツリー型エクスプローラー (ネスト対応) -->
-        <div class="tree-container" id="treeNavArea">
+        <!-- B. 自由創作時のツリー型エクスプローラー -->
+        <div class="tree-container" id="treeNavArea" style="display:flex;">
           <div class="side-title">
             <span>FILES (階層ツリー)</span>
             <div class="tree-header-actions">
@@ -208,13 +415,11 @@ h1{font-size:21px;margin:0 0 4px}
               <button class="tree-icon-btn" onclick="promptCreateFolder('root')" title="ルートにフォルダ作成">📁+</button>
             </div>
           </div>
-          <div id="treeRoot">
-            <!-- JavaScriptで再帰的に動的生成 -->
-          </div>
+          <div id="treeRoot"></div>
         </div>
 
         <div class="side-note" id="sideNote">
-          <strong>✦ フォルダ入れ子に対応！</strong>フォルダの中にさらにフォルダやプログラムを入れて整理できます。
+          <strong>✦ 自由創作モード</strong>複数ファイルを作成して <code>import</code> 相互実行を試せます。
         </div>
 
       </div>
@@ -227,63 +432,82 @@ h1{font-size:21px;margin:0 0 4px}
           <h1 id="pageTitle">コードエディタ (自由創作)</h1>
           <div class="sub" id="pageSub">フォルダ階層を見比べながら自由にプログラムを作り、相互に実行してみよう。</div>
         </div>
-        <div class="mode-switch">
-          <button class="active" id="btnModeFree" onclick="setAppMode('free')">自由創作</button>
-          <button id="btnModeTask" onclick="setAppMode('task')">課題演習</button>
-        </div>
       </div>
 
-      <section class="panel editor-panel">
-        <!-- ファイル切り替えタブバー -->
-        <div class="file-tabs-bar" id="fileTabsBar">
-          <!-- 開いているファイルがタブとして並ぶ -->
-        </div>
+      <!-- ========================================================
+           【課題演習専用】問題一覧カード画面 (課題選択前)
+           ======================================================== -->
+      <section class="task-selection-view" id="taskSelectionView" style="display:none;">
+        <div class="task-cards-container" id="taskCardGrid"></div>
+      </section>
 
-        <div class="panel-head">
-          <div class="file-label">
-            <span class="py-icon">Py</span>
-            <strong id="activeFileNameDisplay">my_project / main.py</strong>
-            <span class="status">Python 3.14</span>
+      <!-- ========================================================
+           【共通作業ビュー】エディタ & コンソール
+           ======================================================== -->
+      <section class="task-work-view" id="taskWorkView" style="display:flex;">
+        
+        <!-- 課題演習中のみ表示されるヘッダーバナー -->
+        <div class="active-task-banner" id="activeTaskBanner" style="display:none;">
+          <div class="banner-left">
+            <button class="btn-back-tasks" onclick="backToTaskList()">← 問題一覧へもどる</button>
+            <strong id="activeTaskBannerTitle" style="color:var(--cyan); font-size:13.5px;">課題01</strong>
+            <span class="badge-diff badge-easy" id="activeTaskBannerDiff">初級</span>
           </div>
-          <div class="tools">
-            <button class="btn" id="resetBtn" onclick="resetFileCode()">初期コード</button>
-            <button class="btn" onclick="formatCode()">✨ 整形</button>
-            <button class="btn btn-run" onclick="runCurrentProgram()">▶ 実行</button>
+          <div style="font-size:12px;">
+            目標出力: <span style="color:var(--green); font-family:Consolas,monospace; font-weight:bold;" id="activeTaskBannerTarget">ねんれいは 10さいです</span>
           </div>
         </div>
 
-        <div class="editor-wrap">
-          <div class="line-numbers" id="lineNumbers">1</div>
-          <textarea id="code" spellcheck="false" aria-label="Pythonコードエディタ" oninput="saveCurrentCode()"></textarea>
+        <div class="panel editor-panel">
+          <!-- 自由創作時のみ表示されるタブバー -->
+          <div class="file-tabs-bar" id="fileTabsBar"></div>
+
+          <div class="panel-head">
+            <div class="file-label">
+              <span class="py-icon">Py</span>
+              <strong id="activeFileNameDisplay">my_project / main.py</strong>
+              <span class="status" id="activeStatusDisplay">Python 3.14</span>
+            </div>
+            <div class="tools">
+              <button class="btn" id="resetBtn" onclick="resetFileCode()">初期コード</button>
+              <button class="btn" onclick="formatCode()">✨ 整形</button>
+              <button class="btn btn-run" onclick="runCurrentProgram()">▶ 実行</button>
+            </div>
+          </div>
+
+          <div class="editor-wrap">
+            <div class="line-numbers" id="lineNumbers">1</div>
+            <textarea id="code" spellcheck="false" aria-label="Pythonコードエディタ" oninput="saveCurrentCode()"></textarea>
+          </div>
+
+          <div class="editor-footer">
+            <span id="editorStatus">準備完了</span>
+            <span>UTF-8 | オートセーブ有効</span>
+          </div>
         </div>
 
-        <div class="editor-footer">
-          <span id="editorStatus">準備完了</span>
-          <span>UTF-8 | オートセーブ有効</span>
+        <!-- 下部コンソール ＆ エラー分析 -->
+        <div class="bottom-grid">
+          <section class="panel output-panel">
+            <div class="small-head">
+              <span>▹ 実行結果コンソール</span>
+              <span class="status" id="runStatus">未実行</span>
+            </div>
+            <div class="output-body" id="output">「▶ 実行」を押すと、プログラムの実行結果が表示されます。</div>
+          </section>
+
+          <section class="panel hint-panel">
+            <div class="small-head">
+              <span>✦ エラー分析 ＆ 修正提案</span>
+              <span class="status">リアルタイム分析</span>
+            </div>
+            <div class="hint-body" id="hint">
+              <strong>ここにAIによるエラー解説と修正提案が表示されます。</strong>
+            </div>
+          </section>
         </div>
       </section>
 
-      <!-- 下部コンソール ＆ エラー分析 -->
-      <div class="bottom-grid">
-        <section class="panel output-panel">
-          <div class="small-head">
-            <span>▹ 実行結果コンソール</span>
-            <span class="status" id="runStatus">未実行</span>
-          </div>
-          <div class="output-body" id="output">「▶ 実行」を押すと、プログラムの実行結果が表示されます。</div>
-        </section>
-
-        <section class="panel hint-panel">
-          <div class="small-head">
-            <span>✦ エラー分析 ＆ 修正提案</span>
-            <span class="status">リアルタイム分析</span>
-          </div>
-          <div class="hint-body" id="hint">
-            <strong>ここにAIによるエラー解説と修正提案が表示されます。</strong><br>
-            サブフォルダ内のファイルを <code>from utils.math import calc</code> などで呼び出した際のエラーも両方解析します。
-          </div>
-        </section>
-      </div>
     </main>
 
     <!-- ③ 右サイドバー -->
@@ -293,7 +517,7 @@ h1{font-size:21px;margin:0 0 4px}
           <div class="ai-mark">✦</div>
           <div>
             <h2>AI学習アシスタント</h2>
-            <div class="sub">フォルダをまたぐコードも丸ごと解析</div>
+            <div class="sub" id="aiSub">フォルダをまたぐコードも丸ごと解析</div>
           </div>
         </div>
         <div class="ai-message" id="chatMessages">
@@ -302,8 +526,8 @@ h1{font-size:21px;margin:0 0 4px}
         </div>
         <div class="quick-prompts">
           <button onclick="sendQuickPrompt('このコードを説明して')">コードを説明して</button>
-          <button onclick="sendQuickPrompt('サブフォルダのimport方法')">importの方法</button>
           <button onclick="sendQuickPrompt('エラーの直し方を教えて')">エラーの直し方</button>
+          <button onclick="sendQuickPrompt('ヒントを教えて')">ヒント</button>
         </div>
         <form class="chat-form" id="chatForm">
           <input id="chatInput" placeholder="質問を入力..." aria-label="AIへの質問">
@@ -313,16 +537,13 @@ h1{font-size:21px;margin:0 0 4px}
 
       <section class="panel task-card" id="taskCard">
         <div class="card-title">
-          <h2 id="taskCardTitle">階層インポートのヒント</h2>
-          <span class="tag" id="taskCardTag">自由創作中</span>
+          <h2 id="taskCardTitle">自由創作のヒント</h2>
+          <span class="tag" id="taskCardTag">自由創作</span>
         </div>
         <p id="taskText">
           フォルダ内のプログラムは <code>from フォルダ名 import ファイル名</code> で読み込めます。
         </p>
-        <div class="example" id="taskExample">
-# 例: utilsフォルダ内のhelper.pyを使う
-from utils import helper
-total = helper.calc_score(10)</div>
+        <div class="example" id="taskExample"># 例: utils/helper.pyを使う\nfrom utils import helper</div>
         <div class="task-meta">
           <span id="taskMeta1">ツリー型管理中</span>
           <span id="taskMeta2">作業フォルダ内スコープ</span>
@@ -345,14 +566,61 @@ total = helper.calc_score(10)</div>
 
   <footer class="footer">
     <span>コードラボ | Python学習環境 · Tauri v2 / Rust / React</span>
-    <span>ツリー型複数階層フォルダ管理 · 相互実行 ＆ 両コード参照エラー解析対応</span>
+    <span>ワンクリック モード切替（Alt+1 / Alt+2）対応</span>
   </footer>
 </div>
 
 <div class="toast" id="toast" role="status"></div>
 
 <script>
-// --- ツリー型ファイル・フォルダのデータ構造（入れ子・再帰対応） ---
+// --- 課題マスタデータ ---
+const taskDatabase = [
+  {
+    id: 'task_01',
+    fileName: 'task_01.py',
+    title: '課題 01｜年齢を表示しよう',
+    diff: 'easy',
+    diffLabel: '初級',
+    desc: '変数 age に年齢（10歳）を代入し、「ねんれいは 10さいです」と画面に表示してください。',
+    targetOutput: 'ねんれいは 10さいです',
+    time: '3分',
+    passScore: '80点以上',
+    initialCode: `# 課題01: 年齢(10歳)を表示するプログラムを作ろう！\nage = 10 + 5\nprint("ねんれいは " + str(age) + "さいです")\n`
+  },
+  {
+    id: 'task_02',
+    fileName: 'task_02.py',
+    title: '課題 02｜1から10までの合計',
+    diff: 'easy',
+    diffLabel: '初級',
+    desc: 'forループを使って1から10までの数を足し合わせ、合計「55」を出力してください。',
+    targetOutput: '合計は 55 です',
+    time: '5分',
+    passScore: '80点以上',
+    initialCode: `# 課題02: 1から10までの合計を計算して表示しよう\ntotal = 0\nfor i in range(1, 11):\n    total += i\nprint(f"合計は {total} です")\n`
+  },
+  {
+    id: 'task_03',
+    fileName: 'task_03.py',
+    title: '課題 03｜偶数・奇数の判定',
+    diff: 'mid',
+    diffLabel: '中級',
+    desc: '変数 num の値が偶数なら「ぐうすう」、奇数なら「きすう」とif文で判定して表示してください。',
+    targetOutput: '8 は ぐうすう です',
+    time: '7分',
+    passScore: '80点以上',
+    initialCode: `# 課題03: 偶数・奇数を判定しよう\nnum = 8\nif num % 2 == 0:\n    print(str(num) + " は ぐうすう です")\nelse:\n    print(str(num) + " は きすう です")\n`
+  }
+];
+
+let selectedTaskId = null;
+let taskUserCodes = {
+  'task_01': taskDatabase[0].initialCode,
+  'task_02': taskDatabase[1].initialCode,
+  'task_03': taskDatabase[2].initialCode
+};
+
+// 自由創作ファイルツリーデータ
 let fileSystem = {
   name: "my_project",
   type: "folder",
@@ -363,14 +631,7 @@ let fileSystem = {
       name: "main.py",
       type: "file",
       path: "my_project/main.py",
-      code: `# [main.py] メインプログラム
-from utils import helper
-
-print("計算をはじめます...")
-# utils/helper.py の関数を呼び出します
-total = helper.calc_score(10)
-print("合計得点: " + str(total))
-`
+      code: `# [main.py] メインプログラム\nfrom utils import helper\n\nprint("計算をはじめます...")\ntotal = helper.calc_score(10)\nprint("合計得点: " + str(total))\n`
     },
     {
       name: "utils",
@@ -382,38 +643,16 @@ print("合計得点: " + str(total))
           name: "helper.py",
           type: "file",
           path: "my_project/utils/helper.py",
-          code: `# [utils/helper.py] 補助関数ファイル
-def calc_score(base_point):
-    bonus = 5
-    # ⚠️ bonus_rate が未定義のためエラーになります
-    return base_point + bonus_rate
-`
-        },
-        {
-          name: "math",
-          type: "folder",
-          path: "my_project/utils/math",
-          expanded: false,
-          children: [
-            {
-              name: "calc.py",
-              type: "file",
-              path: "my_project/utils/math/calc.py",
-              code: `# [utils/math/calc.py] 詳細計算\ndef double(n):\n    return n * 2\n`
-            }
-          ]
+          code: `# [utils/helper.py] 補助関数ファイル\ndef calc_score(base_point):\n    bonus = 5\n    return base_point + bonus_rate\n`
         }
       ]
     }
   ]
 };
 
-// 課題演習用データ
-let taskCode = `# 課題: 年齢(10歳)を表示するプログラムを作ろう！\nage = 10 + 5\nprint("ねんれいは " + str(age) + "さいです")\n`;
-
 let currentMode = 'free'; // 'free' | 'task'
 let activeFilePath = 'my_project/main.py';
-let openTabs = ['my_project/main.py', 'my_project/utils/helper.py'];
+let openTabs = ['my_project/main.py'];
 
 const codeEl = document.getElementById('code');
 const outputEl = document.getElementById('output');
@@ -422,8 +661,20 @@ const lineNumbersEl = document.getElementById('lineNumbers');
 const toastEl = document.getElementById('toast');
 
 window.onload = () => {
+  renderTaskSelectionCards();
   setAppMode('free');
 };
+
+// キーボードショートカット (Alt+1: 自由創作, Alt+2: 課題演習)
+window.addEventListener('keydown', (e) => {
+  if (e.altKey && e.key === '1') {
+    e.preventDefault();
+    setAppMode('free');
+  } else if (e.altKey && e.key === '2') {
+    e.preventDefault();
+    setAppMode('task');
+  }
+});
 
 // テーマ切替
 document.getElementById('themeToggleBtn').addEventListener('click', () => {
@@ -437,7 +688,6 @@ document.getElementById('themeToggleBtn').addEventListener('click', () => {
   }
 });
 
-// 行番号更新
 function updateLines(){
   const n = Math.max(1, codeEl.value.split('\n').length);
   lineNumbersEl.textContent = Array.from({length:n},(_,i)=>i+1).join('\n');
@@ -447,7 +697,7 @@ function notify(message){
   toastEl.textContent = message;
   toastEl.style.display = 'block';
   clearTimeout(notify.timer);
-  notify.timer = setTimeout(() => toastEl.style.display = 'none', 2600);
+  notify.timer = setTimeout(() => toastEl.style.display = 'none', 2400);
 }
 
 codeEl.addEventListener('input', updateLines);
@@ -465,204 +715,177 @@ codeEl.addEventListener('keydown', e => {
   }
 });
 
-// モード切り替え (自由創作 ⇄ 課題演習)
+// ★ モード切り替え（ヘッダー・サイドバー連動） ★
 function setAppMode(mode) {
   currentMode = mode;
+
+  // 上部トグルボタンのアクティブ同期
   document.getElementById('btnModeFree').classList.toggle('active', mode === 'free');
   document.getElementById('btnModeTask').classList.toggle('active', mode === 'task');
+
+  // サイドバートグルのアクティブ同期
+  document.getElementById('sideBtnFree').classList.toggle('active', mode === 'free');
+  document.getElementById('sideBtnTask').classList.toggle('active', mode === 'task');
 
   const standardNav = document.getElementById('standardNavArea');
   const treeNav = document.getElementById('treeNavArea');
   const fileTabsBar = document.getElementById('fileTabsBar');
-  const pageTitle = document.getElementById('pageTitle');
-  const pageSub = document.getElementById('pageSub');
+  const activeTaskBanner = document.getElementById('activeTaskBanner');
+  const sideNote = document.getElementById('sideNote');
 
   if(mode === 'free') {
+    // 自由創作モード
     standardNav.style.display = 'none';
     treeNav.style.display = 'flex';
+    document.getElementById('taskSelectionView').style.display = 'none';
+    document.getElementById('taskWorkView').style.display = 'flex';
     fileTabsBar.style.display = 'flex';
-    pageTitle.textContent = "コードエディタ (自由創作)";
-    pageSub.textContent = "フォルダ階層を見比べながら自由にプログラムを作り、相互に実行してみよう。";
+    activeTaskBanner.style.display = 'none';
+    document.getElementById('activeStatusDisplay').textContent = 'Python 3.14';
+
+    document.getElementById('pageTitle').textContent = "コードエディタ (自由創作)";
+    document.getElementById('pageSub').textContent = "フォルダ階層を見比べながら自由にプログラムを作り、相互に実行してみよう。";
+    sideNote.innerHTML = "<strong>✦ 自由創作モード</strong>複数ファイルを作成して <code>import</code> 相互実行を試せます。";
+
+    document.getElementById('aiSub').textContent = "フォルダをまたぐコードも丸ごと解析";
+    document.getElementById('taskCardTitle').textContent = "自由創作のヒント";
+    document.getElementById('taskCardTag').textContent = "自由創作";
+    document.getElementById('taskText').innerHTML = "フォルダ内のプログラムは <code>from フォルダ名 import ファイル名</code> で読み込めます。";
+    document.getElementById('taskExample').textContent = "# 例: utils/helper.pyを使う\nfrom utils import helper";
+
     renderTree();
     renderTabs();
     openFileByPath(activeFilePath);
+    notify("📁 自由創作モードに切り替えました (Alt+1)");
   } else {
+    // 課題演習モード
     standardNav.style.display = 'block';
     treeNav.style.display = 'none';
     fileTabsBar.style.display = 'none';
-    pageTitle.textContent = "課題演習モード (自動採点)";
-    pageSub.textContent = "目標のお題に合わせて白紙からコードを書き、テストとAI採点を受けよう。";
-    document.getElementById('activeFileNameDisplay').textContent = "solution.py (課題演習)";
-    codeEl.value = taskCode;
-    updateLines();
+    document.getElementById('activeStatusDisplay').textContent = '課題自動採点';
+    sideNote.innerHTML = "<strong>✦ 課題演習モード</strong>お題に合わせてコードを完成させ、合格を目指しましょう。";
+    document.getElementById('aiSub').textContent = "段階的ヒント・エラー解決支援";
+
+    if (selectedTaskId) {
+      document.getElementById('taskSelectionView').style.display = 'none';
+      document.getElementById('taskWorkView').style.display = 'flex';
+      activeTaskBanner.style.display = 'flex';
+      selectTaskAndOpenEditor(selectedTaskId, false);
+    } else {
+      backToTaskList(false);
+    }
+    notify("🎯 課題演習モードに切り替えました (Alt+2)");
   }
 }
 
-// --- ツリー描画ロジック（再帰） ---
-function renderTree() {
-  const rootEl = document.getElementById('treeRoot');
-  rootEl.innerHTML = '';
-  rootEl.appendChild(createTreeNodeElement(fileSystem));
-}
+// 課題カードの描画
+function renderTaskSelectionCards() {
+  const container = document.getElementById('taskCardGrid');
+  container.innerHTML = '';
+  taskDatabase.forEach(task => {
+    const card = document.createElement('div');
+    card.className = 'task-select-card';
+    card.onclick = () => selectTaskAndOpenEditor(task.id);
 
-function createTreeNodeElement(node) {
-  const container = document.createElement('div');
-  container.className = 'tree-node';
-
-  const row = document.createElement('div');
-  row.className = 'tree-row' + (node.path === activeFilePath ? ' active' : '');
-  
-  if(node.type === 'folder') {
-    row.innerHTML = `
-      <span class="tree-toggle">${node.expanded ? '▼' : '▶'}</span>
-      <span>📁 ${node.name}</span>
-      <div class="tree-actions">
-        <button class="tree-icon-btn" onclick="event.stopPropagation(); promptCreateFile('${node.path}')" title="ここにファイル作成">📄+</button>
-        <button class="tree-icon-btn" onclick="event.stopPropagation(); promptCreateFolder('${node.path}')" title="ここに子フォルダ作成">📁+</button>
+    card.innerHTML = `
+      <div>
+        <div class="task-card-header">
+          <h3>${task.title}</h3>
+          <span class="badge-diff ${task.diff === 'easy' ? 'badge-easy' : 'badge-mid'}">${task.diffLabel}</span>
+        </div>
+        <p>${task.desc}</p>
+        <div class="task-target-box">
+          <span class="label">【期待される出力】</span>
+          <span class="val">${task.targetOutput}</span>
+        </div>
+      </div>
+      <div class="task-card-foot">
+        <span>目安: ${task.time} ｜ 合格: ${task.passScore}</span>
+        <button class="btn-start-task" onclick="event.stopPropagation(); selectTaskAndOpenEditor('${task.id}')">挑戦する ▶</button>
       </div>
     `;
-    row.onclick = () => {
-      node.expanded = !node.expanded;
-      renderTree();
-    };
-  } else {
-    row.innerHTML = `
-      <span class="tree-toggle"></span>
-      <span>📄 ${node.name}</span>
-    `;
-    row.onclick = () => openFileByPath(node.path);
-  }
-
-  container.appendChild(row);
-
-  if(node.type === 'folder' && node.expanded && node.children) {
-    const childrenContainer = document.createElement('div');
-    childrenContainer.className = 'tree-children';
-    node.children.forEach(child => {
-      childrenContainer.appendChild(createTreeNodeElement(child));
-    });
-    container.appendChild(childrenContainer);
-  }
-
-  return container;
-}
-
-// ファイル・タブ操作
-function openFileByPath(path) {
-  activeFilePath = path;
-  if(!openTabs.includes(path)) openTabs.push(path);
-  renderTabs();
-  renderTree();
-
-  const fileObj = findNodeByPath(fileSystem, path);
-  if(fileObj) {
-    codeEl.value = fileObj.code || '';
-    document.getElementById('activeFileNameDisplay').textContent = path;
-  }
-  updateLines();
-}
-
-function renderTabs() {
-  const bar = document.getElementById('fileTabsBar');
-  bar.innerHTML = '';
-  openTabs.forEach(path => {
-    const tab = document.createElement('div');
-    tab.className = 'file-tab' + (path === activeFilePath ? ' active' : '');
-    const fileName = path.split('/').pop();
-    tab.innerHTML = `
-      <span>📄 ${fileName}</span>
-      <span class="file-tab-close" onclick="event.stopPropagation(); closeTab('${path}')">✕</span>
-    `;
-    tab.onclick = () => openFileByPath(path);
-    bar.appendChild(tab);
+    container.appendChild(card);
   });
 }
 
-function closeTab(path) {
-  openTabs = openTabs.filter(p => p !== path);
-  if(activeFilePath === path) {
-    activeFilePath = openTabs.length > 0 ? openTabs[openTabs.length - 1] : '';
-  }
-  if(activeFilePath) openFileByPath(activeFilePath);
-  else {
-    codeEl.value = '';
-    document.getElementById('activeFileNameDisplay').textContent = '(開いているファイルなし)';
-    renderTabs();
-    renderTree();
-  }
+function selectTaskAndOpenEditor(taskId, showToast = true) {
+  selectedTaskId = taskId;
+  const task = taskDatabase.find(t => t.id === taskId);
+  if (!task) return;
+
+  document.getElementById('taskSelectionView').style.display = 'none';
+  document.getElementById('taskWorkView').style.display = 'flex';
+  document.getElementById('activeTaskBanner').style.display = 'flex';
+
+  document.getElementById('activeTaskBannerTitle').textContent = task.title;
+  document.getElementById('activeTaskBannerDiff').textContent = task.diffLabel;
+  document.getElementById('activeTaskBannerDiff').className = `badge-diff ${task.diff === 'easy' ? 'badge-easy' : 'badge-mid'}`;
+  document.getElementById('activeTaskBannerTarget').textContent = task.targetOutput;
+
+  document.getElementById('activeFileNameDisplay').textContent = `${task.fileName} (課題演習)`;
+  codeEl.value = taskUserCodes[taskId] || task.initialCode;
+  updateLines();
+
+  document.getElementById('pageTitle').textContent = `課題演習: ${task.title}`;
+  document.getElementById('pageSub').textContent = `目標の出力を目指してコードを書き、「▶ 実行」を押して自動採点を受けましょう。`;
+
+  document.getElementById('taskCardTitle').textContent = task.title;
+  document.getElementById('taskCardTag').textContent = task.diffLabel;
+  document.getElementById('taskText').textContent = task.desc;
+  document.getElementById('taskExample').textContent = `目標の出力：${task.targetOutput}`;
+  document.getElementById('taskMeta1').textContent = `目安: ${task.time}`;
+  document.getElementById('taskMeta2').textContent = `合格ライン: ${task.passScore}`;
+
+  document.getElementById('chatMessages').innerHTML = `
+    <strong>AIアシスタント：</strong><br>
+    「${task.title}」を始めたね！<br>
+    目標の出力は「<strong style="color:var(--green)">${task.targetOutput}</strong>」だよ。書けたら「▶ 実行」を押してね！
+  `;
+
+  if(showToast) notify(`「${task.title}」のエディタを開きました`);
 }
 
-// フォルダ・ファイル作成ダイアログ
-function promptCreateFile(targetPath) {
-  const name = prompt("作成するファイル名を入力してください (例: config.py):", "new_script.py");
-  if(!name) return;
-  const parent = targetPath === 'root' ? fileSystem : findNodeByPath(fileSystem, targetPath);
-  if(parent && parent.type === 'folder') {
-    parent.expanded = true;
-    const newPath = parent.path + '/' + name;
-    parent.children.push({
-      name: name,
-      type: "file",
-      path: newPath,
-      code: `# [${name}]\n# 新規ファイルです\n`
-    });
-    renderTree();
-    openFileByPath(newPath);
-    notify(`ファイル「${name}」を作成しました`);
-  }
-}
+function backToTaskList(showToast = true) {
+  selectedTaskId = null;
+  document.getElementById('taskWorkView').style.display = 'none';
+  document.getElementById('taskSelectionView').style.display = 'flex';
 
-function promptCreateFolder(targetPath) {
-  const name = prompt("作成するフォルダ名を入力してください (例: models, components):", "sub_folder");
-  if(!name) return;
-  const parent = targetPath === 'root' ? fileSystem : findNodeByPath(fileSystem, targetPath);
-  if(parent && parent.type === 'folder') {
-    parent.expanded = true;
-    const newPath = parent.path + '/' + name;
-    parent.children.push({
-      name: name,
-      type: "folder",
-      path: newPath,
-      expanded: true,
-      children: []
-    });
-    renderTree();
-    notify(`フォルダ「${name}」を作成しました`);
-  }
-}
+  document.getElementById('pageTitle').textContent = "課題演習モード (問題一覧)";
+  document.getElementById('pageSub').textContent = "挑戦する問題カードを選択してください。";
 
-function findNodeByPath(root, path) {
-  if(root.path === path) return root;
-  if(root.children) {
-    for(let child of root.children) {
-      const found = findNodeByPath(child, path);
-      if(found) return found;
-    }
-  }
-  return null;
+  document.getElementById('taskCardTitle').textContent = "課題演習の進め方";
+  document.getElementById('taskCardTag').textContent = "ガイド";
+  document.getElementById('taskText').textContent = "解きたい課題カードをクリックするとエディタが開き、白紙からコードを書いてテスト・採点できます。";
+  document.getElementById('taskExample').textContent = "合格条件：80点以上 ＆ エラーなし";
+
+  document.getElementById('chatMessages').innerHTML = `
+    <strong>AIアシスタント：</strong><br>
+    挑戦したい課題カードを選んで学習をはじめよう！
+  `;
 }
 
 function saveCurrentCode() {
-  if(currentMode === 'free') {
+  if(currentMode === 'task' && selectedTaskId) {
+    taskUserCodes[selectedTaskId] = codeEl.value;
+  } else {
     const fileObj = findNodeByPath(fileSystem, activeFilePath);
     if(fileObj) fileObj.code = codeEl.value;
-  } else {
-    taskCode = codeEl.value;
   }
   updateLines();
 }
 
 function resetFileCode() {
-  if(confirm("コードをリセットしますか？")) {
-    if(currentMode === 'free') {
+  if(confirm("コードを初期状態に戻しますか？")) {
+    if(currentMode === 'task' && selectedTaskId) {
+      const curTask = taskDatabase.find(t => t.id === selectedTaskId);
+      taskUserCodes[selectedTaskId] = curTask.initialCode;
+      codeEl.value = curTask.initialCode;
+    } else {
       const fileObj = findNodeByPath(fileSystem, activeFilePath);
       if(fileObj) {
         fileObj.code = `# [${fileObj.name}]\n`;
         codeEl.value = fileObj.code;
       }
-    } else {
-      taskCode = `# 課題: 年齢(10歳)を表示するプログラムを作ろう！\nage = 10 + 5\nprint("ねんれいは " + str(age) + "さいです")\n`;
-      codeEl.value = taskCode;
     }
     updateLines();
     notify("コードを初期化しました");
@@ -683,10 +906,26 @@ function runCurrentProgram() {
   setTimeout(() => {
     document.getElementById('runStatus').textContent = '完了';
 
-    if(currentMode === 'free') {
+    if(currentMode === 'task') {
+      const curTask = taskDatabase.find(t => t.id === selectedTaskId);
+      const code = taskUserCodes[selectedTaskId] || '';
+
+      if (selectedTaskId === 'task_01') {
+        if (code.includes('10 + 5')) {
+          outputEl.innerHTML = `<span class="error">出力: ねんれいは 15さいです</span>\n-------------------------\n[判定: 85点 (不合格)]`;
+          hintEl.innerHTML = `<strong>🤔 期待した結果と違います (論理エラー)</strong><br>目標は「<strong>${curTask.targetOutput}</strong>」ですが、15歳になっています。<code>10 + 5</code> の計算を見直してみましょう！`;
+        } else {
+          outputEl.innerHTML = `<span class="success">出力: ${curTask.targetOutput}</span>\n-------------------------\n<span class="success">[判定: 100点満点 (合格！)]</span>`;
+          hintEl.innerHTML = `<strong style="color:var(--green)">🎉 100点満点クリア！</strong><br>目標どおりの出力が確認できました！`;
+        }
+      } else {
+        outputEl.innerHTML = `<span class="success">出力: ${curTask.targetOutput}</span>\n-------------------------\n<span class="success">[判定: 100点満点 (合格！)]</span>`;
+        hintEl.innerHTML = `<strong style="color:var(--green)">🎉 合格！</strong><br>バッチリお題通りの出力です。`;
+      }
+    } else {
+      // 自由創作実行
       const helperObj = findNodeByPath(fileSystem, 'my_project/utils/helper.py');
       if(helperObj && helperObj.code.includes('bonus_rate')) {
-        // 別フォルダ(utils/helper.py)起因のエラー
         outputEl.innerHTML = `
 <span class="error">Traceback (most recent call last):</span>
   File "my_project/main.py", line 6, in &lt;module&gt;
@@ -705,44 +944,83 @@ function runCurrentProgram() {
 <strong>【直し方の提案】</strong><br>
 ① <strong>helper.py を修正:</strong> <code>bonus_rate</code> を定義済みの <code>bonus</code> に直す。<br>
 ② <strong>main.py を修正:</strong> <code>calc_score(10, 5)</code> のように引数を渡せるよう関数定義を拡張する。`;
-
-        document.getElementById('chatMessages').innerHTML = `
-<strong>AIアシスタント：</strong><br>
-サブフォルダ <code>utils/helper.py</code> の中でエラーが起きているよ！「👉 utils/helper.py を開く」を押すとすぐ直せるよ。`;
       } else {
-        outputEl.innerHTML = `
-計算をはじめます...
-合計得点: 15
------------------------------------
-<span class="success">🎉 プログラムは正常に終了しました (終了コード: 0)</span>`;
-
-        hintEl.innerHTML = `<strong style="color:var(--green)">🎉 フォルダ間連携 成功！</strong><br>サブフォルダ内のモジュールを正常に呼び出せました。`;
-      }
-    } else {
-      // 課題演習
-      if(taskCode.includes('10 + 5')) {
-        outputEl.innerHTML = `<span class="error">出力: ねんれいは 15さいです</span>`;
-        hintEl.innerHTML = `<strong>🤔 期待した結果と違います (論理エラー)</strong><br>目標は「10歳」です。計算を見直してみよう！`;
-      } else {
-        outputEl.innerHTML = `<span class="success">ねんれいは 10さいです</span>`;
-        hintEl.innerHTML = `<strong style="color:var(--green)">🎉 100点満点合格！</strong>`;
+        outputEl.innerHTML = `計算をはじめます...\n合計得点: 15\n-------------------------\n<span class="success">🎉 プログラムは正常終了しました</span>`;
+        hintEl.innerHTML = `<strong style="color:var(--green)">実行完了</strong>`;
       }
     }
-  }, 400);
+  }, 350);
 }
 
+// 自由創作ツリー・タブ関数群
+function renderTree() {
+  const rootEl = document.getElementById('treeRoot');
+  rootEl.innerHTML = '';
+  rootEl.appendChild(createTreeNodeElement(fileSystem));
+}
+function createTreeNodeElement(node) {
+  const container = document.createElement('div');
+  container.className = 'tree-node';
+  const row = document.createElement('div');
+  row.className = 'tree-row' + (node.path === activeFilePath ? ' active' : '');
+  if(node.type === 'folder') {
+    row.innerHTML = `<span class="tree-toggle">${node.expanded ? '▼' : '▶'}</span><span>📁 ${node.name}</span>`;
+    row.onclick = () => { node.expanded = !node.expanded; renderTree(); };
+  } else {
+    row.innerHTML = `<span class="tree-toggle"></span><span>📄 ${node.name}</span>`;
+    row.onclick = () => openFileByPath(node.path);
+  }
+  container.appendChild(row);
+  if(node.type === 'folder' && node.expanded && node.children) {
+    const childrenContainer = document.createElement('div');
+    childrenContainer.className = 'tree-children';
+    node.children.forEach(child => childrenContainer.appendChild(createTreeNodeElement(child)));
+    container.appendChild(childrenContainer);
+  }
+  return container;
+}
+function openFileByPath(path) {
+  activeFilePath = path;
+  if(!openTabs.includes(path)) openTabs.push(path);
+  renderTabs();
+  renderTree();
+  const fileObj = findNodeByPath(fileSystem, path);
+  if(fileObj) {
+    codeEl.value = fileObj.code || '';
+    document.getElementById('activeFileNameDisplay').textContent = path;
+  }
+  updateLines();
+}
+function renderTabs() {
+  const bar = document.getElementById('fileTabsBar');
+  bar.innerHTML = '';
+  openTabs.forEach(path => {
+    const tab = document.createElement('div');
+    tab.className = 'file-tab' + (path === activeFilePath ? ' active' : '');
+    tab.innerHTML = `<span>📄 ${path.split('/').pop()}</span>`;
+    tab.onclick = () => openFileByPath(path);
+    bar.appendChild(tab);
+  });
+}
+function findNodeByPath(root, path) {
+  if(root.path === path) return root;
+  if(root.children) {
+    for(let child of root.children) {
+      const found = findNodeByPath(child, path);
+      if(found) return found;
+    }
+  }
+  return null;
+}
 function sendQuickPrompt(txt) {
   document.getElementById('chatInput').value = txt;
   document.getElementById('chatInput').focus();
 }
-
 document.getElementById('chatForm').addEventListener('submit', e => {
   e.preventDefault();
   const input = document.getElementById('chatInput');
   if(!input.value.trim()) return;
-  document.getElementById('chatMessages').innerHTML = `
-<strong>あなた：</strong><br>${input.value}<br><br>
-<strong>AIアシスタント：</strong><br>質問ありがとう！現在の階層構造と開いているファイル内容をもとにサポートするよ。`;
+  document.getElementById('chatMessages').innerHTML = `<strong>あなた：</strong><br>${input.value}<br><br><strong>AIアシスタント：</strong><br>お題のクリアに向けて一緒にコードを確認しよう！`;
   input.value = '';
 });
 </script>
