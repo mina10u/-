@@ -1,1028 +1,1868 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="h-full select-none">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>コードラボ | プログラミング学習 AI誤り分析アシスタント</title>
-<style>
-:root{
-  --bg:#0b1120;--panel:#111b2e;--panel2:#162238;--border:#293750;
-  --text:#e8eef8;--muted:#91a1bb;--blue:#4f8cff;--cyan:#54d6e8;
-  --green:#49d6a0;--orange:#ffbd69;--red:#ff7185;
-  --editor-bg:#0c1423;--editor-text:#dbeafe;--line-num-bg:#0c1423;--line-num-text:#53637c;
-}
-[data-theme="light"]{
-  --bg:#f1f5f9;--panel:#ffffff;--panel2:#f8fafc;--border:#cbd5e1;
-  --text:#0f172a;--muted:#64748b;--blue:#2563eb;--cyan:#0284c7;
-  --green:#16a34a;--orange:#d97706;--red:#dc2626;
-  --editor-bg:#ffffff;--editor-text:#0f172a;--line-num-bg:#f8fafc;--line-num-text:#94a3b8;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 "Segoe UI",Meiryo,sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;transition:background 0.2s,color 0.2s}
-button,textarea,input{font:inherit}
-button{cursor:pointer}
-.app{height:100vh;display:flex;flex-direction:column}
-
-/* トップバー */
-.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:var(--panel2);gap:18px;flex-shrink:0}
-.brand{display:flex;align-items:center;gap:12px;font-weight:750;font-size:17px;white-space:nowrap}
-.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3986ff,#48d7d0);display:grid;place-items:center;color:#061323;font-weight:900;font-size:19px}
-.brand small{display:block;color:var(--muted);font-size:11px;font-weight:500;letter-spacing:.04em}
-
-/* ★ トップバー中央：大きく押しやすいメインモード切替スイッチ ★ */
-.top-mode-switcher {
-  display: flex;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 4px;
-  gap: 4px;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-}
-.mode-toggle-btn {
-  background: transparent;
-  color: var(--muted);
-  border: none;
-  border-radius: 8px;
-  padding: 8px 18px;
-  font-size: 13px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-.mode-toggle-btn:hover {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.05);
-}
-.mode-toggle-btn.active {
-  background: var(--blue);
-  color: #ffffff;
-  box-shadow: 0 2px 8px rgba(79, 140, 255, 0.4);
-}
-.mode-shortcut-badge {
-  font-size: 10px;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 1px 5px;
-  border-radius: 4px;
-  font-family: monospace;
-}
-
-.top-actions{display:flex;align-items:center;gap:10px}
-.pill{border:1px solid var(--border);border-radius:999px;padding:6px 11px;color:var(--muted);font-size:12px;background:var(--panel)}
-.pill.online{color:var(--green);border-color:var(--border)}
-.avatar{width:32px;height:32px;border-radius:50%;background:var(--border);display:grid;place-items:center;font-weight:700}
-
-/* レイアウト */
-.layout{display:grid;grid-template-columns:250px minmax(380px,1fr) minmax(300px,350px);gap:16px;padding:18px;flex:1;min-height:0;overflow:hidden}
-.sidebar,.workspace,.rightbar{min-width:0;display:flex;flex-direction:column;height:100%;overflow:hidden}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
-.sidebar .panel{padding:14px;overflow-y:auto}
-
-/* サイドバー内ミニモード切替 */
-.side-mode-box {
-  background: var(--panel2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 4px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4px;
-  margin-bottom: 12px;
-}
-.side-mode-btn {
-  background: transparent;
-  color: var(--muted);
-  border: none;
-  border-radius: 6px;
-  padding: 6px 0;
-  font-size: 11.5px;
-  font-weight: 700;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.side-mode-btn.active {
-  background: var(--blue);
-  color: #fff;
-}
-
-.side-title{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.12em;margin:6px 8px 8px;display:flex;justify-content:space-between;align-items:center}
-.nav{display:flex;align-items:center;gap:10px;padding:9px 11px;margin:2px 0;border-radius:9px;color:var(--text);cursor:pointer;opacity:0.85}
-.nav:hover{opacity:1;background:var(--panel2)}
-.nav.active{background:var(--panel2);color:var(--blue);border:1px solid var(--border);font-weight:700;opacity:1}
-.nav .ico{width:18px;text-align:center;font-size:15px}
-.side-note{margin-top:auto;padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:11.5px}
-.side-note strong{display:block;color:var(--cyan);margin-bottom:3px}
-
-/* ツリー型ファイルエクスプローラー */
-.tree-container{display:none;flex-direction:column;gap:2px;font-size:12px;}
-.tree-header-actions{display:flex;gap:4px;}
-.tree-icon-btn{background:none;border:none;color:var(--muted);padding:2px 5px;border-radius:4px;cursor:pointer;font-size:12px}
-.tree-icon-btn:hover{color:var(--blue);background:var(--panel2)}
-
-.tree-node{display:flex;flex-direction:column;}
-.tree-row{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:6px;cursor:pointer;user-select:none;color:var(--text);transition:background 0.15s;}
-.tree-row:hover{background:var(--panel2);}
-.tree-row.active{background:rgba(79,140,255,0.15);color:var(--blue);font-weight:bold;}
-.tree-toggle{width:14px;font-size:10px;color:var(--muted);display:inline-block;text-align:center;}
-.tree-children{padding-left:14px;border-left:1px dashed var(--border);margin-left:8px;display:flex;flex-direction:column;gap:2px;}
-.tree-row .tree-actions{margin-left:auto;display:none;gap:2px;}
-.tree-row:hover .tree-actions{display:flex;}
-
-/* 中央ワークスペース */
-.workspace{overflow-y:auto;padding-right:4px}
-.mainhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:3px 2px 14px;flex-shrink:0}
-h1{font-size:20px;margin:0 0 4px}
-.sub{color:var(--muted);font-size:12px}
-
-/* 課題演習：問題選択カード一覧 */
-.task-selection-view {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  flex: 1;
-}
-.task-cards-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-}
-.task-select-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 18px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.task-select-card:hover {
-  border-color: var(--blue);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(79,140,255,0.15);
-}
-.task-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 10px;
-}
-.task-card-header h3 {
-  font-size: 15px;
-  margin: 0;
-  color: var(--text);
-}
-.badge-diff {
-  font-size: 11px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-weight: 700;
-}
-.badge-easy { background: rgba(73,214,160,0.15); color: var(--green); border: 1px solid var(--green); }
-.badge-mid { background: rgba(255,189,105,0.15); color: var(--orange); border: 1px solid var(--orange); }
-
-.task-select-card p {
-  font-size: 12.5px;
-  color: var(--muted);
-  line-height: 1.55;
-  margin: 0 0 14px;
-}
-.task-target-box {
-  background: var(--editor-bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px;
-  font-size: 12px;
-  margin-bottom: 14px;
-}
-.task-target-box .label {
-  color: var(--muted);
-  font-size: 11px;
-  display: block;
-  margin-bottom: 4px;
-}
-.task-target-box .val {
-  color: var(--green);
-  font-family: Consolas, monospace;
-  font-weight: bold;
-}
-.task-card-foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11.5px;
-  color: var(--muted);
-  border-top: 1px solid var(--border);
-  padding-top: 12px;
-}
-.btn-start-task {
-  background: var(--blue);
-  color: white;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 12px;
-  transition: all 0.15s;
-}
-.btn-start-task:hover { filter: brightness(1.15); }
-
-/* 課題演習：作業ビュー */
-.task-work-view {
-  display: none;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
-.active-task-banner {
-  background: var(--panel2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 14px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-}
-.banner-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.btn-back-tasks {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  color: var(--cyan);
-  padding: 5px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: bold;
-}
-.btn-back-tasks:hover { background: var(--border); color: #fff; }
-
-.editor-panel{display:flex;flex-direction:column;flex:1;min-height:340px}
-
-/* タブバー */
-.file-tabs-bar{display:flex;align-items:center;background:var(--panel2);border-bottom:1px solid var(--border);padding:0 8px;gap:4px;overflow-x:auto}
-.file-tab{display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:12px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;user-select:none}
-.file-tab:hover{color:var(--text)}
-.file-tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:bold;background:rgba(79,140,255,0.06)}
-
-.panel-head{display:flex;justify-content:space-between;align-items:center;padding:10px 15px;border-bottom:1px solid var(--border);background:var(--panel)}
-.file-label{display:flex;align-items:center;gap:8px;color:var(--text);font-size:12px}
-.py-icon{display:inline-grid;place-items:center;width:20px;height:20px;background:#f1c75b;color:#18233a;border-radius:5px;font-size:11px;font-weight:900}
-.tools{display:flex;gap:7px}
-.btn{border:1px solid var(--border);background:var(--panel2);color:var(--text);border-radius:8px;padding:6px 11px;font-size:12px}
-.btn:hover{filter:brightness(1.15)}
-.btn-run{background:#1d9c75;border-color:#1d9c75;color:#fff;font-weight:800;padding:6px 15px}
-
-.editor-wrap{display:grid;grid-template-columns:42px minmax(0,1fr);flex:1;min-height:200px;background:var(--editor-bg);overflow:hidden}
-.line-numbers{padding:17px 10px 17px 0;text-align:right;color:var(--line-num-text);white-space:pre;user-select:none;font:13px/1.8 Consolas,monospace;border-right:1px solid var(--border);background:var(--line-num-bg)}
-#code{resize:none;width:100%;height:100%;background:transparent;border:0;outline:none;color:var(--editor-text);padding:17px 16px;font:13px/1.8 Consolas,"Cascadia Code",monospace;tab-size:4;white-space:pre;overflow:auto}
-.editor-footer{display:flex;justify-content:space-between;gap:10px;padding:8px 14px;border-top:1px solid var(--border);color:var(--muted);font-size:11px;flex-shrink:0;background:var(--panel)}
-
-.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;flex-shrink:0}
-.output-panel,.hint-panel{min-height:160px}
-.small-head{padding:10px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:12px;background:var(--panel2)}
-.status{font-size:10px;padding:3px 7px;border-radius:999px;background:var(--panel);color:var(--muted);border:1px solid var(--border)}
-.output-body{padding:12px 14px;color:var(--text);font:12px/1.8 Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:130px;overflow-y:auto;background:var(--editor-bg)}
-.output-body .success{color:var(--green);font-weight:bold}
-.output-body .error{color:var(--red);font-weight:bold}
-.hint-body{padding:12px 14px;color:var(--text);font-size:12px;max-height:130px;overflow-y:auto}
-.hint-body strong{color:var(--cyan)}
-
-.btn-jump-error{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:5px 12px;background:var(--blue);color:white;border:none;border-radius:6px;font-size:11px;font-weight:bold;cursor:pointer}
-.btn-jump-error:hover{filter:brightness(1.15)}
-
-/* 右サイドバー */
-.rightbar{display:flex;flex-direction:column;gap:14px;overflow-y:auto}
-.ai-head{display:flex;align-items:center;gap:9px}
-.ai-mark{width:29px;height:29px;border-radius:999px;background:var(--panel2);color:var(--cyan);display:grid;place-items:center;font-weight:900}
-.ai-card{padding:15px}
-.ai-card h2{font-size:14px;margin:0}
-.ai-card .sub{margin-top:3px}
-.ai-message{margin:15px 0 12px;background:var(--panel2);border:1px solid var(--border);border-radius:11px;padding:12px;color:var(--text);font-size:12px;max-height:140px;overflow-y:auto}
-.ai-message strong{color:var(--text)}
-.quick-prompts{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 13px}
-.quick-prompts button{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:999px;padding:6px 9px;font-size:11px}
-.chat-form{display:flex;gap:7px}
-.chat-form input{width:100%;min-width:0;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);outline:none}
-.chat-form button{border:0;border-radius:8px;background:var(--blue);color:white;padding:0 13px;font-weight:700}
-
-.task-card{padding:15px}
-.card-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.card-title h2{font-size:14px;margin:0}
-.tag{font-size:10px;color:var(--cyan);background:var(--panel2);border-radius:5px;padding:4px 7px;border:1px solid var(--border)}
-.task-card p{font-size:12px;color:var(--text);margin:0 0 12px}
-.example{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;font:12px/1.7 Consolas,monospace;color:var(--text)}
-.task-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:11px}
-
-.progress-card{padding:15px}
-.progress-top{display:flex;justify-content:space-between;align-items:center}
-.progress-top h2{font-size:14px;margin:0}
-.progress-num{font-size:18px;font-weight:800;color:var(--green)}
-.progress-track{height:7px;border-radius:10px;background:var(--border);overflow:hidden;margin:12px 0 8px}
-.progress-fill{height:100%;width:35%;background:linear-gradient(90deg,#2c9e9a,#58ddb0);border-radius:10px}
-.progress-foot{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
-
-.footer{padding:10px 22px;border-top:1px solid var(--border);color:var(--muted);font-size:11px;display:flex;justify-content:space-between;gap:10px;flex-shrink:0;background:var(--panel2)}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);padding:11px 16px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--text);box-shadow:0 10px 35px #0005;display:none;max-width:90vw;z-index:10}
-</style>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プログラミングアプリ - CodeLab</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Consolas', 'Monaco', 'monospace']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e0ebff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.03); }
+        .dark ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.03); }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.18); border-radius: 9999px; }
+        .dark ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 9999px; }
+        
+        .glass-header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+        }
+        .dark .glass-header {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
+        }
+        .focus-ring:focus-visible {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        .code-font {
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+        }
+        .card-hover-effect {
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card-hover-effect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.12);
+        }
+    </style>
 </head>
-<body>
-<div class="app">
-  <!-- トップバー -->
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo">&lt;/&gt;</div>
-      <div>コードラボ<small>プログラミング学習 AI誤り分析アシスタント</small></div>
+<body class="h-screen overflow-hidden bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-150">
+
+    <div id="app" class="flex flex-col h-full w-full overflow-hidden">
+        
+        <!-- TOP HEADER -->
+        <header class="glass-header sticky top-0 border-b border-slate-200/80 dark:border-slate-800/80 shrink-0 z-20 shadow-xs flex flex-col">
+            <div class="px-3 sm:px-4 py-2 flex items-center justify-between gap-2 sm:gap-3">
+                
+                <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
+                    <button onclick="toggleSidebar()" aria-label="サイドバーの切り替え" class="focus-ring p-2 rounded-lg bg-slate-200/60 dark:bg-slate-800/80 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors border border-slate-300/50 dark:border-slate-700/50 flex items-center gap-1.5 text-xs font-semibold" title="サイドバーの切り替え (Ctrl+B)">
+                        <i data-lucide="panel-left" class="w-4 h-4"></i>
+                    </button>
+
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20 shrink-0">
+                            <i data-lucide="code-2" class="w-4 h-4"></i>
+                        </div>
+                        <h1 class="font-extrabold text-sm text-slate-900 dark:text-white tracking-tight hidden sm:block">
+                            CodeLab - AI誤り分析アシスタント
+                        </h1>
+                    </div>
+
+                    <!-- エディタ操作ボタン群 -->
+                    <div id="editorHeaderControls" class="hidden flex items-center space-x-1.5 pl-2 border-l border-slate-200 dark:border-slate-800">
+                        <button id="headerFileBtn" onclick="openFileAction()" class="px-2 py-1 bg-slate-200/60 dark:bg-slate-800/80 hover:bg-slate-300 dark:hover:bg-slate-700 rounded text-xs font-bold transition-all text-slate-700 dark:text-slate-300">
+                            ファイル
+                        </button>
+                        <button onclick="runCode()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold transition-all shadow-xs flex items-center gap-1">
+                            <i data-lucide="play" class="w-3.5 h-3.5 fill-white"></i>うごかす！
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Language Selector, Mode Badge & Utilities -->
+                <div class="flex items-center space-x-2 shrink-0">
+                    
+                    <!-- ★ 言語セレクター（Python / JavaScript / C言語） ★ -->
+                    <div class="flex items-center bg-slate-200/80 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-300/60 dark:border-slate-700">
+                        <button onclick="changeGlobalLanguage('python')" id="langBtn-python" class="px-2 py-1 rounded text-[11px] font-bold bg-white dark:bg-slate-700 text-brand-600 dark:text-brand-300 shadow-xs transition-all">
+                            Python
+                        </button>
+                        <button onclick="changeGlobalLanguage('javascript')" id="langBtn-javascript" class="px-2 py-1 rounded text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
+                            JS
+                        </button>
+                        <button onclick="changeGlobalLanguage('c')" id="langBtn-c" class="px-2 py-1 rounded text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
+                            C言語
+                        </button>
+                    </div>
+
+                    <span id="currentModeBadge" class="px-2.5 py-1 text-xs font-bold rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30">
+                        🎯 課題演習：問題選択
+                    </span>
+
+                    <button onclick="toggleAudience()" id="audienceBtn" class="px-2 py-1 bg-slate-200/60 dark:bg-slate-800/80 hover:bg-slate-300 dark:hover:bg-slate-700 text-xs font-bold rounded-lg border border-slate-300/40 dark:border-slate-700/50">
+                        こどもモード (ルビあり)
+                    </button>
+
+                    <button onclick="toggleDetailPanel()" class="focus-ring p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 flex items-center gap-1 text-xs font-bold" title="AIサポート & 辞書">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        <span class="hidden md:inline">AI・辞書パネル</span>
+                    </button>
+
+                    <button onclick="toggleDarkMode()" class="focus-ring p-2 rounded-lg text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 dark:text-slate-400">
+                        <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+                        <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-slate-600"></i>
+                    </button>
+
+                    <div class="w-7 h-7 rounded bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs">
+                        ゲ
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <div class="flex-1 flex overflow-hidden relative">
+            
+            <!-- LEFT SIDEBAR -->
+            <aside id="desktopSidebar" class="fixed md:static inset-y-0 left-0 z-30 w-60 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shrink-0 flex flex-col transition-all duration-200">
+                <div class="p-3 space-y-4 overflow-y-auto flex-1">
+                    
+                    <!-- メインメニュー -->
+                    <div>
+                        <p class="px-2 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">メニュー</p>
+                        <nav class="space-y-1">
+                            <button onclick="switchView('tasks')" id="nav-tasks" class="focus-ring w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-extrabold bg-brand-500 text-white shadow-xs transition-all">
+                                <span class="flex items-center space-x-2">
+                                    <i data-lucide="check-square" class="w-4 h-4"></i>
+                                    <span>課題演習</span>
+                                </span>
+                                <span class="text-[10px] bg-brand-700 px-1.5 py-0.5 rounded font-bold">8</span>
+                            </button>
+                            <button onclick="switchView('projects')" id="nav-projects" class="focus-ring w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-all">
+                                <span class="flex items-center space-x-2">
+                                    <i data-lucide="folder" class="w-4 h-4"></i>
+                                    <span>自由制作</span>
+                                </span>
+                            </button>
+                            <button onclick="switchView('history')" id="nav-history" class="focus-ring w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-all">
+                                <span class="flex items-center space-x-2">
+                                    <i data-lucide="history" class="w-4 h-4 text-amber-500"></i>
+                                    <span>学習履歴</span>
+                                </span>
+                            </button>
+                            <button onclick="switchView('dict-view')" id="nav-dict" class="focus-ring w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-all">
+                                <span class="flex items-center space-x-2">
+                                    <i data-lucide="book-open" class="w-4 h-4 text-indigo-500"></i>
+                                    <span>構文辞書</span>
+                                </span>
+                                <span class="text-[10px] bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300 px-1.5 py-0.5 rounded font-bold">多言語</span>
+                            </button>
+                            <button onclick="switchView('settings')" id="nav-settings" class="focus-ring w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-all">
+                                <span class="flex items-center space-x-2">
+                                    <i data-lucide="settings" class="w-4 h-4 text-slate-500 dark:text-slate-400"></i>
+                                    <span>設定</span>
+                                </span>
+                            </button>
+                        </nav>
+                    </div>
+
+                    <!-- 課題カテゴリ検索 -->
+                    <div id="taskCategoryNavSection" class="pt-3 border-t border-slate-200 dark:border-slate-800">
+                        <p class="px-2 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">問題カテゴリ</p>
+                        <div class="space-y-0.5">
+                            <button onclick="setCategory('all')" id="cat-all" class="cat-btn w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-bold bg-slate-200/80 dark:bg-slate-800 text-brand-600 dark:text-brand-400">
+                                <span>すべて</span>
+                                <span class="text-[10px] font-mono text-slate-400">8</span>
+                            </button>
+                            <button onclick="setCategory('output')" id="cat-output" class="cat-btn w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800">
+                                <span>基本出力 (print)</span>
+                                <span class="text-[10px] font-mono text-slate-400">2</span>
+                            </button>
+                            <button onclick="setCategory('calc')" id="cat-calc" class="cat-btn w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800">
+                                <span>変数・計算</span>
+                                <span class="text-[10px] font-mono text-slate-400">2</span>
+                            </button>
+                            <button onclick="setCategory('branch')" id="cat-branch" class="cat-btn w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800">
+                                <span>条件分岐 (if)</span>
+                                <span class="text-[10px] font-mono text-slate-400">2</span>
+                            </button>
+                            <button onclick="setCategory('loop')" id="cat-loop" class="cat-btn w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800">
+                                <span>リスト・ループ</span>
+                                <span class="text-[10px] font-mono text-slate-400">2</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 辞書カテゴリ -->
+                    <div id="dictCategoryNavSection" class="hidden pt-3 border-t border-slate-200 dark:border-slate-800">
+                        <p class="px-2 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">辞書カテゴリ</p>
+                        <div class="space-y-0.5">
+                            <button onclick="setDictCategory('all')" id="dictcat-all" class="dictcat-btn w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
+                                <span>すべて</span>
+                                <span class="text-[10px] font-mono text-slate-400">6</span>
+                            </button>
+                            <button onclick="setDictCategory('io')" id="dictcat-io" class="dictcat-btn w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800">
+                                <span>出力・入力</span>
+                                <span class="text-[10px] font-mono text-slate-400">2</span>
+                            </button>
+                            <button onclick="setDictCategory('types')" id="dictcat-types" class="dictcat-btn w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800">
+                                <span>型・データ変換</span>
+                                <span class="text-[10px] font-mono text-slate-400">2</span>
+                            </button>
+                            <button onclick="setDictCategory('syntax')" id="dictcat-syntax" class="dictcat-btn w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800">
+                                <span>制御構文 (if/for)</span>
+                                <span class="text-[10px] font-mono text-slate-400">2</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 自由制作ファイルツリー -->
+                    <div id="fileTreeSection" class="hidden pt-3 border-t border-slate-200 dark:border-slate-800">
+                        <div class="flex items-center justify-between px-2 mb-1.5">
+                            <p class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500" id="currentProjectTreeLabel">FILES</p>
+                            <button onclick="promptNewFile()" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded text-slate-500" title="新規ファイル作成">
+                                <i data-lucide="file-plus" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        <div class="space-y-1" id="fileTreeItems"></div>
+                    </div>
+                </div>
+
+                <div class="p-2.5 border-t border-slate-200 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-900/80 flex items-center justify-between shrink-0">
+                    <div class="flex items-center space-x-2 min-w-0">
+                        <div class="w-7 h-7 rounded bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shrink-0">ゲ</div>
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold truncate text-slate-800 dark:text-slate-200 leading-none">ゲストユーザー</p>
+                            <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5">ローカル学習モード</p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="flex-1 flex flex-col overflow-hidden bg-slate-100 dark:bg-slate-950 p-3 sm:p-4 gap-3">
+                
+                <!-- VIEW 1: 課題演習 -->
+                <div id="view-tasks-container" class="flex-1 overflow-y-auto space-y-4">
+                    <div id="resumeTaskSection" class="bg-gradient-to-r from-amber-500/10 via-brand-500/10 to-indigo-500/10 border-2 border-amber-500/40 dark:border-amber-400/40 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 relative overflow-hidden">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 bg-amber-500 text-white text-[10px] font-black rounded uppercase tracking-wider flex items-center gap-1">
+                                    <i data-lucide="play-circle" class="w-3.5 h-3.5"></i> 前回のつづきから
+                                </span>
+                                <span class="text-xs text-slate-500 dark:text-slate-400 font-mono" id="resumeLastAccess">最終学習: 2026/11/16 10:10</span>
+                            </div>
+                            <h3 class="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white flex items-center gap-2" id="resumeTaskTitle">
+                                課題03: 年齢を表示しよう
+                            </h3>
+                            <p class="text-xs text-slate-600 dark:text-slate-300" id="resumeTaskDesc">
+                                変数と数値を組み合わせて「ねんれいは 10さいです」と出力します。
+                            </p>
+                        </div>
+                        <button onclick="resumeLastTask()" class="focus-ring px-4 py-2.5 bg-gradient-to-r from-amber-500 to-brand-600 hover:from-amber-600 hover:to-brand-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 shrink-0 transition-transform active:scale-95">
+                            <i data-lucide="corner-down-right" class="w-4 h-4"></i>
+                            <span>続きを再開する</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                                <h2 class="text-base font-extrabold" id="categoryTitle">🎯 すべての課題</h2>
+                                <p class="text-xs text-slate-500">挑戦したい課題カードを選んでエディタを起動しましょう。（課題中は問題に集中するためファイル構成は隠れます）</p>
+                            </div>
+                            <span id="matchCountBadge" class="text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded-md">
+                                該当 8 件
+                            </span>
+                        </div>
+
+                        <div class="flex items-center gap-1.5 pt-2 border-t border-slate-100 dark:border-slate-800 flex-wrap">
+                            <span class="text-xs font-bold text-slate-500 mr-1 flex items-center gap-1">
+                                <i data-lucide="filter" class="w-3.5 h-3.5"></i>難易度:
+                            </span>
+                            <button onclick="setDifficulty('all')" id="diff-all" class="diff-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-brand-600 text-white shadow-xs">
+                                すべて
+                            </button>
+                            <button onclick="setDifficulty('easy')" id="diff-easy" class="diff-btn px-2.5 py-1 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                                初級 (★☆☆)
+                            </button>
+                            <button onclick="setDifficulty('medium')" id="diff-medium" class="diff-btn px-2.5 py-1 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                                中級 (★★☆)
+                            </button>
+                            <button onclick="setDifficulty('hard')" id="diff-hard" class="diff-btn px-2.5 py-1 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                                上級 (★★★)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="taskGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+
+                    <div id="emptyNotice" class="hidden text-center py-12 text-slate-400 text-xs">
+                        条件に一致する課題が見つかりませんでした。
+                    </div>
+                </div>
+
+                <!-- VIEW 2: 自由制作 プロジェクト選択 -->
+                <div id="view-projects-container" class="hidden flex-1 overflow-y-auto space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-base font-extrabold text-slate-900 dark:text-white">📁 自由制作：プロジェクトを選択</h2>
+                            <p class="text-xs text-slate-500">制作したい作品のフォルダを選ぶか、あたらしいフォルダを作成してください。</p>
+                        </div>
+                        <button onclick="promptNewFolder()" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-bold shadow-xs flex items-center gap-1.5">
+                            <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>新規プロジェクト作成
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="projectCardGrid"></div>
+                </div>
+
+                <!-- VIEW 3: 構文辞書カードビュー（★他言語比較機能付き） -->
+                <div id="view-dict-container" class="hidden flex-1 overflow-y-auto space-y-4">
+                    <div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-3">
+                                <button onclick="goBackFromDict()" class="focus-ring px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors" title="直前の画面に戻る (Escキー)">
+                                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                                    <span id="dictBackBtnLabel">戻る</span>
+                                    <span class="text-[10px] text-slate-400 font-mono hidden sm:inline"><kbd class="px-1 py-0.5 bg-slate-200 dark:bg-slate-900 rounded border border-slate-300 dark:border-slate-700">Esc</kbd></span>
+                                </button>
+                                <div>
+                                    <h2 class="text-base font-extrabold flex items-center gap-2">
+                                        <i data-lucide="book-open" class="w-5 h-5 text-indigo-500"></i>
+                                        <span>多言語対応・かんたん構文辞書カード</span>
+                                    </h2>
+                                    <p class="text-xs text-slate-500">Pythonの構文がJavaScriptやC言語ではどう書くのかをカード内でタブ切り替えして比較できます。</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <div class="relative">
+                                    <input type="text" id="dictSearchInput" oninput="handleDictSearch()" placeholder="キーワード検索 (例: print, str)..." class="w-56 pl-8 pr-3 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg outline-none focus:border-brand-500">
+                                    <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                                </div>
+                                <button onclick="toggleDictFavoritesOnly()" id="dictFavFilterBtn" class="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-700 flex items-center gap-1">
+                                    <i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 fill-amber-400"></i>
+                                    <span>お気に入りのみ</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dictCardGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4"></div>
+
+                    <div id="dictEmptyNotice" class="hidden text-center py-12 text-slate-400 text-xs">
+                        該当する用語が見つかりませんでした。別の言葉で検索してみてください。
+                    </div>
+                </div>
+
+                <!-- VIEW 4: コーディング・エディタ画面 -->
+                <div id="view-editor-container" class="hidden flex-1 flex flex-col gap-3 overflow-hidden">
+                    
+                    <!-- お題バナー -->
+                    <div id="taskBanner" class="hidden bg-gradient-to-r from-blue-900/40 to-indigo-900/40 border border-blue-500/30 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 shadow-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 bg-blue-500 text-white text-[10px] font-bold rounded">演習課題</span>
+                            <span id="taskBannerTitle" class="text-xs font-bold text-slate-800 dark:text-slate-100">タイトル</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="text-xs font-mono">
+                                <span class="text-slate-500 dark:text-slate-400">期待される出力:</span>
+                                <code id="taskBannerExpected" class="px-2 py-0.5 bg-slate-900 text-emerald-400 rounded text-xs ml-1 font-bold">出力例</code>
+                            </div>
+                            <button onclick="switchView('tasks')" class="px-2 py-1 bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 rounded text-[11px] font-bold transition-all">
+                                ← 課題一覧へ
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 自由制作エディタ用 ナビゲーションバナー -->
+                    <div id="projectNavBanner" class="hidden bg-slate-200/60 dark:bg-slate-900 border border-slate-300/60 dark:border-slate-800 rounded-xl px-3 py-2 flex items-center justify-between">
+                        <div class="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-200">
+                            <i data-lucide="folder-open" class="w-4 h-4 text-brand-500"></i>
+                            <span id="activeProjectBreadcrumb">my_project /</span>
+                        </div>
+                        <button onclick="switchView('projects')" class="px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-200 rounded text-[11px] font-bold flex items-center gap-1">
+                            <i data-lucide="arrow-left" class="w-3 h-3"></i>プロジェクト一覧へ
+                        </button>
+                    </div>
+
+                    <!-- エディタ＆コンソールパネル -->
+                    <div class="flex-1 flex flex-col bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800/80 overflow-hidden shadow-xs">
+                        <div class="px-3 py-2 bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span id="currentEditorFileName" class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                                    <i data-lucide="terminal" class="w-3.5 h-3.5 text-brand-500"></i> main.py
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="formatCode()" class="px-2 py-1 bg-slate-200/60 dark:bg-slate-700 hover:bg-slate-300 text-[11px] font-bold rounded text-slate-700 dark:text-slate-200">
+                                    ✨ 整形
+                                </button>
+                                <button onclick="insertSnippet('print')" class="px-2 py-1 bg-slate-200/60 dark:bg-slate-700 hover:bg-slate-300 text-[11px] font-bold rounded text-slate-700 dark:text-slate-200">
+                                    ＋ print
+                                </button>
+                            </div>
+                        </div>
+
+                        <textarea id="codeEditor" class="flex-1 p-3 code-font text-xs bg-slate-900 text-slate-100 resize-none outline-none leading-relaxed" spellcheck="false"></textarea>
+
+                        <!-- 下部コンソール＆AI分析エリア -->
+                        <div class="h-44 border-t border-slate-200 dark:border-slate-800 flex flex-col bg-slate-950">
+                            <div class="flex items-center justify-between px-3 py-1.5 bg-slate-900 border-b border-slate-800">
+                                <div class="flex space-x-2">
+                                    <button onclick="switchConsoleTab('output')" id="tabBtnOutput" class="text-xs font-bold text-white border-b-2 border-brand-500 pb-0.5">
+                                        💻 出力結果
+                                    </button>
+                                    <button onclick="switchConsoleTab('diff')" id="tabBtnDiff" class="text-xs font-bold text-slate-400 hover:text-white pb-0.5">
+                                        ⚖️ 期待値との差分(Diff)
+                                    </button>
+                                    <button onclick="switchConsoleTab('ai')" id="tabBtnAi" class="hidden text-xs font-bold text-indigo-400 hover:text-white pb-0.5 flex items-center gap-1">
+                                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> AIエラー分析
+                                    </button>
+                                </div>
+                                <span class="text-[10px] text-slate-500 font-mono" id="engineVersionLabel">Python 3.10 Engine</span>
+                            </div>
+
+                            <div id="consoleBody" class="flex-1 p-3 font-mono text-xs overflow-y-auto text-slate-300 leading-relaxed">
+                                <span class="text-slate-500">「うごかす！」ボタンを押すと実行結果がここに表示されます。</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 5: 学習履歴画面 -->
+                <div id="view-history-container" class="hidden flex-1 overflow-y-auto space-y-4">
+                    <h2 class="text-base font-extrabold text-slate-900 dark:text-white">📊 学習カルテ・履歴</h2>
+                    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400">
+                                    <th class="pb-2">日時</th>
+                                    <th class="pb-2">課題名</th>
+                                    <th class="pb-2">結果</th>
+                                    <th class="pb-2">エラー傾向 / AIメモ</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+                                <tr>
+                                    <td class="py-2.5">2026/11/16 10:10</td>
+                                    <td>課題03: 年齢を表示しよう</td>
+                                    <td><span class="px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 text-[10px] font-bold">論理エラー</span></td>
+                                    <td>10+5の計算で期待値(10)と乖離</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5">2026/11/16 09:45</td>
+                                    <td>課題01: helloを出力</td>
+                                    <td><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">合格</span></td>
+                                    <td>print文を正常に利用</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- VIEW 6: 設定画面 -->
+                <div id="view-settings-container" class="hidden flex-1 overflow-y-auto space-y-4">
+                    <h2 class="text-base font-extrabold text-slate-900 dark:text-white">⚙️ 環境設定・レイアウトカスタマイズ</h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+                        <div class="lg:col-span-7 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 space-y-5">
+                            <div>
+                                <h3 class="font-bold text-xs text-brand-600 dark:text-brand-400 uppercase tracking-wider mb-2">画面レイアウトの配置パターン</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                                    <label class="border-2 border-brand-500 rounded-xl p-3 cursor-pointer bg-brand-50/50 dark:bg-brand-950/20 block relative" id="presetLabel-standard">
+                                        <input type="radio" name="layoutPreset" value="standard" checked onchange="applyLayoutPreset('standard')" class="absolute top-2.5 right-2.5 text-brand-600">
+                                        <div class="font-bold text-xs mb-1">① 標準 (右集約)</div>
+                                        <p class="text-[10px] text-slate-500">問題・AI・辞書を右パネルにまとめる構成</p>
+                                    </label>
+                                    <label class="border border-slate-300 dark:border-slate-700 rounded-xl p-3 cursor-pointer hover:border-brand-400 block relative" id="presetLabel-inline">
+                                        <input type="radio" name="layoutPreset" value="inline" onchange="applyLayoutPreset('inline')" class="absolute top-2.5 right-2.5 text-brand-600">
+                                        <div class="font-bold text-xs mb-1">② エディタ集中型</div>
+                                        <p class="text-[10px] text-slate-500">問題は上、AIは下、右は辞書のみ</p>
+                                    </label>
+                                    <label class="border border-slate-300 dark:border-slate-700 rounded-xl p-3 cursor-pointer hover:border-brand-400 block relative" id="presetLabel-separated">
+                                        <input type="radio" name="layoutPreset" value="separated" onchange="applyLayoutPreset('separated')" class="absolute top-2.5 right-2.5 text-brand-600">
+                                        <div class="font-bold text-xs mb-1">③ 3カラム並列型</div>
+                                        <p class="text-[10px] text-slate-500">問題は上、AIは右、辞書は画面切替</p>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr class="border-slate-200 dark:border-slate-800">
+
+                            <div class="space-y-4">
+                                <h3 class="font-bold text-xs text-slate-700 dark:text-slate-300 uppercase tracking-wider">各パーツの位置を個別に変更</h3>
+
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-xs">問題・お題文の位置</h4>
+                                        <p class="text-[11px] text-slate-500">演習課題の目標・期待値をどこに置くか</p>
+                                    </div>
+                                    <select id="settingTaskPos" onchange="updatePartPositions()" class="px-2.5 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg outline-none font-bold">
+                                        <option value="top">エディタの直上（横長バナー）</option>
+                                        <option value="right" selected>右側パネルの上段</option>
+                                        <option value="hide">非表示（集中モード）</option>
+                                    </select>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-xs">AI分析・アドバイスの位置</h4>
+                                        <p class="text-[11px] text-slate-500">エラー解説や段階的ヒントの表示場所</p>
+                                    </div>
+                                    <select id="settingAiPos" onchange="updatePartPositions()" class="px-2.5 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg outline-none font-bold">
+                                        <option value="right" selected>右側パネル（中段）</option>
+                                        <option value="bottom">エディタ下部（コンソールのタブ内）</option>
+                                    </select>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-xs">構文辞書の位置</h4>
+                                        <p class="text-[11px] text-slate-500">関数の使い方やふりがな辞書の確認方法</p>
+                                    </div>
+                                    <select id="settingDictPos" onchange="updatePartPositions()" class="px-2.5 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg outline-none font-bold">
+                                        <option value="right" selected>右側パネルの下段（カードリスト）</option>
+                                        <option value="view">左メニューから開く全画面カードのみ</option>
+                                        <option value="hide">右パネル内は非表示</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <hr class="border-slate-200 dark:border-slate-800">
+
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-bold text-xs">カラーテーマ</h3>
+                                    <p class="text-[11px] text-slate-500">画面の明暗テーマを切り替えます</p>
+                                </div>
+                                <button onclick="toggleDarkMode()" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg text-xs font-bold">
+                                    明るい / 暗い を切り替え
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- リアルタイムレイアウトプレビュー -->
+                        <div class="lg:col-span-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 space-y-3 sticky top-4 shadow-xs">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-extrabold text-xs text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                                    <i data-lucide="layout" class="w-4 h-4 text-brand-500"></i>
+                                    <span>レイアウト プレビュー</span>
+                                </h3>
+                                <span class="text-[10px] text-slate-400 font-mono">Real-time Layout</span>
+                            </div>
+
+                            <div class="bg-slate-900 border border-slate-700 rounded-lg p-2 flex flex-col gap-1.5 h-64 text-[10px] font-bold text-center">
+                                <div class="bg-slate-800 text-slate-400 py-1 rounded flex items-center justify-between px-2 text-[9px]">
+                                    <span>CodeLab</span>
+                                    <span>[実行▶]</span>
+                                </div>
+
+                                <div class="flex-1 flex gap-1.5 overflow-hidden">
+                                    <div class="flex-1 flex flex-col gap-1">
+                                        <div id="previewTaskTop" class="bg-blue-600/30 border border-blue-500 text-blue-300 py-1 rounded text-[9px] flex items-center justify-center">
+                                            🎯 お題バナー
+                                        </div>
+                                        <div class="flex-1 bg-slate-950 border border-slate-800 rounded flex items-center justify-center text-slate-500 font-mono text-[9px]">
+                                            コードエディタ
+                                        </div>
+                                        <div class="h-14 bg-slate-950 border border-slate-800 rounded flex flex-col p-1 gap-1 text-[8px] text-left">
+                                            <div class="flex gap-1 text-slate-400 border-b border-slate-800 pb-0.5">
+                                                <span>💻 出力</span>
+                                                <span id="previewAiTab" class="hidden text-indigo-400 font-bold">✨ AI分析</span>
+                                            </div>
+                                            <div class="text-slate-600">結果出力エリア</div>
+                                        </div>
+                                    </div>
+
+                                    <div id="previewRightPanel" class="w-28 bg-slate-800/80 border border-slate-700 rounded p-1 flex flex-col gap-1">
+                                        <div id="previewTaskRight" class="bg-blue-900/40 border border-blue-700/60 text-blue-300 p-1 rounded text-[8px]">
+                                            🎯 お題（右パネル）
+                                        </div>
+                                        <div id="previewAiRight" class="bg-indigo-900/40 border border-indigo-700/60 text-indigo-300 p-1 rounded text-[8px]">
+                                            🤖 AIアドバイス
+                                        </div>
+                                        <div id="previewDictRight" class="bg-slate-900/60 border border-slate-700 text-slate-400 p-1 rounded text-[8px] flex-1">
+                                            📖 辞書カード
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-slate-500 leading-relaxed">
+                                設定を変更するとプレビューが即座に連動します。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            <!-- RIGHT DETAIL PANEL: AIアシスタント & 構文辞書 & 問題文 -->
+            <aside id="detailPanel" class="fixed top-0 right-0 bottom-0 w-full sm:w-[420px] bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 z-40 translate-x-full transition-transform duration-200 ease-in-out flex flex-col shadow-2xl">
+                <div class="p-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-900">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                            <i data-lucide="layout-panel-right" class="w-4 h-4 text-indigo-600"></i> サポートサイドパネル
+                        </span>
+                    </div>
+                    <button onclick="toggleDetailPanel()" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto p-4 space-y-4" id="rightPanelContent">
+                    <div id="rightTaskBox" class="bg-slate-50 dark:bg-slate-800/80 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/60 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-brand-600 dark:text-brand-400 flex items-center gap-1">
+                                <i data-lucide="target" class="w-3.5 h-3.5"></i> 現在のお題
+                            </span>
+                            <span id="rightTaskExpectedBadge" class="text-[10px] bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 px-1.5 py-0.5 rounded font-mono font-bold"></span>
+                        </div>
+                        <h4 class="font-extrabold text-xs text-slate-900 dark:text-white" id="rightTaskTitle">タイトル</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed" id="rightTaskDesc">説明文</p>
+                    </div>
+
+                    <div id="rightAiBox" class="bg-indigo-50/70 dark:bg-indigo-950/40 p-3.5 rounded-xl border border-indigo-200 dark:border-indigo-800/60 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-1">
+                                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> AIからのアドバイス
+                            </span>
+                            <span class="text-[9px] bg-indigo-200 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 px-1.5 py-0.5 rounded font-bold">ヒント 1/3</span>
+                        </div>
+                        <p id="aiAdviceText" class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                            「うごかす！」を押したあと、下のコンソールから「AI解説を見る」を押すとここにアドバイスが表示されるよ！
+                        </p>
+                    </div>
+
+                    <div id="rightDictBox" class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                                <i data-lucide="book" class="w-3.5 h-3.5 text-brand-500"></i> ピックアップ構文カード
+                            </span>
+                            <button onclick="switchView('dict-view'); toggleDetailPanel();" class="text-[11px] text-brand-600 dark:text-brand-400 font-bold hover:underline">
+                                全て見る →
+                            </button>
+                        </div>
+                        <div class="space-y-2 pt-1" id="sideDictCardsContainer"></div>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
     </div>
 
-    <!-- ★ 中央に大きく目立つモード切替トグル（ショートカット表記付き） ★ -->
-    <div class="top-mode-switcher">
-      <button class="mode-toggle-btn active" id="btnModeFree" onclick="setAppMode('free')">
-        <span>📁 自由創作</span>
-        <span class="mode-shortcut-badge">Alt+1</span>
-      </button>
-      <button class="mode-toggle-btn" id="btnModeTask" onclick="setAppMode('task')">
-        <span>🎯 課題演習</span>
-        <span class="mode-shortcut-badge">Alt+2</span>
-      </button>
-    </div>
+    <!-- UI制御スクリプト -->
+    <script>
+        let isKidMode = true;
+        let isDetailOpen = false;
+        let activeMode = 'task'; // 'task', 'free', 'dict'
+        let currentProjectKey = 'janken_game';
+        let currentFileKey = 'main.py';
+        const navigationHistoryStack = [];
+        let lastWorkedTaskId = 3;
+        const userTaskCodes = {};
 
-    <div class="top-actions">
-      <div id="common-nav"></div>
-      <script>
-        fetch('nav.html')
-          .then(response => {
-            if (!response.ok) throw new Error('nav.html not found');
-            return response.text();
-          })
-          .then(html => {
-            const navContainer = document.getElementById('common-nav');
-            navContainer.innerHTML = html;
-            const currentFile = location.pathname.split('/').pop() || 'mockup.html';
-            const links = navContainer.querySelectorAll('.nav-link');
-            links.forEach(link => {
-              if (link.getAttribute('href') === currentFile) link.classList.add('active');
+        // ★ 現在の選択言語（デフォルト: python）
+        let currentSelectedLang = 'python';
+
+        let layoutConfig = {
+            taskPos: 'right',
+            aiPos: 'right',
+            dictPos: 'right'
+        };
+
+        // 課題一覧データ
+        const tasks = [
+            { id: 1, category: 'output', difficulty: 'easy', diffLabel: '初級', title: '課題01: helloを出力', desc: 'print関数を使って画面に文字列を出力する最初の一歩です。', time: '3分', expected: 'hello', code: `print("hello")\n`, relatedDictIds: ['print'] },
+            { id: 2, category: 'output', difficulty: 'easy', diffLabel: '初級', title: '課題02: 複数行のメッセージ', desc: '複数のprint文を使って複数行の文章を画面に表示させましょう。', time: '3分', expected: "1行目\n2行目", code: `print("1行目")\nprint("2行目")\n`, relatedDictIds: ['print'] },
+            { id: 3, category: 'calc', difficulty: 'easy', diffLabel: '初級', title: '課題03: 年齢を表示しよう', desc: '変数と数値を組み合わせて「ねんれいは 10さいです」と出力します。', time: '5分', expected: 'ねんれいは 10さいです', code: `# 年齢(10歳)を表示するプログラムを作ろう！\nage = 10 + 5\nprint("ねんれいは " + str(age) + "さいです")\n`, relatedDictIds: ['print', 'str'] },
+            { id: 4, category: 'calc', difficulty: 'medium', diffLabel: '中級', title: '課題04: 割り勘計算ツール', desc: '合計金額と人数を変数で受け取り、1人あたりの金額を計算します。', time: '8分', expected: '1人あたり: 500円', code: `total = 1500\npeople = 3\nprint("1人あたり: " + str(total // people) + "円")\n`, relatedDictIds: ['print', 'int'] },
+            { id: 5, category: 'branch', difficulty: 'medium', diffLabel: '中級', title: '課題05: 偶数・奇数の判定', desc: 'if文と余り演算子(%)を使って数字の偶数・奇数を判定します。', time: '8分', expected: '偶数です', code: `num = 10\nif num % 2 == 0:\n    print("偶数です")\nelse:\n    print("奇数です")\n`, relatedDictIds: ['print', 'if'] },
+            { id: 6, category: 'branch', difficulty: 'hard', diffLabel: '上級', title: '課題06: 成績ランク判定', desc: '得点に応じて「A」「B」「C」に3分岐させるプログラムです。', time: '12分', expected: '評価: A', code: `score = 85\nif score >= 80:\n    print("評価: A")\nelif score >= 60:\n    print("評価: B")\nelse:\n    print("評価: C")\n`, relatedDictIds: ['print', 'if'] },
+            { id: 7, category: 'loop', difficulty: 'medium', diffLabel: '中級', title: '課題07: 1〜10のループ出力', desc: 'for文とrange関数を使って1から10までの数値を順に出力します。', time: '10分', expected: '1\n2\n3\n4\n5', code: `for i in range(1, 6):\n    print(i)\n`, relatedDictIds: ['print', 'for'] },
+            { id: 8, category: 'loop', difficulty: 'hard', diffLabel: '上級', title: '課題08: リストの合計値計算', desc: 'リスト内の数値をループで足し合わせ、合計値を算出します。', time: '15分', expected: '合計: 60', code: `numbers = [10, 20, 30]\ntotal = 0\nfor n in numbers:\n    total += n\nprint("合計: " + str(total))\n`, relatedDictIds: ['print', 'for'] }
+        ];
+
+        // ★ 多言語比較対応 構文辞書データ（Python / JavaScript / C言語） ★
+        const dictionaryData = [
+            { 
+                id: 'print', 
+                category: 'io', 
+                summary: '画面に文字や計算結果を出す', 
+                desc: 'カッコの中に入れた文字列や数値、計算結果を画面（コンソール）に出力します。',
+                langs: {
+                    python: {
+                        name: 'print() 関数',
+                        kana: 'プリント',
+                        syntax: 'print("表示したい文字")',
+                        example: 'print("こんにちは")\n# 出力: こんにちは',
+                        snippet: 'print("こんにちは")',
+                        note: '末尾に自動で改行がつきます。セミコロンは不要です。'
+                    },
+                    javascript: {
+                        name: 'console.log()',
+                        kana: 'コンソール・ログ',
+                        syntax: 'console.log("表示したい文字");',
+                        example: 'console.log("こんにちは");\n// 出力: こんにちは',
+                        snippet: 'console.log("こんにちは");',
+                        note: 'ブラウザの開発者ツールやNode.jsでコンソールに出力します。末尾にセミコロン(;)を付けるのが標準です。'
+                    },
+                    c: {
+                        name: 'printf() 関数',
+                        kana: 'プリント・エフ',
+                        syntax: 'printf("フォーマット文字列\\n", 値);',
+                        example: '#include <stdio.h>\nprintf("こんにちは\\n");',
+                        snippet: 'printf("こんにちは\\n");',
+                        note: '#include <stdio.h> が必須。改行には \\n が必要です。'
+                    }
+                },
+                relatedTaskIds: [1, 2],
+                isFavorite: true 
+            },
+            { 
+                id: 'input', 
+                category: 'io', 
+                summary: 'キーボードから文字を受け取る', 
+                desc: 'ユーザーがキーボードで打ち込んだテキストを受け取って変数に保存します。',
+                langs: {
+                    python: {
+                        name: 'input() 関数',
+                        kana: 'インプット',
+                        syntax: 'name = input("お名前は？")',
+                        example: 'age = input("年齢を入れてね: ")\nprint(age + "歳ですね")',
+                        snippet: 'name = input("お名前は？: ")',
+                        note: '入力された値は常に「文字列(str)」型になります。'
+                    },
+                    javascript: {
+                        name: 'prompt() / readline',
+                        kana: 'プロンプト',
+                        syntax: 'let name = prompt("お名前は？");',
+                        example: 'let age = prompt("年齢を入れてね:");\nconsole.log(age + "歳ですね");',
+                        snippet: 'let name = prompt("お名前は？:");',
+                        note: 'ブラウザでは prompt() ダイアログで入力できます。'
+                    },
+                    c: {
+                        name: 'scanf() 関数',
+                        kana: 'スキャン・エフ',
+                        syntax: 'scanf("%d", &変数名);',
+                        example: 'int age;\nscanf("%d", &age);',
+                        snippet: 'scanf("%d", &age);',
+                        note: '変数のアドレス（&変数名）を指定する必要があり、初学者がつまずきやすいポイントです。'
+                    }
+                },
+                relatedTaskIds: [],
+                isFavorite: false 
+            },
+            { 
+                id: 'str', 
+                category: 'types', 
+                summary: '数字を文字の仲間に変換する', 
+                desc: '数値を文字列データに変換して文字同士をつなげられるようにします。',
+                langs: {
+                    python: {
+                        name: 'str() 関数',
+                        kana: 'ストリング',
+                        syntax: 'str(数値データ)',
+                        example: 'age = 10\nprint("年齢は " + str(age) + "歳")',
+                        snippet: 'str(10)',
+                        note: 'Pythonは文字と数値を自動でつなげないため、明示的に str() が必要です。'
+                    },
+                    javascript: {
+                        name: 'String() / .toString()',
+                        kana: 'ストリング',
+                        syntax: 'String(数値) または 数値.toString()',
+                        example: 'let age = 10;\nconsole.log("年齢は " + String(age) + "歳");',
+                        snippet: 'String(10)',
+                        note: 'JSは暗黙の型変換があるため "年齢は " + age でも自動で文字列化されます。'
+                    },
+                    c: {
+                        name: 'sprintf() 関数',
+                        kana: 'エス・プリント・エフ',
+                        syntax: 'sprintf(char配列, "%d", 数値);',
+                        example: 'char buf[16];\nsprintf(buf, "%d", 10);',
+                        snippet: 'sprintf(buf, "%d", 10);',
+                        note: '文字配列（バッファ）を用意して数値を書き込みます。'
+                    }
+                },
+                relatedTaskIds: [3, 4],
+                isFavorite: true 
+            },
+            { 
+                id: 'int', 
+                category: 'types', 
+                summary: '文字を整数の仲間に変換する', 
+                desc: '文字列の数字を、計算ができる整数の数値データに変換します。',
+                langs: {
+                    python: {
+                        name: 'int() 関数',
+                        kana: 'イント',
+                        syntax: 'int("100")',
+                        example: 'num = int("50") + 10\nprint(num) # 出力: 60',
+                        snippet: 'int("100")',
+                        note: '小数を整数に丸める（小数点以下切り捨て）際にも使います。'
+                    },
+                    javascript: {
+                        name: 'parseInt() / Number()',
+                        kana: 'パース・イント',
+                        syntax: 'parseInt("100", 10)',
+                        example: 'let num = parseInt("50", 10) + 10;\nconsole.log(num); // 60',
+                        snippet: 'parseInt("100", 10)',
+                        note: '第2引数に基数（10進数なら10）を指定するのが安全です。'
+                    },
+                    c: {
+                        name: 'atoi() 関数',
+                        kana: 'エー・トゥー・アイ',
+                        syntax: 'atoi("100")',
+                        example: '#include <stdlib.h>\nint num = atoi("50") + 10;',
+                        snippet: 'atoi("100")',
+                        note: '<stdlib.h> が必要。ASCII to Integer の略です。'
+                    }
+                },
+                relatedTaskIds: [4],
+                isFavorite: false 
+            },
+            { 
+                id: 'if', 
+                category: 'syntax', 
+                summary: '条件によって動きを分岐させる', 
+                desc: '「もし〜なら」という条件判定を行います。',
+                langs: {
+                    python: {
+                        name: 'if / elif / else',
+                        kana: 'イフ / エルイフ / エルス',
+                        syntax: 'if 条件式:\n    処理\nelif 別の条件:\n    処理\nelse:\n    処理',
+                        example: 'score = 80\nif score >= 70:\n    print("合格！")\nelse:\n    print("もう一息！")',
+                        snippet: 'if score >= 70:\n    print("合格！")\nelse:\n    print("もう一息！")',
+                        note: 'カッコは任意。末尾コロン(:)とインデント（字下げ）でブロックを表現します。'
+                    },
+                    javascript: {
+                        name: 'if / else if / else',
+                        kana: 'イフ / エルス・イフ',
+                        syntax: 'if (条件式) {\n    処理;\n} else if (条件式) {\n    処理;\n} else {\n    処理;\n}',
+                        example: 'let score = 80;\nif (score >= 70) {\n    console.log("合格！");\n} else {\n    console.log("もう一息！");\n}',
+                        snippet: 'if (score >= 70) {\n    console.log("合格！");\n}',
+                        note: '条件式を丸括弧 () で囲み、処理を波括弧 {} で囲みます。'
+                    },
+                    c: {
+                        name: 'if / else if / else',
+                        kana: 'イフ / エルス・イフ',
+                        syntax: 'if (条件式) {\n    処理;\n} else {\n    処理;\n}',
+                        example: 'int score = 80;\nif (score >= 70) {\n    printf("合格！\\n");\n}',
+                        snippet: 'if (score >= 70) {\n    printf("合格！\\n");\n}',
+                        note: '構文はJSとほぼ同じ。型宣言（int score;）と各行末のセミコロンが必須です。'
+                    }
+                },
+                relatedTaskIds: [5, 6],
+                isFavorite: true 
+            },
+            { 
+                id: 'for', 
+                category: 'syntax', 
+                summary: '決められた回数だけ繰り返す', 
+                desc: '指定した回数分だけ同じ処理を連続して実行します。',
+                langs: {
+                    python: {
+                        name: 'for文 / range()',
+                        kana: 'フォー / レンジ',
+                        syntax: 'for i in range(回数):\n    繰り返す処理',
+                        example: 'for i in range(3):\n    print("やっほー")',
+                        snippet: 'for i in range(3):\n    print("こんにちは")',
+                        note: 'range(3) は 0, 1, 2 の3回繰り返します。'
+                    },
+                    javascript: {
+                        name: 'for (初期化; 条件; 加算)',
+                        kana: 'フォー文',
+                        syntax: 'for (let i = 0; i < 回数; i++) {\n    処理;\n}',
+                        example: 'for (let i = 0; i < 3; i++) {\n    console.log("やっほー");\n}',
+                        snippet: 'for (let i = 0; i < 3; i++) {\n    console.log("こんにちは");\n}',
+                        note: 'カウンター変数 i の初期化、終了条件、増分を1行で定義します。'
+                    },
+                    c: {
+                        name: 'for (初期化; 条件; 加算)',
+                        kana: 'フォー文',
+                        syntax: 'for (int i = 0; i < 回数; i++) {\n    処理;\n}',
+                        example: 'for (int i = 0; i < 3; i++) {\n    printf("やっほー\\n");\n}',
+                        snippet: 'for (int i = 0; i < 3; i++) {\n    printf("こんにちは\\n");\n}',
+                        note: 'C99規格以降ならループ内で int i = 0 と宣言可能です。'
+                    }
+                },
+                relatedTaskIds: [7, 8],
+                isFavorite: false 
+            }
+        ];
+
+        let selectedDictCategory = 'all';
+        let showFavoritesOnly = false;
+        let selectedCategory = 'all';
+        let selectedDifficulty = 'all';
+
+        const projectsData = {
+            'janken_game': {
+                name: 'janken_game',
+                desc: 'じゃんけんの手を判定して勝敗を出すミニゲームプログラム。',
+                updated: '2026/11/16 10:15',
+                files: {
+                    'main.py': `# [main.py] じゃんけんゲーム\nimport random\nimport rules\n\nuser_hand = "グー"\ncpu_hand = random.choice(["グー", "チョキ", "パー"])\nresult = rules.judge(user_hand, cpu_hand)\nprint(f"結果: {result}")\n`,
+                    'rules.py': `# [rules.py] 勝敗判定ルール\ndef judge(u, c):\n    if u == c:\n        return "あいこ"\n    return "勝ち！"\n`
+                }
+            },
+            'calc_tool': {
+                name: 'calc_tool',
+                desc: '税込み計算や割り勘計算を行う計算スクリプト集。',
+                updated: '2026/11/15 16:30',
+                files: {
+                    'main.py': `# [main.py] 計算ツール\nfrom math_utils import tax\nprice = 1000\nprint("税込: " + str(tax.calc(price)))\n`,
+                    'math_utils.py': `# [math_utils.py]\ndef calc(p):\n    return int(p * 1.1)\n`
+                }
+            }
+        };
+
+        // ★ 言語の一括切り替え（ヘッダー・辞書連動）
+        function changeGlobalLanguage(lang) {
+            currentSelectedLang = lang;
+
+            ['python', 'javascript', 'c'].forEach(l => {
+                const btn = document.getElementById(`langBtn-${l}`);
+                if (btn) {
+                    btn.className = (l === lang)
+                        ? 'px-2 py-1 rounded text-[11px] font-bold bg-white dark:bg-slate-700 text-brand-600 dark:text-brand-300 shadow-xs transition-all'
+                        : 'px-2 py-1 rounded text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all';
+                }
             });
-          })
-          .catch(err => console.error('ナビゲーション読み込みエラー:', err));
-      </script>
-      <button class="btn" id="themeToggleBtn" style="font-weight:bold;">☀️ / 🌙 テーマ切替</button>
-      <span class="pill">🐍 Python 特化</span>
-      <span class="pill online">● ローカルAI稼働中</span>
-      <span class="avatar">学</span>
-    </div>
-  </header>
 
-  <div class="layout">
-    <!-- ① 左サイドバー -->
-    <aside class="sidebar">
-      <div class="panel">
-        
-        <!-- サイドバー最上部にもクイック切替を配置 -->
-        <div class="side-mode-box">
-          <button class="side-mode-btn active" id="sideBtnFree" onclick="setAppMode('free')">📁 自由創作</button>
-          <button class="side-mode-btn" id="sideBtnTask" onclick="setAppMode('task')">🎯 課題演習</button>
-        </div>
+            const engineNames = {
+                'python': 'Python 3.10 Engine',
+                'javascript': 'Node.js / V8 Engine',
+                'c': 'GCC / Clang Engine'
+            };
+            const engineLabel = document.getElementById('engineVersionLabel');
+            if (engineLabel) engineLabel.innerText = engineNames[lang];
 
-        <!-- A. 課題演習時の通常メニュー -->
-        <div id="standardNavArea" style="display:none;">
-          <div class="side-title">LEARNING</div>
-          <div class="nav active"><span class="ico">▣</span>問題一覧カード</div>
-          <div class="nav"><span class="ico">⌕</span>関数・構文辞書</div>
-          <div class="side-title" style="margin-top:20px">MY RECORDS</div>
-          <div class="nav"><span class="ico">▥</span>成長カルテ</div>
-          <div class="nav"><span class="ico">↺</span>エラー履歴</div>
-          <div class="nav"><span class="ico">✧</span>アチーブメント</div>
-        </div>
-
-        <!-- B. 自由創作時のツリー型エクスプローラー -->
-        <div class="tree-container" id="treeNavArea" style="display:flex;">
-          <div class="side-title">
-            <span>FILES (階層ツリー)</span>
-            <div class="tree-header-actions">
-              <button class="tree-icon-btn" onclick="promptCreateFile('root')" title="ルートにファイル作成">📄+</button>
-              <button class="tree-icon-btn" onclick="promptCreateFolder('root')" title="ルートにフォルダ作成">📁+</button>
-            </div>
-          </div>
-          <div id="treeRoot"></div>
-        </div>
-
-        <div class="side-note" id="sideNote">
-          <strong>✦ 自由創作モード</strong>複数ファイルを作成して <code>import</code> 相互実行を試せます。
-        </div>
-
-      </div>
-    </aside>
-
-    <!-- ② 中央ワークスペース -->
-    <main class="workspace">
-      <div class="mainhead">
-        <div>
-          <h1 id="pageTitle">コードエディタ (自由創作)</h1>
-          <div class="sub" id="pageSub">フォルダ階層を見比べながら自由にプログラムを作り、相互に実行してみよう。</div>
-        </div>
-      </div>
-
-      <!-- ========================================================
-           【課題演習専用】問題一覧カード画面 (課題選択前)
-           ======================================================== -->
-      <section class="task-selection-view" id="taskSelectionView" style="display:none;">
-        <div class="task-cards-container" id="taskCardGrid"></div>
-      </section>
-
-      <!-- ========================================================
-           【共通作業ビュー】エディタ & コンソール
-           ======================================================== -->
-      <section class="task-work-view" id="taskWorkView" style="display:flex;">
-        
-        <!-- 課題演習中のみ表示されるヘッダーバナー -->
-        <div class="active-task-banner" id="activeTaskBanner" style="display:none;">
-          <div class="banner-left">
-            <button class="btn-back-tasks" onclick="backToTaskList()">← 問題一覧へもどる</button>
-            <strong id="activeTaskBannerTitle" style="color:var(--cyan); font-size:13.5px;">課題01</strong>
-            <span class="badge-diff badge-easy" id="activeTaskBannerDiff">初級</span>
-          </div>
-          <div style="font-size:12px;">
-            目標出力: <span style="color:var(--green); font-family:Consolas,monospace; font-weight:bold;" id="activeTaskBannerTarget">ねんれいは 10さいです</span>
-          </div>
-        </div>
-
-        <div class="panel editor-panel">
-          <!-- 自由創作時のみ表示されるタブバー -->
-          <div class="file-tabs-bar" id="fileTabsBar"></div>
-
-          <div class="panel-head">
-            <div class="file-label">
-              <span class="py-icon">Py</span>
-              <strong id="activeFileNameDisplay">my_project / main.py</strong>
-              <span class="status" id="activeStatusDisplay">Python 3.14</span>
-            </div>
-            <div class="tools">
-              <button class="btn" id="resetBtn" onclick="resetFileCode()">初期コード</button>
-              <button class="btn" onclick="formatCode()">✨ 整形</button>
-              <button class="btn btn-run" onclick="runCurrentProgram()">▶ 実行</button>
-            </div>
-          </div>
-
-          <div class="editor-wrap">
-            <div class="line-numbers" id="lineNumbers">1</div>
-            <textarea id="code" spellcheck="false" aria-label="Pythonコードエディタ" oninput="saveCurrentCode()"></textarea>
-          </div>
-
-          <div class="editor-footer">
-            <span id="editorStatus">準備完了</span>
-            <span>UTF-8 | オートセーブ有効</span>
-          </div>
-        </div>
-
-        <!-- 下部コンソール ＆ エラー分析 -->
-        <div class="bottom-grid">
-          <section class="panel output-panel">
-            <div class="small-head">
-              <span>▹ 実行結果コンソール</span>
-              <span class="status" id="runStatus">未実行</span>
-            </div>
-            <div class="output-body" id="output">「▶ 実行」を押すと、プログラムの実行結果が表示されます。</div>
-          </section>
-
-          <section class="panel hint-panel">
-            <div class="small-head">
-              <span>✦ エラー分析 ＆ 修正提案</span>
-              <span class="status">リアルタイム分析</span>
-            </div>
-            <div class="hint-body" id="hint">
-              <strong>ここにAIによるエラー解説と修正提案が表示されます。</strong>
-            </div>
-          </section>
-        </div>
-      </section>
-
-    </main>
-
-    <!-- ③ 右サイドバー -->
-    <aside class="rightbar">
-      <section class="panel ai-card">
-        <div class="ai-head">
-          <div class="ai-mark">✦</div>
-          <div>
-            <h2>AI学習アシスタント</h2>
-            <div class="sub" id="aiSub">フォルダをまたぐコードも丸ごと解析</div>
-          </div>
-        </div>
-        <div class="ai-message" id="chatMessages">
-          <strong>こんにちは！</strong><br>
-          階層ツリーでフォルダを整理しながらプログラミングできるよ。別フォルダの関数を呼んでエラーになってもAIがサポートするね！
-        </div>
-        <div class="quick-prompts">
-          <button onclick="sendQuickPrompt('このコードを説明して')">コードを説明して</button>
-          <button onclick="sendQuickPrompt('エラーの直し方を教えて')">エラーの直し方</button>
-          <button onclick="sendQuickPrompt('ヒントを教えて')">ヒント</button>
-        </div>
-        <form class="chat-form" id="chatForm">
-          <input id="chatInput" placeholder="質問を入力..." aria-label="AIへの質問">
-          <button type="submit">送信</button>
-        </form>
-      </section>
-
-      <section class="panel task-card" id="taskCard">
-        <div class="card-title">
-          <h2 id="taskCardTitle">自由創作のヒント</h2>
-          <span class="tag" id="taskCardTag">自由創作</span>
-        </div>
-        <p id="taskText">
-          フォルダ内のプログラムは <code>from フォルダ名 import ファイル名</code> で読み込めます。
-        </p>
-        <div class="example" id="taskExample"># 例: utils/helper.pyを使う\nfrom utils import helper</div>
-        <div class="task-meta">
-          <span id="taskMeta1">ツリー型管理中</span>
-          <span id="taskMeta2">作業フォルダ内スコープ</span>
-        </div>
-      </section>
-
-      <section class="panel progress-card">
-        <div class="progress-top">
-          <h2>学習の進み具合</h2>
-          <span class="progress-num">35%</span>
-        </div>
-        <div class="progress-track"><div class="progress-fill" style="width:35%;"></div></div>
-        <div class="progress-foot">
-          <span>クリア実績</span>
-          <span>3 / 8 課題完了</span>
-        </div>
-      </section>
-    </aside>
-  </div>
-
-  <footer class="footer">
-    <span>コードラボ | Python学習環境 · Tauri v2 / Rust / React</span>
-    <span>ワンクリック モード切替（Alt+1 / Alt+2）対応</span>
-  </footer>
-</div>
-
-<div class="toast" id="toast" role="status"></div>
-
-<script>
-// --- 課題マスタデータ ---
-const taskDatabase = [
-  {
-    id: 'task_01',
-    fileName: 'task_01.py',
-    title: '課題 01｜年齢を表示しよう',
-    diff: 'easy',
-    diffLabel: '初級',
-    desc: '変数 age に年齢（10歳）を代入し、「ねんれいは 10さいです」と画面に表示してください。',
-    targetOutput: 'ねんれいは 10さいです',
-    time: '3分',
-    passScore: '80点以上',
-    initialCode: `# 課題01: 年齢(10歳)を表示するプログラムを作ろう！\nage = 10 + 5\nprint("ねんれいは " + str(age) + "さいです")\n`
-  },
-  {
-    id: 'task_02',
-    fileName: 'task_02.py',
-    title: '課題 02｜1から10までの合計',
-    diff: 'easy',
-    diffLabel: '初級',
-    desc: 'forループを使って1から10までの数を足し合わせ、合計「55」を出力してください。',
-    targetOutput: '合計は 55 です',
-    time: '5分',
-    passScore: '80点以上',
-    initialCode: `# 課題02: 1から10までの合計を計算して表示しよう\ntotal = 0\nfor i in range(1, 11):\n    total += i\nprint(f"合計は {total} です")\n`
-  },
-  {
-    id: 'task_03',
-    fileName: 'task_03.py',
-    title: '課題 03｜偶数・奇数の判定',
-    diff: 'mid',
-    diffLabel: '中級',
-    desc: '変数 num の値が偶数なら「ぐうすう」、奇数なら「きすう」とif文で判定して表示してください。',
-    targetOutput: '8 は ぐうすう です',
-    time: '7分',
-    passScore: '80点以上',
-    initialCode: `# 課題03: 偶数・奇数を判定しよう\nnum = 8\nif num % 2 == 0:\n    print(str(num) + " は ぐうすう です")\nelse:\n    print(str(num) + " は きすう です")\n`
-  }
-];
-
-let selectedTaskId = null;
-let taskUserCodes = {
-  'task_01': taskDatabase[0].initialCode,
-  'task_02': taskDatabase[1].initialCode,
-  'task_03': taskDatabase[2].initialCode
-};
-
-// 自由創作ファイルツリーデータ
-let fileSystem = {
-  name: "my_project",
-  type: "folder",
-  path: "my_project",
-  expanded: true,
-  children: [
-    {
-      name: "main.py",
-      type: "file",
-      path: "my_project/main.py",
-      code: `# [main.py] メインプログラム\nfrom utils import helper\n\nprint("計算をはじめます...")\ntotal = helper.calc_score(10)\nprint("合計得点: " + str(total))\n`
-    },
-    {
-      name: "utils",
-      type: "folder",
-      path: "my_project/utils",
-      expanded: true,
-      children: [
-        {
-          name: "helper.py",
-          type: "file",
-          path: "my_project/utils/helper.py",
-          code: `# [utils/helper.py] 補助関数ファイル\ndef calc_score(base_point):\n    bonus = 5\n    return base_point + bonus_rate\n`
+            // 辞書カード再描画
+            renderDictCards();
+            renderSideDictCards();
         }
-      ]
-    }
-  ]
-};
 
-let currentMode = 'free'; // 'free' | 'task'
-let activeFilePath = 'my_project/main.py';
-let openTabs = ['my_project/main.py'];
+        // 個別カードでの言語タブ切り替え
+        function switchCardLanguage(itemId, lang, event) {
+            if (event) event.stopPropagation();
+            const cardEl = document.getElementById(`dictCard-${itemId}`);
+            if (!cardEl) return;
 
-const codeEl = document.getElementById('code');
-const outputEl = document.getElementById('output');
-const hintEl = document.getElementById('hint');
-const lineNumbersEl = document.getElementById('lineNumbers');
-const toastEl = document.getElementById('toast');
+            const item = dictionaryData.find(d => d.id === itemId);
+            if (!item || !item.langs[lang]) return;
 
-window.onload = () => {
-  renderTaskSelectionCards();
-  setAppMode('free');
-};
+            const langData = item.langs[lang];
 
-// キーボードショートカット (Alt+1: 自由創作, Alt+2: 課題演習)
-window.addEventListener('keydown', (e) => {
-  if (e.altKey && e.key === '1') {
-    e.preventDefault();
-    setAppMode('free');
-  } else if (e.altKey && e.key === '2') {
-    e.preventDefault();
-    setAppMode('task');
-  }
-});
+            // タブの見た目切り替え
+            cardEl.querySelectorAll('.card-lang-tab').forEach(tab => {
+                const isCurrent = tab.getAttribute('data-lang') === lang;
+                tab.className = isCurrent 
+                    ? 'card-lang-tab px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-600 text-white'
+                    : 'card-lang-tab px-2 py-0.5 rounded text-[10px] font-bold text-slate-400 hover:text-white';
+            });
 
-// テーマ切替
-document.getElementById('themeToggleBtn').addEventListener('click', () => {
-  const isLight = document.body.getAttribute('data-theme') === 'light';
-  if(isLight) {
-    document.body.removeAttribute('data-theme');
-    notify('ダークモードに切り替えました');
-  } else {
-    document.body.setAttribute('data-theme', 'light');
-    notify('ライトモードに切り替えました');
-  }
-});
-
-function updateLines(){
-  const n = Math.max(1, codeEl.value.split('\n').length);
-  lineNumbersEl.textContent = Array.from({length:n},(_,i)=>i+1).join('\n');
-}
-
-function notify(message){
-  toastEl.textContent = message;
-  toastEl.style.display = 'block';
-  clearTimeout(notify.timer);
-  notify.timer = setTimeout(() => toastEl.style.display = 'none', 2400);
-}
-
-codeEl.addEventListener('input', updateLines);
-codeEl.addEventListener('scroll', () => { lineNumbersEl.scrollTop = codeEl.scrollTop; });
-codeEl.addEventListener('keydown', e => {
-  if(e.key === 'Tab'){
-    e.preventDefault();
-    const start = codeEl.selectionStart, end = codeEl.selectionEnd;
-    codeEl.setRangeText('    ', start, end, 'end');
-    updateLines();
-  }
-  if((e.ctrlKey || e.metaKey) && e.key === 'Enter'){
-    e.preventDefault();
-    runCurrentProgram();
-  }
-});
-
-// ★ モード切り替え（ヘッダー・サイドバー連動） ★
-function setAppMode(mode) {
-  currentMode = mode;
-
-  // 上部トグルボタンのアクティブ同期
-  document.getElementById('btnModeFree').classList.toggle('active', mode === 'free');
-  document.getElementById('btnModeTask').classList.toggle('active', mode === 'task');
-
-  // サイドバートグルのアクティブ同期
-  document.getElementById('sideBtnFree').classList.toggle('active', mode === 'free');
-  document.getElementById('sideBtnTask').classList.toggle('active', mode === 'task');
-
-  const standardNav = document.getElementById('standardNavArea');
-  const treeNav = document.getElementById('treeNavArea');
-  const fileTabsBar = document.getElementById('fileTabsBar');
-  const activeTaskBanner = document.getElementById('activeTaskBanner');
-  const sideNote = document.getElementById('sideNote');
-
-  if(mode === 'free') {
-    // 自由創作モード
-    standardNav.style.display = 'none';
-    treeNav.style.display = 'flex';
-    document.getElementById('taskSelectionView').style.display = 'none';
-    document.getElementById('taskWorkView').style.display = 'flex';
-    fileTabsBar.style.display = 'flex';
-    activeTaskBanner.style.display = 'none';
-    document.getElementById('activeStatusDisplay').textContent = 'Python 3.14';
-
-    document.getElementById('pageTitle').textContent = "コードエディタ (自由創作)";
-    document.getElementById('pageSub').textContent = "フォルダ階層を見比べながら自由にプログラムを作り、相互に実行してみよう。";
-    sideNote.innerHTML = "<strong>✦ 自由創作モード</strong>複数ファイルを作成して <code>import</code> 相互実行を試せます。";
-
-    document.getElementById('aiSub').textContent = "フォルダをまたぐコードも丸ごと解析";
-    document.getElementById('taskCardTitle').textContent = "自由創作のヒント";
-    document.getElementById('taskCardTag').textContent = "自由創作";
-    document.getElementById('taskText').innerHTML = "フォルダ内のプログラムは <code>from フォルダ名 import ファイル名</code> で読み込めます。";
-    document.getElementById('taskExample').textContent = "# 例: utils/helper.pyを使う\nfrom utils import helper";
-
-    renderTree();
-    renderTabs();
-    openFileByPath(activeFilePath);
-    notify("📁 自由創作モードに切り替えました (Alt+1)");
-  } else {
-    // 課題演習モード
-    standardNav.style.display = 'block';
-    treeNav.style.display = 'none';
-    fileTabsBar.style.display = 'none';
-    document.getElementById('activeStatusDisplay').textContent = '課題自動採点';
-    sideNote.innerHTML = "<strong>✦ 課題演習モード</strong>お題に合わせてコードを完成させ、合格を目指しましょう。";
-    document.getElementById('aiSub').textContent = "段階的ヒント・エラー解決支援";
-
-    if (selectedTaskId) {
-      document.getElementById('taskSelectionView').style.display = 'none';
-      document.getElementById('taskWorkView').style.display = 'flex';
-      activeTaskBanner.style.display = 'flex';
-      selectTaskAndOpenEditor(selectedTaskId, false);
-    } else {
-      backToTaskList(false);
-    }
-    notify("🎯 課題演習モードに切り替えました (Alt+2)");
-  }
-}
-
-// 課題カードの描画
-function renderTaskSelectionCards() {
-  const container = document.getElementById('taskCardGrid');
-  container.innerHTML = '';
-  taskDatabase.forEach(task => {
-    const card = document.createElement('div');
-    card.className = 'task-select-card';
-    card.onclick = () => selectTaskAndOpenEditor(task.id);
-
-    card.innerHTML = `
-      <div>
-        <div class="task-card-header">
-          <h3>${task.title}</h3>
-          <span class="badge-diff ${task.diff === 'easy' ? 'badge-easy' : 'badge-mid'}">${task.diffLabel}</span>
-        </div>
-        <p>${task.desc}</p>
-        <div class="task-target-box">
-          <span class="label">【期待される出力】</span>
-          <span class="val">${task.targetOutput}</span>
-        </div>
-      </div>
-      <div class="task-card-foot">
-        <span>目安: ${task.time} ｜ 合格: ${task.passScore}</span>
-        <button class="btn-start-task" onclick="event.stopPropagation(); selectTaskAndOpenEditor('${task.id}')">挑戦する ▶</button>
-      </div>
-    `;
-    container.appendChild(card);
-  });
-}
-
-function selectTaskAndOpenEditor(taskId, showToast = true) {
-  selectedTaskId = taskId;
-  const task = taskDatabase.find(t => t.id === taskId);
-  if (!task) return;
-
-  document.getElementById('taskSelectionView').style.display = 'none';
-  document.getElementById('taskWorkView').style.display = 'flex';
-  document.getElementById('activeTaskBanner').style.display = 'flex';
-
-  document.getElementById('activeTaskBannerTitle').textContent = task.title;
-  document.getElementById('activeTaskBannerDiff').textContent = task.diffLabel;
-  document.getElementById('activeTaskBannerDiff').className = `badge-diff ${task.diff === 'easy' ? 'badge-easy' : 'badge-mid'}`;
-  document.getElementById('activeTaskBannerTarget').textContent = task.targetOutput;
-
-  document.getElementById('activeFileNameDisplay').textContent = `${task.fileName} (課題演習)`;
-  codeEl.value = taskUserCodes[taskId] || task.initialCode;
-  updateLines();
-
-  document.getElementById('pageTitle').textContent = `課題演習: ${task.title}`;
-  document.getElementById('pageSub').textContent = `目標の出力を目指してコードを書き、「▶ 実行」を押して自動採点を受けましょう。`;
-
-  document.getElementById('taskCardTitle').textContent = task.title;
-  document.getElementById('taskCardTag').textContent = task.diffLabel;
-  document.getElementById('taskText').textContent = task.desc;
-  document.getElementById('taskExample').textContent = `目標の出力：${task.targetOutput}`;
-  document.getElementById('taskMeta1').textContent = `目安: ${task.time}`;
-  document.getElementById('taskMeta2').textContent = `合格ライン: ${task.passScore}`;
-
-  document.getElementById('chatMessages').innerHTML = `
-    <strong>AIアシスタント：</strong><br>
-    「${task.title}」を始めたね！<br>
-    目標の出力は「<strong style="color:var(--green)">${task.targetOutput}</strong>」だよ。書けたら「▶ 実行」を押してね！
-  `;
-
-  if(showToast) notify(`「${task.title}」のエディタを開きました`);
-}
-
-function backToTaskList(showToast = true) {
-  selectedTaskId = null;
-  document.getElementById('taskWorkView').style.display = 'none';
-  document.getElementById('taskSelectionView').style.display = 'flex';
-
-  document.getElementById('pageTitle').textContent = "課題演習モード (問題一覧)";
-  document.getElementById('pageSub').textContent = "挑戦する問題カードを選択してください。";
-
-  document.getElementById('taskCardTitle').textContent = "課題演習の進め方";
-  document.getElementById('taskCardTag').textContent = "ガイド";
-  document.getElementById('taskText').textContent = "解きたい課題カードをクリックするとエディタが開き、白紙からコードを書いてテスト・採点できます。";
-  document.getElementById('taskExample').textContent = "合格条件：80点以上 ＆ エラーなし";
-
-  document.getElementById('chatMessages').innerHTML = `
-    <strong>AIアシスタント：</strong><br>
-    挑戦したい課題カードを選んで学習をはじめよう！
-  `;
-}
-
-function saveCurrentCode() {
-  if(currentMode === 'task' && selectedTaskId) {
-    taskUserCodes[selectedTaskId] = codeEl.value;
-  } else {
-    const fileObj = findNodeByPath(fileSystem, activeFilePath);
-    if(fileObj) fileObj.code = codeEl.value;
-  }
-  updateLines();
-}
-
-function resetFileCode() {
-  if(confirm("コードを初期状態に戻しますか？")) {
-    if(currentMode === 'task' && selectedTaskId) {
-      const curTask = taskDatabase.find(t => t.id === selectedTaskId);
-      taskUserCodes[selectedTaskId] = curTask.initialCode;
-      codeEl.value = curTask.initialCode;
-    } else {
-      const fileObj = findNodeByPath(fileSystem, activeFilePath);
-      if(fileObj) {
-        fileObj.code = `# [${fileObj.name}]\n`;
-        codeEl.value = fileObj.code;
-      }
-    }
-    updateLines();
-    notify("コードを初期化しました");
-  }
-}
-
-function formatCode() {
-  codeEl.value = codeEl.value.trim();
-  saveCurrentCode();
-  notify("✨ コードを整形しました");
-}
-
-// 実行処理
-function runCurrentProgram() {
-  document.getElementById('runStatus').textContent = '実行中...';
-  outputEl.innerHTML = `<span style="color:var(--muted)">⏳ プログラムを実行中...</span>`;
-
-  setTimeout(() => {
-    document.getElementById('runStatus').textContent = '完了';
-
-    if(currentMode === 'task') {
-      const curTask = taskDatabase.find(t => t.id === selectedTaskId);
-      const code = taskUserCodes[selectedTaskId] || '';
-
-      if (selectedTaskId === 'task_01') {
-        if (code.includes('10 + 5')) {
-          outputEl.innerHTML = `<span class="error">出力: ねんれいは 15さいです</span>\n-------------------------\n[判定: 85点 (不合格)]`;
-          hintEl.innerHTML = `<strong>🤔 期待した結果と違います (論理エラー)</strong><br>目標は「<strong>${curTask.targetOutput}</strong>」ですが、15歳になっています。<code>10 + 5</code> の計算を見直してみましょう！`;
-        } else {
-          outputEl.innerHTML = `<span class="success">出力: ${curTask.targetOutput}</span>\n-------------------------\n<span class="success">[判定: 100点満点 (合格！)]</span>`;
-          hintEl.innerHTML = `<strong style="color:var(--green)">🎉 100点満点クリア！</strong><br>目標どおりの出力が確認できました！`;
+            // コンテンツ更新
+            cardEl.querySelector('.card-syntax-code').innerText = langData.example;
+            cardEl.querySelector('.card-syntax-type').innerText = langData.syntax.split('\n')[0];
+            cardEl.querySelector('.card-syntax-note').innerText = `💡 [${lang.toUpperCase()}] ${langData.note}`;
+            cardEl.querySelector('.card-func-title').innerText = langData.name;
         }
-      } else {
-        outputEl.innerHTML = `<span class="success">出力: ${curTask.targetOutput}</span>\n-------------------------\n<span class="success">[判定: 100点満点 (合格！)]</span>`;
-        hintEl.innerHTML = `<strong style="color:var(--green)">🎉 合格！</strong><br>バッチリお題通りの出力です。`;
-      }
-    } else {
-      // 自由創作実行
-      const helperObj = findNodeByPath(fileSystem, 'my_project/utils/helper.py');
-      if(helperObj && helperObj.code.includes('bonus_rate')) {
-        outputEl.innerHTML = `
-<span class="error">Traceback (most recent call last):</span>
-  File "my_project/main.py", line 6, in &lt;module&gt;
-    total = helper.calc_score(10)
-  File "my_project/utils/helper.py", line 4, in calc_score
-    return base_point + bonus_rate
-<span class="error">NameError: name 'bonus_rate' is not defined</span>
-<div style="border-top:1px dashed var(--border); padding-top:6px; margin-top:6px;">
-  ⚠️ <strong>utils/helper.py の 4行目でエラーを検知しました</strong><br>
-  <button class="btn-jump-error" onclick="openFileByPath('my_project/utils/helper.py')">👉 utils/helper.py を開いて直す</button>
-</div>`;
 
-        hintEl.innerHTML = `
-<strong>🔍 フォルダをまたいだ両コードを分析しました！</strong><br>
-<code>main.py</code> の呼び出し先である <span style="color:var(--red); font-weight:bold;">utils/helper.py (4行目)</span> で変数が未定義のエラーです。<br><br>
-<strong>【直し方の提案】</strong><br>
-① <strong>helper.py を修正:</strong> <code>bonus_rate</code> を定義済みの <code>bonus</code> に直す。<br>
-② <strong>main.py を修正:</strong> <code>calc_score(10, 5)</code> のように引数を渡せるよう関数定義を拡張する。`;
-      } else {
-        outputEl.innerHTML = `計算をはじめます...\n合計得点: 15\n-------------------------\n<span class="success">🎉 プログラムは正常終了しました</span>`;
-        hintEl.innerHTML = `<strong style="color:var(--green)">実行完了</strong>`;
-      }
-    }
-  }, 350);
-}
+        function toggleSidebar() {
+            const sidebar = document.getElementById('desktopSidebar');
+            sidebar.classList.toggle('md:-ml-60');
+            sidebar.classList.toggle('-translate-x-full');
+        }
 
-// 自由創作ツリー・タブ関数群
-function renderTree() {
-  const rootEl = document.getElementById('treeRoot');
-  rootEl.innerHTML = '';
-  rootEl.appendChild(createTreeNodeElement(fileSystem));
-}
-function createTreeNodeElement(node) {
-  const container = document.createElement('div');
-  container.className = 'tree-node';
-  const row = document.createElement('div');
-  row.className = 'tree-row' + (node.path === activeFilePath ? ' active' : '');
-  if(node.type === 'folder') {
-    row.innerHTML = `<span class="tree-toggle">${node.expanded ? '▼' : '▶'}</span><span>📁 ${node.name}</span>`;
-    row.onclick = () => { node.expanded = !node.expanded; renderTree(); };
-  } else {
-    row.innerHTML = `<span class="tree-toggle"></span><span>📄 ${node.name}</span>`;
-    row.onclick = () => openFileByPath(node.path);
-  }
-  container.appendChild(row);
-  if(node.type === 'folder' && node.expanded && node.children) {
-    const childrenContainer = document.createElement('div');
-    childrenContainer.className = 'tree-children';
-    node.children.forEach(child => childrenContainer.appendChild(createTreeNodeElement(child)));
-    container.appendChild(childrenContainer);
-  }
-  return container;
-}
-function openFileByPath(path) {
-  activeFilePath = path;
-  if(!openTabs.includes(path)) openTabs.push(path);
-  renderTabs();
-  renderTree();
-  const fileObj = findNodeByPath(fileSystem, path);
-  if(fileObj) {
-    codeEl.value = fileObj.code || '';
-    document.getElementById('activeFileNameDisplay').textContent = path;
-  }
-  updateLines();
-}
-function renderTabs() {
-  const bar = document.getElementById('fileTabsBar');
-  bar.innerHTML = '';
-  openTabs.forEach(path => {
-    const tab = document.createElement('div');
-    tab.className = 'file-tab' + (path === activeFilePath ? ' active' : '');
-    tab.innerHTML = `<span>📄 ${path.split('/').pop()}</span>`;
-    tab.onclick = () => openFileByPath(path);
-    bar.appendChild(tab);
-  });
-}
-function findNodeByPath(root, path) {
-  if(root.path === path) return root;
-  if(root.children) {
-    for(let child of root.children) {
-      const found = findNodeByPath(child, path);
-      if(found) return found;
-    }
-  }
-  return null;
-}
-function sendQuickPrompt(txt) {
-  document.getElementById('chatInput').value = txt;
-  document.getElementById('chatInput').focus();
-}
-document.getElementById('chatForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const input = document.getElementById('chatInput');
-  if(!input.value.trim()) return;
-  document.getElementById('chatMessages').innerHTML = `<strong>あなた：</strong><br>${input.value}<br><br><strong>AIアシスタント：</strong><br>お題のクリアに向けて一緒にコードを確認しよう！`;
-  input.value = '';
-});
-</script>
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function toggleDetailPanel() {
+            const panel = document.getElementById('detailPanel');
+            isDetailOpen = !isDetailOpen;
+            panel.classList.toggle('translate-x-full', !isDetailOpen);
+        }
+
+        function toggleAudience() {
+            isKidMode = !isKidMode;
+            document.getElementById('audienceBtn').innerText = isKidMode ? 'こどもモード (ルビあり)' : '大人モード (標準表記)';
+            renderDictCards();
+            renderSideDictCards();
+        }
+
+        function applyLayoutPreset(preset) {
+            ['standard', 'inline', 'separated'].forEach(p => {
+                const el = document.getElementById(`presetLabel-${p}`);
+                if (el) {
+                    el.className = (p === preset)
+                        ? 'border-2 border-brand-500 rounded-xl p-3 cursor-pointer bg-brand-50/50 dark:bg-brand-950/20 block relative'
+                        : 'border border-slate-300 dark:border-slate-700 rounded-xl p-3 cursor-pointer hover:border-brand-400 block relative';
+                }
+            });
+
+            if (preset === 'standard') {
+                layoutConfig = { taskPos: 'right', aiPos: 'right', dictPos: 'right' };
+            } else if (preset === 'inline') {
+                layoutConfig = { taskPos: 'top', aiPos: 'bottom', dictPos: 'right' };
+            } else if (preset === 'separated') {
+                layoutConfig = { taskPos: 'top', aiPos: 'right', dictPos: 'view' };
+            }
+            document.getElementById('settingTaskPos').value = layoutConfig.taskPos;
+            document.getElementById('settingAiPos').value = layoutConfig.aiPos;
+            document.getElementById('settingDictPos').value = layoutConfig.dictPos;
+            renderDynamicLayout();
+        }
+
+        function updatePartPositions() {
+            layoutConfig.taskPos = document.getElementById('settingTaskPos').value;
+            layoutConfig.aiPos = document.getElementById('settingAiPos').value;
+            layoutConfig.dictPos = document.getElementById('settingDictPos').value;
+            renderDynamicLayout();
+        }
+
+        function renderDynamicLayout() {
+            const topTaskBanner = document.getElementById('taskBanner');
+            const rightTaskBox = document.getElementById('rightTaskBox');
+            const rightAiBox = document.getElementById('rightAiBox');
+            const tabBtnAi = document.getElementById('tabBtnAi');
+            const rightDictBox = document.getElementById('rightDictBox');
+
+            if (activeMode === 'task') {
+                if (layoutConfig.taskPos === 'top') {
+                    topTaskBanner.classList.remove('hidden');
+                    rightTaskBox.classList.add('hidden');
+                } else if (layoutConfig.taskPos === 'right') {
+                    topTaskBanner.classList.add('hidden');
+                    rightTaskBox.classList.remove('hidden');
+                } else {
+                    topTaskBanner.classList.add('hidden');
+                    rightTaskBox.classList.add('hidden');
+                }
+            } else {
+                topTaskBanner.classList.add('hidden');
+                rightTaskBox.classList.add('hidden');
+            }
+
+            if (layoutConfig.aiPos === 'bottom') {
+                rightAiBox.classList.add('hidden');
+                tabBtnAi.classList.remove('hidden');
+            } else {
+                rightAiBox.classList.remove('hidden');
+                tabBtnAi.classList.add('hidden');
+            }
+
+            if (layoutConfig.dictPos === 'right') {
+                rightDictBox.classList.remove('hidden');
+            } else {
+                rightDictBox.classList.add('hidden');
+            }
+
+            updateMiniPreview();
+        }
+
+        function updateMiniPreview() {
+            const prevTaskTop = document.getElementById('previewTaskTop');
+            const prevAiTab = document.getElementById('previewAiTab');
+            const prevTaskRight = document.getElementById('previewTaskRight');
+            const prevAiRight = document.getElementById('previewAiRight');
+            const prevDictRight = document.getElementById('previewDictRight');
+            const prevRightPanel = document.getElementById('previewRightPanel');
+
+            if (!prevTaskTop) return;
+
+            prevTaskTop.classList.toggle('hidden', layoutConfig.taskPos !== 'top');
+            prevTaskRight.classList.toggle('hidden', layoutConfig.taskPos !== 'right');
+            prevAiTab.classList.toggle('hidden', layoutConfig.aiPos !== 'bottom');
+            prevAiRight.classList.toggle('hidden', layoutConfig.aiPos !== 'right');
+            prevDictRight.classList.toggle('hidden', layoutConfig.dictPos !== 'right');
+
+            const isRightEmpty = (layoutConfig.taskPos !== 'right') && (layoutConfig.aiPos !== 'right') && (layoutConfig.dictPos !== 'right');
+            prevRightPanel.classList.toggle('hidden', isRightEmpty);
+        }
+
+        // ビュー制御
+        function switchView(view, pushHistory = true) {
+            if (activeMode === 'task' && lastWorkedTaskId) {
+                userTaskCodes[lastWorkedTaskId] = document.getElementById('codeEditor').value;
+            }
+
+            const currentVisible = getCurrentVisibleView();
+
+            if (pushHistory && currentVisible !== view) {
+                navigationHistoryStack.push({
+                    view: currentVisible,
+                    taskId: lastWorkedTaskId,
+                    savedCode: document.getElementById('codeEditor').value,
+                    projectKey: currentProjectKey,
+                    fileKey: currentFileKey
+                });
+            }
+
+            if (view === 'dict-view') {
+                const peek = navigationHistoryStack[navigationHistoryStack.length - 1];
+                const lastV = peek ? peek.view : 'tasks';
+                const labelMap = {
+                    'tasks': '課題一覧へ戻る',
+                    'editor-task': `課題(${peek?.taskId || lastWorkedTaskId})へ戻る`,
+                    'editor-free': '制作エディタへ戻る',
+                    'projects': 'プロジェクト選択へ戻る',
+                    'history': '履歴へ戻る',
+                    'settings': '設定へ戻る'
+                };
+                document.getElementById('dictBackBtnLabel').innerText = labelMap[lastV] || '戻る';
+            }
+
+            document.getElementById('view-tasks-container').classList.add('hidden');
+            document.getElementById('view-projects-container').classList.add('hidden');
+            document.getElementById('view-dict-container').classList.add('hidden');
+            document.getElementById('view-editor-container').classList.add('hidden');
+            document.getElementById('view-history-container').classList.add('hidden');
+            document.getElementById('view-settings-container').classList.add('hidden');
+
+            const taskCategoryNav = document.getElementById('taskCategoryNavSection');
+            const dictCategoryNav = document.getElementById('dictCategoryNavSection');
+            const fileTree = document.getElementById('fileTreeSection');
+            const headerControls = document.getElementById('editorHeaderControls');
+            const headerFileBtn = document.getElementById('headerFileBtn');
+            const badge = document.getElementById('currentModeBadge');
+            const projectBanner = document.getElementById('projectNavBanner');
+
+            ['tasks', 'projects', 'history', 'dict', 'settings'].forEach(v => {
+                const btn = document.getElementById(`nav-${v}`);
+                if (btn) {
+                    const isTarget = (view === 'tasks' && v === 'tasks') || 
+                                     (view === 'editor-task' && v === 'tasks') ||
+                                     (view === 'projects' && v === 'projects') ||
+                                     (view === 'editor-free' && v === 'projects') ||
+                                     (view === 'dict-view' && v === 'dict') ||
+                                     (view === v);
+                    btn.className = isTarget
+                        ? 'focus-ring w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-extrabold bg-brand-500 text-white shadow-xs transition-all'
+                        : 'focus-ring w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-all';
+                }
+            });
+
+            if (view === 'tasks') {
+                activeMode = 'task';
+                document.getElementById('view-tasks-container').classList.remove('hidden');
+                headerControls.classList.add('hidden');
+                taskCategoryNav.classList.remove('hidden');
+                dictCategoryNav.classList.add('hidden');
+                fileTree.classList.add('hidden');
+                badge.innerText = '🎯 課題演習：問題選択';
+                badge.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30';
+                renderResumeTaskCard();
+                renderTasks();
+            } else if (view === 'projects') {
+                activeMode = 'free';
+                document.getElementById('view-projects-container').classList.remove('hidden');
+                headerControls.classList.add('hidden');
+                taskCategoryNav.classList.add('hidden');
+                dictCategoryNav.classList.add('hidden');
+                fileTree.classList.add('hidden');
+                badge.innerText = '📁 自由制作：プロジェクト選択';
+                badge.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30';
+                renderProjectCards();
+            } else if (view === 'dict-view') {
+                activeMode = 'dict';
+                document.getElementById('view-dict-container').classList.remove('hidden');
+                headerControls.classList.add('hidden');
+                taskCategoryNav.classList.add('hidden');
+                dictCategoryNav.classList.remove('hidden');
+                fileTree.classList.add('hidden');
+                badge.innerText = '📖 構文辞書：多言語カード';
+                badge.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30';
+                renderDictCards();
+            } else if (view === 'editor-task') {
+                activeMode = 'task';
+                document.getElementById('view-editor-container').classList.remove('hidden');
+                headerControls.classList.remove('hidden');
+                headerFileBtn.classList.add('hidden');
+                taskCategoryNav.classList.add('hidden');
+                dictCategoryNav.classList.add('hidden');
+                fileTree.classList.add('hidden');
+                projectBanner.classList.add('hidden');
+                badge.innerText = '🎯 課題演習モード中';
+                badge.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30';
+            } else if (view === 'editor-free') {
+                activeMode = 'free';
+                document.getElementById('view-editor-container').classList.remove('hidden');
+                headerControls.classList.remove('hidden');
+                headerFileBtn.classList.remove('hidden');
+                taskCategoryNav.classList.add('hidden');
+                dictCategoryNav.classList.add('hidden');
+                fileTree.classList.remove('hidden');
+                projectBanner.classList.remove('hidden');
+                badge.innerText = `📁 自由制作：${currentProjectKey}`;
+                badge.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30';
+                renderFileTree();
+            } else if (view === 'history') {
+                document.getElementById('view-history-container').classList.remove('hidden');
+                headerControls.classList.add('hidden');
+                taskCategoryNav.classList.add('hidden');
+                dictCategoryNav.classList.add('hidden');
+                fileTree.classList.add('hidden');
+            } else if (view === 'settings') {
+                document.getElementById('view-settings-container').classList.remove('hidden');
+                headerControls.classList.add('hidden');
+                taskCategoryNav.classList.add('hidden');
+                dictCategoryNav.classList.add('hidden');
+                fileTree.classList.add('hidden');
+            }
+
+            renderDynamicLayout();
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function getCurrentVisibleView() {
+            if (!document.getElementById('view-tasks-container').classList.contains('hidden')) return 'tasks';
+            if (!document.getElementById('view-projects-container').classList.contains('hidden')) return 'projects';
+            if (!document.getElementById('view-dict-container').classList.contains('hidden')) return 'dict-view';
+            if (!document.getElementById('view-editor-container').classList.contains('hidden')) {
+                return activeMode === 'task' ? 'editor-task' : 'editor-free';
+            }
+            if (!document.getElementById('view-history-container').classList.contains('hidden')) return 'history';
+            if (!document.getElementById('view-settings-container').classList.contains('hidden')) return 'settings';
+            return 'tasks';
+        }
+
+        function goBackFromDict() {
+            if (navigationHistoryStack.length > 0) {
+                const target = navigationHistoryStack.pop();
+                if (target.view === 'editor-task' && target.taskId) {
+                    selectTask(target.taskId, false);
+                } else if (target.view === 'editor-free') {
+                    currentProjectKey = target.projectKey;
+                    currentFileKey = target.fileKey;
+                    switchView('editor-free', false);
+                } else {
+                    switchView(target.view || 'tasks', false);
+                }
+            } else {
+                switchView('tasks', false);
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const current = getCurrentVisibleView();
+                if (current === 'dict-view') {
+                    e.preventDefault();
+                    goBackFromDict();
+                } else if (isDetailOpen) {
+                    toggleDetailPanel();
+                }
+            }
+        });
+
+        function tryDictSnippetInEditor(id, event) {
+            if (event) event.stopPropagation();
+            const item = dictionaryData.find(d => d.id === id);
+            if (!item) return;
+
+            const langData = item.langs[currentSelectedLang] || item.langs.python;
+            goBackFromDict();
+
+            setTimeout(() => {
+                const ed = document.getElementById('codeEditor');
+                if (ed) {
+                    ed.value += `\n# --- [${langData.name}] のサンプル ---\n${langData.snippet}\n`;
+                    ed.scrollTop = ed.scrollHeight;
+                }
+            }, 50);
+        }
+
+        function jumpToTaskFromDict(taskId, event) {
+            if (event) event.stopPropagation();
+            navigationHistoryStack.push({
+                view: 'dict-view',
+                taskId: lastWorkedTaskId,
+                savedCode: document.getElementById('codeEditor').value,
+                projectKey: currentProjectKey,
+                fileKey: currentFileKey
+            });
+            selectTask(taskId, true);
+        }
+
+        function renderResumeTaskCard() {
+            const task = tasks.find(t => t.id === lastWorkedTaskId) || tasks[2];
+            document.getElementById('resumeTaskTitle').innerText = task.title;
+            document.getElementById('resumeTaskDesc').innerText = task.desc;
+        }
+
+        function resumeLastTask() {
+            selectTask(lastWorkedTaskId);
+        }
+
+        function setDictCategory(cat) {
+            selectedDictCategory = cat;
+            document.querySelectorAll('.dictcat-btn').forEach(btn => {
+                btn.className = 'dictcat-btn w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800';
+            });
+            const activeBtn = document.getElementById(`dictcat-${cat}`);
+            if (activeBtn) activeBtn.className = 'dictcat-btn w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400';
+            renderDictCards();
+        }
+
+        function toggleDictFavoritesOnly() {
+            showFavoritesOnly = !showFavoritesOnly;
+            const btn = document.getElementById('dictFavFilterBtn');
+            btn.className = showFavoritesOnly
+                ? 'px-2.5 py-1.5 bg-amber-500 text-white rounded-lg text-xs font-bold border border-amber-600 flex items-center gap-1 shadow-xs'
+                : 'px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-700 flex items-center gap-1';
+            renderDictCards();
+        }
+
+        function handleDictSearch() {
+            renderDictCards();
+        }
+
+        function toggleFavoriteItem(id, event) {
+            if (event) event.stopPropagation();
+            const item = dictionaryData.find(d => d.id === id);
+            if (item) {
+                item.isFavorite = !item.isFavorite;
+                renderDictCards();
+                renderSideDictCards();
+            }
+        }
+
+        // ★ 辞書カードの描画（他言語比較タブ付き）
+        function renderDictCards() {
+            const grid = document.getElementById('dictCardGrid');
+            const notice = document.getElementById('dictEmptyNotice');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const query = (document.getElementById('dictSearchInput')?.value || '').trim().toLowerCase();
+
+            const filtered = dictionaryData.filter(item => {
+                const matchCat = (selectedDictCategory === 'all' || item.category === selectedDictCategory);
+                const matchFav = !showFavoritesOnly || item.isFavorite;
+                const matchQuery = !query || 
+                    item.langs.python.name.toLowerCase().includes(query) ||
+                    item.langs.javascript.name.toLowerCase().includes(query) ||
+                    item.langs.c.name.toLowerCase().includes(query) ||
+                    item.summary.toLowerCase().includes(query) ||
+                    item.desc.toLowerCase().includes(query);
+                return matchCat && matchFav && matchQuery;
+            });
+
+            if (filtered.length === 0) {
+                notice.classList.remove('hidden');
+                return;
+            }
+            notice.classList.add('hidden');
+
+            filtered.forEach(item => {
+                const currentLangData = item.langs[currentSelectedLang] || item.langs.python;
+
+                // 関連課題バッジ
+                let relatedTasksHtml = '';
+                if (item.relatedTaskIds && item.relatedTaskIds.length > 0) {
+                    const taskBadges = item.relatedTaskIds.map(tId => {
+                        const tObj = tasks.find(t => t.id === tId);
+                        if (!tObj) return '';
+                        return `
+                            <button onclick="jumpToTaskFromDict(${tObj.id}, event)" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900/60 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800 transition-colors" title="「${tObj.title}」を解く">
+                                <span>🎯 課題0${tObj.id}</span>
+                                <i data-lucide="external-link" class="w-2.5 h-2.5"></i>
+                            </button>
+                        `;
+                    }).join('');
+                    
+                    relatedTasksHtml = `
+                        <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 space-y-1">
+                            <span class="text-[10px] font-bold text-slate-400 block">この構文を使う課題：</span>
+                            <div class="flex flex-wrap gap-1">${taskBadges}</div>
+                        </div>
+                    `;
+                }
+
+                const card = document.createElement('div');
+                card.id = `dictCard-${item.id}`;
+                card.className = 'focus-ring card-hover-effect bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col justify-between space-y-3';
+                card.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">
+                                ${item.category === 'io' ? '入出力' : (item.category === 'types' ? '型・データ' : '制御構文')}
+                            </span>
+                            <button onclick="toggleFavoriteItem('${item.id}', event)" class="p-1 text-slate-400 hover:text-amber-400 transition-colors">
+                                <i data-lucide="star" class="w-4 h-4 ${item.isFavorite ? 'text-amber-400 fill-amber-400' : ''}"></i>
+                            </button>
+                        </div>
+
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <h3 class="font-extrabold text-sm text-slate-900 dark:text-white font-mono card-func-title">${currentLangData.name}</h3>
+                                ${isKidMode ? `<span class="text-[10px] text-slate-400">(${currentLangData.kana})</span>` : ''}
+                            </div>
+                            <p class="text-xs font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">【${item.summary}】</p>
+                        </div>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">${item.desc}</p>
+                    </div>
+
+                    <!-- ★ 各カード内の言語切り替えタブ ＆ コード枠 ★ -->
+                    <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-bold text-slate-400">言語を切り替えて比較：</span>
+                            <div class="flex bg-slate-950 p-0.5 rounded gap-0.5">
+                                <button onclick="switchCardLanguage('${item.id}', 'python', event)" data-lang="python" class="card-lang-tab px-2 py-0.5 rounded text-[10px] font-bold ${currentSelectedLang === 'python' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}">Python</button>
+                                <button onclick="switchCardLanguage('${item.id}', 'javascript', event)" data-lang="javascript" class="card-lang-tab px-2 py-0.5 rounded text-[10px] font-bold ${currentSelectedLang === 'javascript' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}">JS</button>
+                                <button onclick="switchCardLanguage('${item.id}', 'c', event)" data-lang="c" class="card-lang-tab px-2 py-0.5 rounded text-[10px] font-bold ${currentSelectedLang === 'c' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}">C</button>
+                            </div>
+                        </div>
+
+                        <div class="p-2.5 rounded-lg bg-slate-900 text-slate-200 font-mono text-[11px] overflow-x-auto min-h-[3.6rem] flex items-center">
+                            <code class="card-syntax-code leading-relaxed">${currentLangData.example}</code>
+                        </div>
+
+                        <p class="text-[10px] text-amber-600 dark:text-amber-400/90 font-medium card-syntax-note">
+                            💡 [${currentSelectedLang.toUpperCase()}] ${currentLangData.note}
+                        </p>
+                    </div>
+
+                    ${relatedTasksHtml}
+
+                    <div class="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800">
+                        <span class="text-slate-400 text-[10px]">型: <code class="text-brand-500 font-mono card-syntax-type">${currentLangData.syntax.split('\n')[0]}</code></span>
+                        <button onclick="tryDictSnippetInEditor('${item.id}', event)" class="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-300 rounded text-[10px] font-bold border border-indigo-200 dark:border-indigo-800 flex items-center gap-1">
+                            <i data-lucide="corner-down-left" class="w-3 h-3"></i>エディタで試す
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // 右サイドバーの簡易辞書カード
+        function renderSideDictCards() {
+            const container = document.getElementById('sideDictCardsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            dictionaryData.slice(0, 3).forEach(item => {
+                const currentLangData = item.langs[currentSelectedLang] || item.langs.python;
+
+                let taskLinkHtml = '';
+                if (item.relatedTaskIds && item.relatedTaskIds.length > 0) {
+                    const firstTaskId = item.relatedTaskIds[0];
+                    taskLinkHtml = `
+                        <button onclick="jumpToTaskFromDict(${firstTaskId}, event); toggleDetailPanel();" class="text-[9px] text-blue-600 dark:text-blue-400 font-bold hover:underline flex items-center gap-0.5">
+                            <span>課題0${firstTaskId}で挑戦</span>
+                            <i data-lucide="chevron-right" class="w-2.5 h-2.5"></i>
+                        </button>
+                    `;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 rounded-xl space-y-1.5';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-xs text-brand-600 dark:text-brand-400 font-mono">${currentLangData.name}</span>
+                        ${taskLinkHtml}
+                    </div>
+                    <div class="p-1.5 rounded bg-slate-900 text-slate-200 font-mono text-[10px]">
+                        <code>${currentLangData.example.split('\n')[0]}</code>
+                    </div>
+                    <div class="text-[9px] text-slate-400">
+                        【${item.summary}】 (${currentSelectedLang.toUpperCase()})
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function setCategory(cat) {
+            selectedCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.className = 'cat-btn w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800';
+            });
+            const activeBtn = document.getElementById(`cat-${cat}`);
+            if (activeBtn) activeBtn.className = 'cat-btn w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-bold bg-slate-200/80 dark:bg-slate-800 text-brand-600 dark:text-brand-400';
+            renderTasks();
+        }
+
+        function setDifficulty(diff) {
+            selectedDifficulty = diff;
+            document.querySelectorAll('.diff-btn').forEach(btn => {
+                btn.className = 'diff-btn px-2.5 py-1 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800';
+            });
+            const activeBtn = document.getElementById(`diff-${diff}`);
+            if (activeBtn) activeBtn.className = 'diff-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-brand-600 text-white shadow-xs';
+            renderTasks();
+        }
+
+        function renderTasks() {
+            const grid = document.getElementById('taskGrid');
+            const notice = document.getElementById('emptyNotice');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const filtered = tasks.filter(t => {
+                const matchCat = (selectedCategory === 'all' || t.category === selectedCategory);
+                const matchDiff = (selectedDifficulty === 'all' || t.difficulty === selectedDifficulty);
+                return matchCat && matchDiff;
+            });
+
+            document.getElementById('matchCountBadge').innerText = `該当 ${filtered.length} 件`;
+            if (filtered.length === 0) {
+                notice.classList.remove('hidden');
+                return;
+            }
+            notice.classList.add('hidden');
+
+            filtered.forEach(task => {
+                const diffBadgeClass = task.difficulty === 'easy' 
+                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' 
+                    : (task.difficulty === 'medium' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' : 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300');
+
+                let dictTagsHtml = '';
+                if (task.relatedDictIds && task.relatedDictIds.length > 0) {
+                    const tagBadges = task.relatedDictIds.map(dId => {
+                        const dObj = dictionaryData.find(d => d.id === dId);
+                        const label = dObj ? dObj.langs.python.name.split(' ')[0] : dId;
+                        return `
+                            <button onclick="jumpToDictFromTaskCard('${dId}', event)" class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 transition-colors" title="辞書を見る: ${label}">
+                                <i data-lucide="book-open" class="w-2.5 h-2.5 text-indigo-500"></i>
+                                <span>${label}</span>
+                            </button>
+                        `;
+                    }).join('');
+
+                    dictTagsHtml = `
+                        <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-1.5 flex-wrap">
+                            <span class="text-[9px] font-bold text-slate-400">使う関数:</span>
+                            <div class="flex flex-wrap gap-1">${tagBadges}</div>
+                        </div>
+                    `;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'focus-ring card-hover-effect bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 cursor-pointer flex flex-col justify-between min-h-[12rem] shadow-xs space-y-2';
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded ${diffBadgeClass}">${task.diffLabel}</span>
+                            <span class="text-[10px] text-slate-400">目安: ${task.time}</span>
+                        </div>
+                        <h3 class="font-bold text-xs text-slate-900 dark:text-white mb-1">${task.title}</h3>
+                        <p class="text-[11px] text-slate-500 line-clamp-2">${task.desc}</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        ${dictTagsHtml}
+                        <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs text-brand-600 font-bold">
+                            <span>挑戦する</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                `;
+                card.onclick = () => selectTask(task.id, true);
+                grid.appendChild(card);
+            });
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function jumpToDictFromTaskCard(dictId, event) {
+            if (event) event.stopPropagation();
+            switchView('dict-view');
+            const searchInput = document.getElementById('dictSearchInput');
+            if (searchInput) {
+                searchInput.value = dictId;
+                handleDictSearch();
+            }
+        }
+
+        function selectTask(taskId, isNewSelect = true) {
+            lastWorkedTaskId = taskId;
+            const task = tasks.find(t => t.id === taskId) || tasks[0];
+            
+            document.getElementById('taskBannerTitle').innerText = task.title;
+            document.getElementById('taskBannerExpected').innerText = task.expected;
+
+            document.getElementById('rightTaskTitle').innerText = task.title;
+            document.getElementById('rightTaskDesc').innerText = task.desc;
+            document.getElementById('rightTaskExpectedBadge').innerText = `目標: ${task.expected}`;
+
+            if (!isNewSelect && userTaskCodes[taskId]) {
+                document.getElementById('codeEditor').value = userTaskCodes[taskId];
+            } else if (isNewSelect) {
+                document.getElementById('codeEditor').value = userTaskCodes[taskId] || task.code;
+            }
+
+            document.getElementById('currentEditorFileName').innerHTML = `<i data-lucide="terminal" class="w-3.5 h-3.5 text-brand-500"></i> task_${taskId}.py`;
+            document.getElementById('consoleBody').innerHTML = `<span class="text-slate-500">「うごかす！」ボタンを押すと実行結果がここに表示されます。</span>`;
+            switchView('editor-task');
+        }
+
+        function renderProjectCards() {
+            const grid = document.getElementById('projectCardGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const newCard = document.createElement('div');
+            newCard.onclick = promptNewFolder;
+            newCard.className = 'focus-ring card-hover-effect bg-white dark:bg-slate-900 p-4 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 hover:border-brand-500 cursor-pointer flex flex-col items-center justify-center h-44 text-center';
+            newCard.innerHTML = `
+                <div class="w-10 h-10 rounded-full bg-brand-50 dark:bg-brand-950 flex items-center justify-center text-brand-600 mb-2">
+                    <i data-lucide="plus" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-bold text-xs text-slate-800 dark:text-slate-200">新規プロジェクト</h3>
+                <p class="text-[11px] text-slate-400 mt-1">新しいフォルダを作成して制作を始める</p>
+            `;
+            grid.appendChild(newCard);
+
+            Object.keys(projectsData).forEach(key => {
+                const proj = projectsData[key];
+                const card = document.createElement('div');
+                card.className = 'focus-ring card-hover-effect bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 cursor-pointer flex flex-col justify-between h-44 shadow-xs relative group';
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-brand-600 dark:text-brand-400 flex items-center gap-1">
+                                <i data-lucide="folder" class="w-4 h-4 fill-brand-500/20"></i> ${proj.name}
+                            </span>
+                            <button onclick="event.stopPropagation(); deleteFolder('${key}')" class="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-rose-500 transition-opacity" title="フォルダを削除">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-500 line-clamp-2">${proj.desc}</p>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-slate-400 font-mono mb-2 flex items-center justify-between">
+                            <span>ファイル: ${Object.keys(proj.files).length}件</span>
+                            <span>${proj.updated}</span>
+                        </div>
+                        <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs text-brand-600 font-bold">
+                            <span>このフォルダを開く</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                `;
+                card.onclick = () => openProject(key);
+                grid.appendChild(card);
+            });
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function openProject(key) {
+            currentProjectKey = key;
+            const proj = projectsData[key];
+            const firstFile = Object.keys(proj.files)[0] || 'main.py';
+            currentFileKey = firstFile;
+
+            document.getElementById('activeProjectBreadcrumb').innerText = `${proj.name} / ${firstFile}`;
+            document.getElementById('currentProjectTreeLabel').innerText = proj.name.toUpperCase();
+            document.getElementById('codeEditor').value = proj.files[firstFile] || '';
+            document.getElementById('currentEditorFileName').innerHTML = `<i data-lucide="terminal" class="w-3.5 h-3.5 text-brand-500"></i> ${firstFile}`;
+            document.getElementById('consoleBody').innerHTML = `<span class="text-slate-500">「うごかす！」ボタンを押すと実行結果がここに表示されます。</span>`;
+
+            switchView('editor-free');
+        }
+
+        function renderFileTree() {
+            const container = document.getElementById('fileTreeItems');
+            if (!container) return;
+            container.innerHTML = '';
+            const proj = projectsData[currentProjectKey];
+            if (!proj) return;
+
+            Object.keys(proj.files).forEach(f => {
+                const item = document.createElement('div');
+                const isActive = f === currentFileKey;
+                item.className = isActive
+                    ? 'flex items-center justify-between px-2 py-1.5 rounded-lg text-xs font-bold bg-slate-200/70 dark:bg-slate-800 text-brand-600 dark:text-brand-400 cursor-pointer'
+                    : 'flex items-center justify-between px-2 py-1.5 rounded-lg text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-200/40 dark:hover:bg-slate-800/60 cursor-pointer';
+                item.innerHTML = `
+                    <span class="flex items-center gap-1.5"><i data-lucide="file" class="w-3.5 h-3.5"></i>${f}</span>
+                    ${isActive ? '<span class="text-[9px] text-slate-400 font-mono">active</span>' : ''}
+                `;
+                item.onclick = () => selectFile(f);
+                container.appendChild(item);
+            });
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function selectFile(f) {
+            currentFileKey = f;
+            const proj = projectsData[currentProjectKey];
+            document.getElementById('codeEditor').value = proj.files[f] || '';
+            document.getElementById('currentEditorFileName').innerHTML = `<i data-lucide="terminal" class="w-3.5 h-3.5 text-brand-500"></i> ${f}`;
+            document.getElementById('activeProjectBreadcrumb').innerText = `${proj.name} / ${f}`;
+            renderFileTree();
+        }
+
+        function promptNewFolder() {
+            const name = prompt("新しいプロジェクト名（英数字）を入力してください：", "my_new_game");
+            if (!name) return;
+            const clean = name.trim().replace(/[^a-zA-Z0-9_-]/g, "");
+            if (!clean || projectsData[clean]) {
+                alert("無効な名前か、すでに存在しているプロジェクト名です。");
+                return;
+            }
+            projectsData[clean] = {
+                name: clean,
+                desc: '新規作成されたプロジェクトフォルダ。',
+                updated: 'たった今',
+                files: { 'main.py': `# [main.py] 新しいプログラム\nprint("Hello from ${clean}!")\n` }
+            };
+            renderProjectCards();
+        }
+
+        function deleteFolder(key) {
+            if (confirm(`フォルダ「${key}」を削除してもよろしいですか？\n中のファイルもすべて消去されます。`)) {
+                delete projectsData[key];
+                renderProjectCards();
+            }
+        }
+
+        function promptNewFile() {
+            const fName = prompt("新しいファイル名（例: utils.py）を入力してください：", "utils.py");
+            if (!fName || !fName.endsWith('.py')) {
+                alert(".py で終わるファイル名を入力してください。");
+                return;
+            }
+            const proj = projectsData[currentProjectKey];
+            if (proj.files[fName]) {
+                alert("同名のファイルがすでに存在します。");
+                return;
+            }
+            proj.files[fName] = `# [${fName}]\n`;
+            selectFile(fName);
+        }
+
+        function runCode() {
+            const consoleBody = document.getElementById('consoleBody');
+            const aiText = document.getElementById('aiAdviceText');
+            
+            if (activeMode === 'task') {
+                consoleBody.innerHTML = `
+                    <div class="text-amber-400 font-bold mb-1">🤔 期待した結果と少しちがうみたい！</div>
+                    <div class="text-slate-400">出力結果: <span class="text-rose-400 font-bold">ねんれいは 15さいです</span></div>
+                    <div class="text-slate-400">期待される結果: <span class="text-emerald-400 font-bold">ねんれいは 10さいです</span></div>
+                    
+                    <div class="mt-3 pt-2.5 border-t border-slate-800 flex items-center gap-2">
+                        <button onclick="openAiHelpFromConsole()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm transition-transform active:scale-95">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                            <span>💡 AIの解説・ヒントを見る</span>
+                        </button>
+                        <button onclick="openDictHelpFromConsole('str')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors">
+                            <i data-lucide="book" class="w-3.5 h-3.5 text-brand-400"></i>
+                            <span>📖 関連する辞書(str)を引く</span>
+                        </button>
+                    </div>
+                `;
+
+                aiText.innerHTML = `
+                    プログラムは動いたけれど、<strong>「15歳」</strong>と表示されているよ！<br>
+                    <code>10 + 5</code> の計算部分を見直して、10になるように直してみよう！
+                `;
+            } else {
+                consoleBody.innerHTML = `
+                    <div class="text-emerald-400 font-bold mb-1">✔ 実行が完了しました (CWD: ${currentProjectKey})</div>
+                    <div class="text-slate-300 font-mono">プログラムが正常に動作しました。別ファイルからの import も成功しています。</div>
+                `;
+                aiText.innerHTML = `
+                    正常に実行できたね！このフォルダの中に新しいファイルを作って呼び出してみよう！
+                `;
+            }
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function openAiHelpFromConsole() {
+            if (layoutConfig.aiPos === 'bottom') {
+                switchConsoleTab('ai');
+            } else {
+                if (!isDetailOpen) toggleDetailPanel();
+            }
+        }
+
+        function openDictHelpFromConsole(keyword) {
+            switchView('dict-view');
+            const searchInput = document.getElementById('dictSearchInput');
+            if (searchInput) {
+                searchInput.value = keyword;
+                handleDictSearch();
+            }
+        }
+
+        function formatCode() {
+            const ed = document.getElementById('codeEditor');
+            ed.value = ed.value.trim();
+        }
+
+        function insertSnippet(type) {
+            const ed = document.getElementById('codeEditor');
+            if (type === 'print') ed.value += '\nprint("こんにちは")';
+        }
+
+        function switchConsoleTab(tab) {
+            const tabBtnOutput = document.getElementById('tabBtnOutput');
+            const tabBtnDiff = document.getElementById('tabBtnDiff');
+            const tabBtnAi = document.getElementById('tabBtnAi');
+            const consoleBody = document.getElementById('consoleBody');
+
+            [tabBtnOutput, tabBtnDiff, tabBtnAi].forEach(btn => {
+                if (btn) btn.className = 'text-xs font-bold text-slate-400 hover:text-white pb-0.5 flex items-center gap-1';
+            });
+
+            if (tab === 'output') {
+                tabBtnOutput.className = 'text-xs font-bold text-white border-b-2 border-brand-500 pb-0.5 flex items-center gap-1';
+                consoleBody.innerHTML = `<span class="text-slate-400">実行結果がここに表示されます。</span>`;
+            } else if (tab === 'diff') {
+                tabBtnDiff.className = 'text-xs font-bold text-white border-b-2 border-brand-500 pb-0.5 flex items-center gap-1';
+                consoleBody.innerHTML = `
+                    <div class="text-slate-400 font-bold mb-1">差分比較 (Diff):</div>
+                    <div class="text-emerald-400">+ 期待値: ねんれいは 10さいです</div>
+                    <div class="text-rose-400">- 実際の出力: ねんれいは 15さいです</div>
+                `;
+            } else if (tab === 'ai') {
+                tabBtnAi.className = 'text-xs font-bold text-indigo-400 border-b-2 border-indigo-500 pb-0.5 flex items-center gap-1';
+                consoleBody.innerHTML = `
+                    <div class="text-indigo-400 font-bold mb-1 flex items-center gap-1"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> AIエラー分析（直下配置）:</div>
+                    <div class="text-slate-300">計算結果が期待値と食い違っています。<code>10 + 5</code> の加算処理をもう一度確認してみよう！</div>
+                `;
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function openFileAction() {
+            alert("【ファイル操作】\n・新規ファイル作成\n・ローカル自動保存済み");
+        }
+
+        window.onload = () => {
+            if (window.lucide) lucide.createIcons();
+            switchView('tasks');
+            renderSideDictCards();
+            renderDynamicLayout();
+        };
+    </script>
 </body>
 </html>
